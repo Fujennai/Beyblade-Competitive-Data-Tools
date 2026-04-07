@@ -5,6 +5,10 @@ import re
 import math
 import logging
 
+# ----------------------------
+# Configuración
+# ----------------------------
+
 logging.basicConfig(level=logging.INFO)
 
 URL = "https://sbbl.es/stats"
@@ -22,6 +26,10 @@ params = {
 
 ratchets_especiales = ["Turbo", "Operate", "Zillion"]
 
+
+# ----------------------------
+# Funciones auxiliares
+# ----------------------------
 
 def separar_componentes(texto):
     partes = texto.split()
@@ -69,6 +77,57 @@ def wilson_score(wins, total, z=1.96):
     return (centre - margin) / denominator
 
 
+def generar_datasets_agregados(df):
+
+    # Blade
+    df_blade = (
+        df[["Blade", "Wins", "Losses", "Partidas"]]
+        .groupby("Blade")
+        .sum()
+        .reset_index()
+    )
+
+    df_blade["Wilson Score"] = df_blade.apply(
+        lambda row: wilson_score(row["Wins"], row["Partidas"])
+        if row["Partidas"] > 0 else None,
+        axis=1
+    )
+
+    # Ratchet
+    df_ratchet = (
+        df[["Ratchet", "Wins", "Losses", "Partidas"]]
+        .groupby("Ratchet")
+        .sum()
+        .reset_index()
+    )
+
+    df_ratchet["Wilson Score"] = df_ratchet.apply(
+        lambda row: wilson_score(row["Wins"], row["Partidas"])
+        if row["Partidas"] > 0 else None,
+        axis=1
+    )
+
+    # Bit
+    df_bit = (
+        df[["Bit", "Wins", "Losses", "Partidas"]]
+        .groupby("Bit")
+        .sum()
+        .reset_index()
+    )
+
+    df_bit["Wilson Score"] = df_bit.apply(
+        lambda row: wilson_score(row["Wins"], row["Partidas"])
+        if row["Partidas"] > 0 else None,
+        axis=1
+    )
+
+    return df_blade, df_ratchet, df_bit
+
+
+# ----------------------------
+# Scraper principal
+# ----------------------------
+
 def scrape():
     logging.info("Iniciando scraping...")
 
@@ -99,6 +158,7 @@ def scrape():
             partidas_text = cols[2].get_text(strip=True)
             eficiencia_text = cols[3].get_text(strip=True)
 
+            # Formato con "•"
             if "•" in combo_text:
                 parte_principal, bit = combo_text.split("•", 1)
                 bit = bit.strip()
@@ -115,6 +175,7 @@ def scrape():
             if bit is None:
                 bit = bit_text
 
+            # Ratchets especiales
             if ratchet in ratchets_especiales:
                 if not bit:
                     bit = ratchet
@@ -126,6 +187,7 @@ def scrape():
                 i += 2
                 continue
 
+            # Métricas
             win_match = re.search(r"([\d\.]+)%", winrate_text)
             wl_match = re.search(r"(\d+)W\s*-\s*(\d+)L", winrate_text)
 
@@ -136,6 +198,7 @@ def scrape():
             partidas = int(partidas_text)
             eficiencia = int(re.search(r"\d+", eficiencia_text).group())
 
+            # Detalle
             detalle_text = rows[i + 1].get_text(" ", strip=True) if i + 1 < len(rows) else ""
             nums = re.findall(r"\d+\.\d+", detalle_text)
 
@@ -165,6 +228,7 @@ def scrape():
     if df.empty:
         raise Exception("El dataframe está vacío")
 
+    # Wilson Score global
     df["Wilson Score"] = df.apply(
         lambda row: wilson_score(row["Wins"], row["Partidas"])
         if pd.notna(row["Wins"]) and row["Partidas"] > 0 else None,
@@ -175,15 +239,26 @@ def scrape():
     df.dropna(inplace=True)
     df = df[df['Partidas'] > 0]
     df = df[df['Win %'] <= 100]
-    df = df[(df['Pts Ganados/Combate'] <= 3) & (df['Pts Ganados/Combate'] >= 0)]
-    df = df[(df['Pts Cedidos/Combate'] <= 3) & (df['Pts Cedidos/Combate'] >= 0)]
+    df = df[(df['Pts Ganados/Combate'] >= 0) & (df['Pts Ganados/Combate'] <= 3)]
+    df = df[(df['Pts Cedidos/Combate'] >= 0) & (df['Pts Cedidos/Combate'] <= 3)]
 
     logging.info(f"Filas finales: {len(df)}")
 
-    # Exportar
+    # ----------------------------
+    # Exportar datasets
+    # ----------------------------
+
+    # Dataset principal
     df.to_csv("beyblade_stats.csv", index=False)
 
-    logging.info("CSV generado correctamente")
+    # Agregados
+    df_blade, df_ratchet, df_bit = generar_datasets_agregados(df)
+
+    df_blade.to_csv("blade_stats.csv", index=False)
+    df_ratchet.to_csv("ratchet_stats.csv", index=False)
+    df_bit.to_csv("bit_stats.csv", index=False)
+
+    logging.info("Todos los CSV generados correctamente")
 
 
 def main():
