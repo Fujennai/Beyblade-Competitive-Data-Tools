@@ -33,32 +33,41 @@ def mostrar_top10(df, nombre):
     df_sorted = df.sort_values(by="Wilson Score", ascending=False).head(10)
 
     st.subheader(f"Top 10 {nombre}")
-    st.dataframe(df_sorted, use_container_width=True)
+    st.dataframe(df_sorted, use_container_width=True, hide_index=True)
 
 
 # ----------------------------
-# Tabs
+# Tabs (solo una)
 # ----------------------------
 
-tabs = st.tabs([
-    "🏅 Combos",
-    "🧩 Blades",
-    "⚙️ Ratchets",
-    "🔘 Bits"
-])
+tab = st.tabs(["📊 META Tracker"])[0]
 
 # ----------------------------
 # Contenido
 # ----------------------------
 
-with tabs[0]:
-    mostrar_top10(df_main, "Combos")
+with tab:
 
-with tabs[1]:
-    mostrar_top10(df_blade, "Blades")
+    # Disclaimer
+    st.info(
+        "¿Qué es la Wilson Score?\n\n"
+        "La Wilson score es una métrica estadística que permite estimar "
+        "la fiabilidad de una proporción (como el winrate) teniendo en cuenta "
+        "el número de partidas. Penaliza muestras pequeñas y evita rankings engañosos."
+    )
 
-with tabs[2]:
-    mostrar_top10(df_ratchet, "Ratchets")
+    # Layout en grid (2x2)
+    col1, col2 = st.columns(2)
+    col3, col4 = st.columns(2)
 
-with tabs[3]:
-    mostrar_top10(df_bit, "Bits")
+    with col1:
+        mostrar_top10(df_main, "Combos")
+
+    with col2:
+        mostrar_top10(df_blade, "Blades")
+
+    with col3:
+        mostrar_top10(df_ratchet, "Ratchets")
+
+    with col4:
+        mostrar_top10(df_bit, "Bits")
