@@ -60,7 +60,7 @@ with tab:
         "Mínimo de partidas",
         min_value=0,
         max_value=int(df_main["Partidas"].max()),
-        value=50,
+        value=0,
         step=10
     )
     df_main_filtered = df_main[df_main["Partidas"] >= min_partidas]
