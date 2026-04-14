@@ -56,18 +56,19 @@ with tab:
         "el número de partidas. Penaliza muestras pequeñas y evita rankings engañosos."
     )
 
-    # Layout en grid (2x2)
-    col1, col2 = st.columns(2)
-    col3, col4 = st.columns(2)
-
+        # Combos full width
+    mostrar_top10(df_main, "Combos")
+    
+    st.divider()
+    
+    # 3 columnas iguales
+    col1, col2, col3 = st.columns(3)
+    
     with col1:
-        mostrar_top10(df_main, "Combos")
-
-    with col2:
         mostrar_top10(df_blade, "Blades")
-
-    with col3:
+    
+    with col2:
         mostrar_top10(df_ratchet, "Ratchets")
-
-    with col4:
+    
+    with col3:
         mostrar_top10(df_bit, "Bits")
