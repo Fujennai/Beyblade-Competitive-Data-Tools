@@ -55,9 +55,21 @@ with tab:
         "la fiabilidad de una proporción (como el winrate) teniendo en cuenta "
         "el número de partidas. Penaliza muestras pequeñas y evita rankings engañosos."
     )
+    
+    min_partidas = st.slider(
+        "Mínimo de partidas",
+        min_value=0,
+        max_value=int(df_main["Partidas"].max()),
+        value=50,
+        step=10
+    )
+    df_main_filtered = df_main[df_main["Partidas"] >= min_partidas]
+    df_blade_filtered = df_blade[df_blade["Partidas"] >= min_partidas]
+    df_ratchet_filtered = df_ratchet[df_ratchet["Partidas"] >= min_partidas]
+    df_bit_filtered = df_bit[df_bit["Partidas"] >= min_partidas]
 
         # Combos full width
-    mostrar_top10(df_main, "Combos")
+    mostrar_top10(df_main_filtered, "Combos")
     
     st.divider()
     
@@ -65,10 +77,10 @@ with tab:
     col1, col2, col3 = st.columns(3)
     
     with col1:
-        mostrar_top10(df_blade, "Blades")
+        mostrar_top10(df_blade_filtered, "Blades")
     
     with col2:
-        mostrar_top10(df_ratchet, "Ratchets")
+        mostrar_top10(df_ratchet_filtered, "Ratchets")
     
     with col3:
-        mostrar_top10(df_bit, "Bits")
+        mostrar_top10(df_bit_filtered, "Bits")
