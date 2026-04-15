@@ -16,14 +16,10 @@ st.title("🏆 Beyblade Competitive Dashboard")
 @st.cache_data
 def load_data():
     df_main = pd.read_csv("beyblade_stats.csv")
-    df_blade = pd.read_csv("blade_stats.csv")
-    df_ratchet = pd.read_csv("ratchet_stats.csv")
-    df_bit = pd.read_csv("bit_stats.csv")
-
-    return df_main, df_blade, df_ratchet, df_bit
+    return df_main
 
 
-df_main, df_blade, df_ratchet, df_bit = load_data()
+df_main = load_data()
 
 # ----------------------------
 # Helper
@@ -38,6 +34,40 @@ def mostrar_top10(df, nombre):
 
     df_sorted = df.sort_values(by="Wilson Score", ascending=False).head(10)
     st.dataframe(df_sorted, use_container_width=True, hide_index=True)
+
+
+def calcular_agregados(df):
+    df_blade = (
+        df.groupby("Blade")[["Wins", "Losses", "Partidas"]]
+        .sum()
+        .reset_index()
+    )
+
+    df_ratchet = (
+        df.groupby("Ratchet")[["Wins", "Losses", "Partidas"]]
+        .sum()
+        .reset_index()
+    )
+
+    df_bit = (
+        df.groupby("Bit")[["Wins", "Losses", "Partidas"]]
+        .sum()
+        .reset_index()
+    )
+
+    # Wilson Score
+    def wilson(w, n, z=1.96):
+        if n == 0:
+            return 0
+        p = w / n
+        return (p + z**2/(2*n) - z*((p*(1-p)+z**2/(4*n))/n)**0.5) / (1 + z**2/n)
+
+    for df_ in [df_blade, df_ratchet, df_bit]:
+        df_["Wilson Score"] = df_.apply(
+            lambda row: wilson(row["Wins"], row["Partidas"]), axis=1
+        )
+
+    return df_blade, df_ratchet, df_bit
 
 
 # ----------------------------
@@ -55,13 +85,12 @@ with tab:
     # Disclaimer
     st.info(
         "¿Qué es la Wilson Score?\n\n"
-        "La Wilson score es una métrica estadística que permite estimar "
-        "la fiabilidad de una proporción (como el winrate) teniendo en cuenta "
-        "el número de partidas. Penaliza muestras pequeñas y evita rankings engañosos."
+        "La Wilson score estima la fiabilidad de un winrate teniendo en cuenta "
+        "el número de partidas. Penaliza muestras pequeñas."
     )
 
     # ----------------------------
-    # Slider mínimo partidas
+    # Slider
     # ----------------------------
 
     min_partidas = st.slider(
@@ -73,7 +102,7 @@ with tab:
     )
 
     # ----------------------------
-    # Filtros
+    # Filtros globales
     # ----------------------------
 
     st.subheader("🔍 Filtros")
@@ -81,61 +110,56 @@ with tab:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        min_winrate = st.slider(
-            "Winrate mínimo (%)",
-            min_value=0.0,
-            max_value=100.0,
-            value=0.0,
-            step=1.0
+        blade_filter = st.selectbox(
+            "Blade",
+            ["Todos"] + sorted(df_main["Blade"].dropna().unique())
         )
 
     with col2:
-        blade_filter = st.selectbox(
-            "Blade",
-            ["Todos"] + sorted(df_main["Blade"].dropna().unique().tolist())
+        ratchet_filter = st.selectbox(
+            "Ratchet",
+            ["Todos"] + sorted(df_main["Ratchet"].dropna().unique())
         )
 
     with col3:
-        search = st.text_input("Buscar combo")
+        bit_filter = st.selectbox(
+            "Bit",
+            ["Todos"] + sorted(df_main["Bit"].dropna().unique())
+        )
 
     st.caption(f"Mostrando datos con al menos {min_partidas} partidas")
 
     # ----------------------------
-    # Filtrado dataset principal
+    # Filtrado global
     # ----------------------------
 
-    df_main_filtered = df_main.copy()
+    df_filtered = df_main.copy()
 
     # Partidas mínimas
-    df_main_filtered = df_main_filtered[df_main_filtered["Partidas"] >= min_partidas]
+    df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
 
-    # Winrate mínimo
-    df_main_filtered = df_main_filtered[df_main_filtered["Win %"] >= min_winrate]
-
-    # Blade
+    # Filtros por piezas
     if blade_filter != "Todos":
-        df_main_filtered = df_main_filtered[df_main_filtered["Blade"] == blade_filter]
+        df_filtered = df_filtered[df_filtered["Blade"] == blade_filter]
 
-    # Búsqueda
-    if search:
-        df_main_filtered = df_main_filtered[
-            df_main_filtered.apply(lambda row: search.lower() in str(row).lower(), axis=1)
-        ]
+    if ratchet_filter != "Todos":
+        df_filtered = df_filtered[df_filtered["Ratchet"] == ratchet_filter]
+
+    if bit_filter != "Todos":
+        df_filtered = df_filtered[df_filtered["Bit"] == bit_filter]
 
     # ----------------------------
-    # Filtrado datasets agregados
+    # Agregados dinámicos
     # ----------------------------
 
-    df_blade_filtered = df_blade[df_blade["Partidas"] >= min_partidas]
-    df_ratchet_filtered = df_ratchet[df_ratchet["Partidas"] >= min_partidas]
-    df_bit_filtered = df_bit[df_bit["Partidas"] >= min_partidas]
+    df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
 
     # ----------------------------
     # UI
     # ----------------------------
 
-    # Combos (full width)
-    mostrar_top10(df_main_filtered, "Combos")
+    # Combos
+    mostrar_top10(df_filtered, "Combos")
 
     st.divider()
 
@@ -143,10 +167,10 @@ with tab:
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        mostrar_top10(df_blade_filtered, "Blades")
+        mostrar_top10(df_blade, "Blades")
 
     with col2:
-        mostrar_top10(df_ratchet_filtered, "Ratchets")
+        mostrar_top10(df_ratchet, "Ratchets")
 
     with col3:
-        mostrar_top10(df_bit_filtered, "Bits")
+        mostrar_top10(df_bit, "Bits")
