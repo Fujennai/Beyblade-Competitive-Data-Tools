@@ -4,6 +4,7 @@ import pandas as pd
 import re
 import math
 import logging
+from datetime import datetime
 
 # ----------------------------
 # Configuración
@@ -248,7 +249,16 @@ def scrape():
     # Exportar datasets
     # ----------------------------
 
-    # Dataset principal
+    # Crear carpeta si no existe
+    os.makedirs("history", exist_ok=True)
+    
+    # Fecha actual
+    fecha = datetime.now().strftime("%Y-%m-%d")
+    
+    # Guardar histórico
+    df.to_csv(f"history/beyblade_stats_{fecha}.csv", index=False)
+    
+    # Guardar última versión (como hasta ahora)
     df.to_csv("beyblade_stats.csv", index=False)
 
     # Agregados
