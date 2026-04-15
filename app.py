@@ -1,6 +1,18 @@
 import streamlit as st
 import pandas as pd
+import os
 
+def load_history():
+    files = sorted(os.listdir("history"))
+    dfs = []
+
+    for file in files:
+        if file.endswith(".csv"):
+            df = pd.read_csv(f"history/{file}")
+            df["fecha"] = file.replace("beyblade_stats_", "").replace(".csv", "")
+            dfs.append(df)
+
+    return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
 # ----------------------------
 # Configuración
 # ----------------------------
@@ -81,7 +93,7 @@ tab = st.tabs(["📊 META Tracker"])[0]
 # ----------------------------
 
 with tab:
-
+    df_history = load_history()
     # Disclaimer
     st.info(
         "¿Qué es la Wilson Score?\n\n"
@@ -174,3 +186,47 @@ with tab:
 
     with col3:
         mostrar_top10(df_bit, "Bits")
+
+    st.subheader("📈 Evolución de un combo")
+
+    st.divider()
+    
+    combo = st.selectbox(
+        "Selecciona combo",
+        df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
+    )
+    
+    df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
+    
+    df_combo = df_history[df_history["combo"] == combo]
+    
+    if not df_combo.empty:
+        df_combo = df_combo.sort_values("fecha")
+        st.line_chart(df_combo.set_index("fecha")["Win %"])
+    
+
+    st.subheader("🔥 Trending Combos")
+
+    if not df_history.empty:
+    
+        df_sorted = df_history.sort_values("fecha")
+    
+        latest = df_sorted.groupby("combo").tail(1)
+        previous = df_sorted.groupby("combo").nth(-2)
+    
+        merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
+    
+        merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
+    
+        top_trending = merged.sort_values("delta_partidas", ascending=False).head(10)
+    
+        st.dataframe(top_trending[["combo", "delta_partidas"]])
+
+    st.subheader("⚡ Meta Shifts")
+    
+    merged["delta_winrate"] = merged["Win %_new"] - merged["Win %_old"]
+    
+    top_shifts = merged.sort_values("delta_winrate", ascending=False).head(10)
+    
+    st.dataframe(top_shifts[["combo", "delta_winrate"]])
+    
