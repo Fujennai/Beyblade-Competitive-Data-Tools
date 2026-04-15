@@ -220,13 +220,33 @@ with tab:
     
         top_trending = merged.sort_values("delta_partidas", ascending=False).head(10)
     
-        st.dataframe(top_trending[["combo", "delta_partidas"]])
+        # Renombrar columnas
+        top_trending = top_trending.rename(columns={
+            "combo": "Combo",
+            "delta_partidas": "Aumento en su uso durante la última semana"
+        })
+    
+        st.dataframe(
+            top_trending[["Combo", "Aumento en su uso durante la última semana"]],
+            use_container_width=True,
+            hide_index=True
+        )
 
     st.subheader("⚡ Meta Shifts")
-    
+
     merged["delta_winrate"] = merged["Win %_new"] - merged["Win %_old"]
     
     top_shifts = merged.sort_values("delta_winrate", ascending=False).head(10)
     
-    st.dataframe(top_shifts[["combo", "delta_winrate"]])
+    # Renombrar columnas
+    top_shifts = top_shifts.rename(columns={
+        "combo": "Combo",
+        "delta_winrate": "Cambio en winrate (%)"
+    })
+    
+    st.dataframe(
+        top_shifts[["Combo", "Cambio en winrate (%)"]],
+        use_container_width=True,
+        hide_index=True
+    )
     
