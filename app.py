@@ -295,38 +295,38 @@ if not df_history.empty:
     # Trending Score
     # ----------------------------
 
-    import numpy as np
-
-    merged["trending_score"] = (
-        merged["growth_pct"] *
-        np.log1p(merged["Partidas_new"]) *
-        (merged["Win %_new"] / 100)
-    )
-
-    # ----------------------------
-    # Ranking
-    # ----------------------------
-
-    top_trending = merged.sort_values("trending_score", ascending=False).head(10)
-
-    # Formato visual
-    top_trending["Crecimiento (%)"] = (top_trending["growth_pct"] * 100).round(1)
-    top_trending["Winrate (%)"] = top_trending["Win %_new"].round(1)
-
-    # Mostrar
-    st.dataframe(
-        top_trending[[
-            "combo",
-            "Crecimiento (%)",
-            "Winrate (%)",
-            "trending_score"
-        ]].rename(columns={
-            "combo": "Combo",
-            "trending_score": "Trending Score"
-        }),
-        use_container_width=True,
-        hide_index=True
-    )
+        import numpy as np
+    
+        merged["trending_score"] = (
+            merged["growth_pct"] *
+            np.log1p(merged["Partidas_new"]) *
+            (merged["Win %_new"] / 100)
+        )
+    
+        # ----------------------------
+        # Ranking
+        # ----------------------------
+    
+        top_trending = merged.sort_values("trending_score", ascending=False).head(10)
+    
+        # Formato visual
+        top_trending["Crecimiento (%)"] = (top_trending["growth_pct"] * 100).round(1)
+        top_trending["Winrate (%)"] = top_trending["Win %_new"].round(1)
+    
+        # Mostrar
+        st.dataframe(
+            top_trending[[
+                "combo",
+                "Crecimiento (%)",
+                "Winrate (%)",
+                "trending_score"
+            ]].rename(columns={
+                "combo": "Combo",
+                "trending_score": "Trending Score"
+            }),
+            use_container_width=True,
+            hide_index=True
+        )
 
         # ----------------------------
         # Meta shifts
