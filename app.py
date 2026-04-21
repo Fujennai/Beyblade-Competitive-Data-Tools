@@ -268,12 +268,18 @@ with tab:
         (df_history["Bit"] == bit_sel)
     ]
     
-    # Mostrar gráfico
+    # Mostrar gráfico    
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
-        st.line_chart(df_combo.set_index("fecha")["Win %"])
+    
+        # 👇 AQUÍ VA EL FIX
+        df_combo_grouped = df_combo.groupby("fecha").agg({
+            "Win %": "mean"
+        })
+    
+        st.line_chart(df_combo_grouped)
     else:
-        st.warning("No hay datos para ese combo")    
+        st.warning("No hay datos para ese combo")
 
     # Trending
     st.subheader("🔥 Trending Combos")
