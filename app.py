@@ -218,9 +218,42 @@ with tab:
 
     df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
 
-    combo = st.selectbox("Selecciona combo", df_history["combo"].unique())
+    st.subheader("📈 Evolución de un combo")
 
-    df_combo = df_history[df_history["combo"] == combo]
+    # Filtros tipo dashboard
+    col1, col2, col3 = st.columns(3)
+    
+    with col1:
+        blade_sel = st.selectbox(
+            "Blade",
+            sorted(df_history["Blade"].dropna().unique())
+        )
+    
+    with col2:
+        ratchet_sel = st.selectbox(
+            "Ratchet",
+            sorted(df_history["Ratchet"].dropna().unique())
+        )
+    
+    with col3:
+        bit_sel = st.selectbox(
+            "Bit",
+            sorted(df_history["Bit"].dropna().unique())
+        )
+    
+    # Filtrar
+    df_combo = df_history[
+        (df_history["Blade"] == blade_sel) &
+        (df_history["Ratchet"] == ratchet_sel) &
+        (df_history["Bit"] == bit_sel)
+    ]
+    
+    # Mostrar gráfico
+    if not df_combo.empty:
+        df_combo = df_combo.sort_values("fecha")
+        st.line_chart(df_combo.set_index("fecha")["Win %"])
+    else:
+        st.warning("No hay datos para ese combo")
 
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
