@@ -216,9 +216,26 @@ with tab:
     # Evolución
     st.subheader("📈 Evolución de un combo")
 
-    df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
+    df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]   
 
-    st.subheader("📈 Evolución de un combo")
+    # Top 1 actual según ranking
+    df_top = df_filtered.sort_values(by="Wilson Score", ascending=False).head(1)
+    
+    if not df_top.empty:
+        default_blade = df_top.iloc[0]["Blade"]
+        default_ratchet = df_top.iloc[0]["Ratchet"]
+        default_bit = df_top.iloc[0]["Bit"]
+    else:
+        default_blade = None
+        default_ratchet = None
+        default_bit = None
+
+    blade_options = sorted(df_history["Blade"].dropna().unique())
+    ratchet_options = sorted(df_history["Ratchet"].dropna().unique())
+    bit_options = sorted(df_history["Bit"].dropna().unique())
+    blade_index = blade_options.index(default_blade) if default_blade in blade_options else 0
+    ratchet_index = ratchet_options.index(default_ratchet) if default_ratchet in ratchet_options else 0
+    bit_index = bit_options.index(default_bit) if default_bit in bit_options else 0
 
     # Filtros tipo dashboard
     col1, col2, col3 = st.columns(3)
@@ -226,19 +243,22 @@ with tab:
     with col1:
         blade_sel = st.selectbox(
             "Blade",
-            sorted(df_history["Blade"].dropna().unique())
+            blade_options,
+            index=blade_index
         )
     
     with col2:
         ratchet_sel = st.selectbox(
             "Ratchet",
-            sorted(df_history["Ratchet"].dropna().unique())
+            ratchet_options,
+            index=ratchet_index
         )
     
     with col3:
         bit_sel = st.selectbox(
             "Bit",
-            sorted(df_history["Bit"].dropna().unique())
+            bit_options,
+            index=bit_index
         )
     
     # Filtrar
@@ -253,11 +273,7 @@ with tab:
         df_combo = df_combo.sort_values("fecha")
         st.line_chart(df_combo.set_index("fecha")["Win %"])
     else:
-        st.warning("No hay datos para ese combo")
-
-    if not df_combo.empty:
-        df_combo = df_combo.sort_values("fecha")
-        st.line_chart(df_combo.set_index("fecha")["Win %"])
+        st.warning("No hay datos para ese combo")    
 
     # Trending
     st.subheader("🔥 Trending Combos")
