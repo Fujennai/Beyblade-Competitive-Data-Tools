@@ -261,38 +261,72 @@ with tab:
     else:
         st.warning("No hay datos para ese combo")
 
+   st.subheader("🔥 Trending Combos")
+st.caption("Combos en tendencia según crecimiento relativo, uso y rendimiento")
+
+if not df_history.empty:
+
+    df_history["combo"] = (
+        df_history["Blade"] + " | " +
+        df_history["Ratchet"] + " | " +
+        df_history["Bit"]
+    )
+
+    df_sorted = df_history.sort_values("fecha")
+
+    latest = df_sorted.groupby("combo").tail(1)
+    previous = df_sorted.groupby("combo").nth(-2)
+
+    merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
+
     # ----------------------------
-    # Trending
+    # Métricas
     # ----------------------------
 
-    st.subheader("🔥 Trending Combos")
-    st.caption("Diferencia en número de partidas respecto al snapshot anterior")
+    # Crecimiento absoluto
+    merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
 
-    if not df_history.empty:
+    # Crecimiento relativo (%)
+    merged["growth_pct"] = (
+        merged["delta_partidas"] / merged["Partidas_old"]
+    ).replace([float("inf"), -float("inf")], 0).fillna(0)
 
-        df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
+    # ----------------------------
+    # Trending Score
+    # ----------------------------
 
-        df_sorted = df_history.sort_values("fecha")
+    import numpy as np
 
-        latest = df_sorted.groupby("combo").tail(1)
-        previous = df_sorted.groupby("combo").nth(-2)
+    merged["trending_score"] = (
+        merged["growth_pct"] *
+        np.log1p(merged["Partidas_new"]) *
+        (merged["Win %_new"] / 100)
+    )
 
-        merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
+    # ----------------------------
+    # Ranking
+    # ----------------------------
 
-        merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
+    top_trending = merged.sort_values("trending_score", ascending=False).head(10)
 
-        top_trending = merged.sort_values("delta_partidas", ascending=False).head(10)
+    # Formato visual
+    top_trending["Crecimiento (%)"] = (top_trending["growth_pct"] * 100).round(1)
+    top_trending["Winrate (%)"] = top_trending["Win %_new"].round(1)
 
-        top_trending = top_trending.rename(columns={
+    # Mostrar
+    st.dataframe(
+        top_trending[[
+            "combo",
+            "Crecimiento (%)",
+            "Winrate (%)",
+            "trending_score"
+        ]].rename(columns={
             "combo": "Combo",
-            "delta_partidas": "Aumento de partidas (última semana vs anterior)"
-        })
-
-        st.dataframe(
-            top_trending[["Combo", "Aumento de partidas (última semana vs anterior)"]],
-            use_container_width=True,
-            hide_index=True
-        )
+            "trending_score": "Trending Score"
+        }),
+        use_container_width=True,
+        hide_index=True
+    )
 
         # ----------------------------
         # Meta shifts
