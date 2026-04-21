@@ -87,7 +87,15 @@ def mostrar_top10(df, nombre):
         return
 
     df_sorted = df.sort_values(by="Wilson Score", ascending=False).head(10)
-    st.dataframe(df_sorted, use_container_width=True, hide_index=True)
+
+    # Ocultar columnas internas
+    columnas_ocultar = ["Blade Base", "Assist Blade", "Eficiencia"]
+
+    df_display = df_sorted.drop(
+        columns=[c for c in columnas_ocultar if c in df_sorted.columns]
+    )
+
+    st.dataframe(df_display, use_container_width=True, hide_index=True)
 
 
 def calcular_agregados(df):
@@ -130,22 +138,16 @@ with tab:
         "el número de partidas. Penaliza muestras pequeñas."
     )
 
-    # ----------------------------
     # Slider
-    # ----------------------------
-
     min_partidas = st.slider(
         "Mínimo de partidas",
         min_value=0,
         max_value=int(df_main["Partidas"].max()),
-        value=0,
+        value=50,
         step=10
     )
 
-    # ----------------------------
     # Filtros
-    # ----------------------------
-
     st.subheader("🔍 Filtros")
 
     col1, col2, col3, col4 = st.columns(4)
@@ -176,12 +178,8 @@ with tab:
 
     st.caption(f"Mostrando datos con al menos {min_partidas} partidas")
 
-    # ----------------------------
     # Filtrado
-    # ----------------------------
-
     df_filtered = df_main.copy()
-
     df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
 
     if blade_base_filter != "Todos":
@@ -196,16 +194,10 @@ with tab:
     if bit_filter != "Todos":
         df_filtered = df_filtered[df_filtered["Bit"] == bit_filter]
 
-    # ----------------------------
     # Agregados
-    # ----------------------------
-
     df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
 
-    # ----------------------------
-    # UI
-    # ----------------------------
-
+    # UI principal
     mostrar_top10(df_filtered, "Combos")
 
     st.divider()
@@ -221,10 +213,7 @@ with tab:
     with col3:
         mostrar_top10(df_bit, "Bits")
 
-    # ----------------------------
     # Evolución
-    # ----------------------------
-
     st.subheader("📈 Evolución de un combo")
 
     df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
@@ -237,10 +226,7 @@ with tab:
         df_combo = df_combo.sort_values("fecha")
         st.line_chart(df_combo.set_index("fecha")["Win %"])
 
-    # ----------------------------
     # Trending
-    # ----------------------------
-
     st.subheader("🔥 Trending Combos")
 
     if not df_history.empty:
@@ -267,10 +253,7 @@ with tab:
             hide_index=True
         )
 
-        # ----------------------------
         # Meta shifts
-        # ----------------------------
-
         st.subheader("⚡ Meta Shifts")
 
         merged["delta_winrate"] = merged["Win %_new"] - merged["Win %_old"]
