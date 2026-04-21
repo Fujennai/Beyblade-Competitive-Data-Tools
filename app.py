@@ -1,6 +1,11 @@
 import streamlit as st
 import pandas as pd
 import os
+from collections import Counter
+
+# ----------------------------
+# History
+# ----------------------------
 
 def load_history():
     files = sorted(os.listdir("history"))
@@ -13,13 +18,15 @@ def load_history():
             dfs.append(df)
 
     return pd.concat(dfs, ignore_index=True) if dfs else pd.DataFrame()
+
+
 # ----------------------------
 # Configuración
 # ----------------------------
 
 st.set_page_config(page_title="Beyblade Analytics", layout="wide")
-
 st.title("🏆 Beyblade Competitive Dashboard")
+
 
 # ----------------------------
 # Cargar datos
@@ -27,14 +34,49 @@ st.title("🏆 Beyblade Competitive Dashboard")
 
 @st.cache_data
 def load_data():
-    df_main = pd.read_csv("beyblade_stats.csv")
-    return df_main
+    return pd.read_csv("beyblade_stats.csv")
 
 
 df_main = load_data()
 
+
 # ----------------------------
-# Helper
+# Separar Blade / Assist
+# ----------------------------
+
+def detectar_prefijos(df):
+    posibles = []
+
+    for blade in df["Blade"]:
+        partes = blade.split()
+        if len(partes) >= 3:
+            prefijo = " ".join(partes[:-1])
+            posibles.append(prefijo)
+
+    conteo = Counter(posibles)
+    return {p for p, c in conteo.items() if c >= 2}
+
+
+def separar_blade(blade, prefijos_validos):
+    partes = blade.split()
+
+    if len(partes) >= 3:
+        prefijo = " ".join(partes[:-1])
+        if prefijo in prefijos_validos:
+            return prefijo, partes[-1]
+
+    return blade, None
+
+
+prefijos_validos = detectar_prefijos(df_main)
+
+df_main[["Blade Base", "Assist Blade"]] = df_main["Blade"].apply(
+    lambda x: pd.Series(separar_blade(x, prefijos_validos))
+)
+
+
+# ----------------------------
+# Helpers
 # ----------------------------
 
 def mostrar_top10(df, nombre):
@@ -49,25 +91,10 @@ def mostrar_top10(df, nombre):
 
 
 def calcular_agregados(df):
-    df_blade = (
-        df.groupby("Blade")[["Wins", "Losses", "Partidas"]]
-        .sum()
-        .reset_index()
-    )
+    df_blade = df.groupby("Blade")[["Wins", "Losses", "Partidas"]].sum().reset_index()
+    df_ratchet = df.groupby("Ratchet")[["Wins", "Losses", "Partidas"]].sum().reset_index()
+    df_bit = df.groupby("Bit")[["Wins", "Losses", "Partidas"]].sum().reset_index()
 
-    df_ratchet = (
-        df.groupby("Ratchet")[["Wins", "Losses", "Partidas"]]
-        .sum()
-        .reset_index()
-    )
-
-    df_bit = (
-        df.groupby("Bit")[["Wins", "Losses", "Partidas"]]
-        .sum()
-        .reset_index()
-    )
-
-    # Wilson Score
     def wilson(w, n, z=1.96):
         if n == 0:
             return 0
@@ -88,13 +115,15 @@ def calcular_agregados(df):
 
 tab = st.tabs(["📊 META Tracker"])[0]
 
+
 # ----------------------------
 # Contenido
 # ----------------------------
 
 with tab:
+
     df_history = load_history()
-    # Disclaimer
+
     st.info(
         "¿Qué es la Wilson Score?\n\n"
         "La Wilson score estima la fiabilidad de un winrate teniendo en cuenta "
@@ -114,26 +143,32 @@ with tab:
     )
 
     # ----------------------------
-    # Filtros globales
+    # Filtros
     # ----------------------------
 
     st.subheader("🔍 Filtros")
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3, col4 = st.columns(4)
 
     with col1:
-        blade_filter = st.selectbox(
-            "Blade",
-            ["Todos"] + sorted(df_main["Blade"].dropna().unique())
+        blade_base_filter = st.selectbox(
+            "Blade Base",
+            ["Todos"] + sorted(df_main["Blade Base"].dropna().unique())
         )
 
     with col2:
+        assist_filter = st.selectbox(
+            "Assist Blade",
+            ["Todos"] + sorted(df_main["Assist Blade"].dropna().unique())
+        )
+
+    with col3:
         ratchet_filter = st.selectbox(
             "Ratchet",
             ["Todos"] + sorted(df_main["Ratchet"].dropna().unique())
         )
 
-    with col3:
+    with col4:
         bit_filter = st.selectbox(
             "Bit",
             ["Todos"] + sorted(df_main["Bit"].dropna().unique())
@@ -142,17 +177,18 @@ with tab:
     st.caption(f"Mostrando datos con al menos {min_partidas} partidas")
 
     # ----------------------------
-    # Filtrado global
+    # Filtrado
     # ----------------------------
 
     df_filtered = df_main.copy()
 
-    # Partidas mínimas
     df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
 
-    # Filtros por piezas
-    if blade_filter != "Todos":
-        df_filtered = df_filtered[df_filtered["Blade"] == blade_filter]
+    if blade_base_filter != "Todos":
+        df_filtered = df_filtered[df_filtered["Blade Base"] == blade_base_filter]
+
+    if assist_filter != "Todos":
+        df_filtered = df_filtered[df_filtered["Assist Blade"] == assist_filter]
 
     if ratchet_filter != "Todos":
         df_filtered = df_filtered[df_filtered["Ratchet"] == ratchet_filter]
@@ -161,7 +197,7 @@ with tab:
         df_filtered = df_filtered[df_filtered["Bit"] == bit_filter]
 
     # ----------------------------
-    # Agregados dinámicos
+    # Agregados
     # ----------------------------
 
     df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
@@ -170,12 +206,10 @@ with tab:
     # UI
     # ----------------------------
 
-    # Combos
     mostrar_top10(df_filtered, "Combos")
 
     st.divider()
 
-    # 3 columnas
     col1, col2, col3 = st.columns(3)
 
     with col1:
@@ -187,66 +221,69 @@ with tab:
     with col3:
         mostrar_top10(df_bit, "Bits")
 
+    # ----------------------------
+    # Evolución
+    # ----------------------------
+
     st.subheader("📈 Evolución de un combo")
 
-    st.divider()
-    
-    combo = st.selectbox(
-        "Selecciona combo",
-        df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
-    )
-    
     df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
-    
+
+    combo = st.selectbox("Selecciona combo", df_history["combo"].unique())
+
     df_combo = df_history[df_history["combo"] == combo]
-    
+
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
         st.line_chart(df_combo.set_index("fecha")["Win %"])
-    
+
+    # ----------------------------
+    # Trending
+    # ----------------------------
 
     st.subheader("🔥 Trending Combos")
 
     if not df_history.empty:
-    
+
         df_sorted = df_history.sort_values("fecha")
-    
+
         latest = df_sorted.groupby("combo").tail(1)
         previous = df_sorted.groupby("combo").nth(-2)
-    
+
         merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
-    
+
         merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
-    
+
         top_trending = merged.sort_values("delta_partidas", ascending=False).head(10)
-    
-        # Renombrar columnas
+
         top_trending = top_trending.rename(columns={
             "combo": "Combo",
             "delta_partidas": "Aumento en su uso durante la última semana"
         })
-    
+
         st.dataframe(
             top_trending[["Combo", "Aumento en su uso durante la última semana"]],
             use_container_width=True,
             hide_index=True
         )
 
-    st.subheader("⚡ Meta Shifts")
+        # ----------------------------
+        # Meta shifts
+        # ----------------------------
 
-    merged["delta_winrate"] = merged["Win %_new"] - merged["Win %_old"]
-    
-    top_shifts = merged.sort_values("delta_winrate", ascending=False).head(10)
-    
-    # Renombrar columnas
-    top_shifts = top_shifts.rename(columns={
-        "combo": "Combo",
-        "delta_winrate": "Cambio en winrate (%)"
-    })
-    
-    st.dataframe(
-        top_shifts[["Combo", "Cambio en winrate (%)"]],
-        use_container_width=True,
-        hide_index=True
-    )
-    
+        st.subheader("⚡ Meta Shifts")
+
+        merged["delta_winrate"] = merged["Win %_new"] - merged["Win %_old"]
+
+        top_shifts = merged.sort_values("delta_winrate", ascending=False).head(10)
+
+        top_shifts = top_shifts.rename(columns={
+            "combo": "Combo",
+            "delta_winrate": "Cambio en winrate (%)"
+        })
+
+        st.dataframe(
+            top_shifts[["Combo", "Cambio en winrate (%)"]],
+            use_container_width=True,
+            hide_index=True
+        )
