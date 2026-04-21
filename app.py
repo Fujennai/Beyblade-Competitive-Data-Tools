@@ -88,7 +88,6 @@ def mostrar_top10(df, nombre):
 
     df_sorted = df.sort_values(by="Wilson Score", ascending=False).head(10)
 
-    # Ocultar columnas internas
     columnas_ocultar = ["Blade Base", "Assist Blade", "Eficiencia"]
 
     df_display = df_sorted.drop(
@@ -213,78 +212,65 @@ with tab:
     with col3:
         mostrar_top10(df_bit, "Bits")
 
+    # ----------------------------
     # Evolución
+    # ----------------------------
+
     st.subheader("📈 Evolución de un combo")
 
-    df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]   
-
-    # Top 1 actual según ranking
+    # Default = top 1 actual
     df_top = df_filtered.sort_values(by="Wilson Score", ascending=False).head(1)
-    
-    if not df_top.empty:
-        default_blade = df_top.iloc[0]["Blade"]
-        default_ratchet = df_top.iloc[0]["Ratchet"]
-        default_bit = df_top.iloc[0]["Bit"]
-    else:
-        default_blade = None
-        default_ratchet = None
-        default_bit = None
 
     blade_options = sorted(df_history["Blade"].dropna().unique())
     ratchet_options = sorted(df_history["Ratchet"].dropna().unique())
     bit_options = sorted(df_history["Bit"].dropna().unique())
+
+    default_blade = df_top.iloc[0]["Blade"] if not df_top.empty else blade_options[0]
+    default_ratchet = df_top.iloc[0]["Ratchet"] if not df_top.empty else ratchet_options[0]
+    default_bit = df_top.iloc[0]["Bit"] if not df_top.empty else bit_options[0]
+
     blade_index = blade_options.index(default_blade) if default_blade in blade_options else 0
     ratchet_index = ratchet_options.index(default_ratchet) if default_ratchet in ratchet_options else 0
     bit_index = bit_options.index(default_bit) if default_bit in bit_options else 0
 
-    # Filtros tipo dashboard
     col1, col2, col3 = st.columns(3)
-    
+
     with col1:
-        blade_sel = st.selectbox(
-            "Blade",
-            blade_options,
-            index=blade_index
-        )
-    
+        blade_sel = st.selectbox("Blade", blade_options, index=blade_index)
+
     with col2:
-        ratchet_sel = st.selectbox(
-            "Ratchet",
-            ratchet_options,
-            index=ratchet_index
-        )
-    
+        ratchet_sel = st.selectbox("Ratchet", ratchet_options, index=ratchet_index)
+
     with col3:
-        bit_sel = st.selectbox(
-            "Bit",
-            bit_options,
-            index=bit_index
-        )
-    
-    # Filtrar
+        bit_sel = st.selectbox("Bit", bit_options, index=bit_index)
+
     df_combo = df_history[
         (df_history["Blade"] == blade_sel) &
         (df_history["Ratchet"] == ratchet_sel) &
         (df_history["Bit"] == bit_sel)
     ]
-    
-    # Mostrar gráfico    
+
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
-    
-        # 👇 AQUÍ VA EL FIX
+
         df_combo_grouped = df_combo.groupby("fecha").agg({
             "Win %": "mean"
         })
-    
+
         st.line_chart(df_combo_grouped)
     else:
         st.warning("No hay datos para ese combo")
 
+    # ----------------------------
     # Trending
+    # ----------------------------
+
     st.subheader("🔥 Trending Combos")
+    st.caption("Diferencia en número de partidas respecto al snapshot anterior")
 
     if not df_history.empty:
+
+        df_history["combo"] = df_history["Blade"] + " | " + df_history["Ratchet"] + " | " + df_history["Bit"]
 
         df_sorted = df_history.sort_values("fecha")
 
@@ -299,17 +285,21 @@ with tab:
 
         top_trending = top_trending.rename(columns={
             "combo": "Combo",
-            "delta_partidas": "Aumento en su uso durante la última semana"
+            "delta_partidas": "Aumento de partidas (última semana vs anterior)"
         })
 
         st.dataframe(
-            top_trending[["Combo", "Aumento en su uso durante la última semana"]],
+            top_trending[["Combo", "Aumento de partidas (última semana vs anterior)"]],
             use_container_width=True,
             hide_index=True
         )
 
+        # ----------------------------
         # Meta shifts
+        # ----------------------------
+
         st.subheader("⚡ Meta Shifts")
+        st.caption("Cambio en winrate entre el último snapshot y el anterior")
 
         merged["delta_winrate"] = merged["Win %_new"] - merged["Win %_old"]
 
@@ -317,11 +307,11 @@ with tab:
 
         top_shifts = top_shifts.rename(columns={
             "combo": "Combo",
-            "delta_winrate": "Cambio en winrate (%)"
+            "delta_winrate": "Cambio de winrate (puntos porcentuales)"
         })
 
         st.dataframe(
-            top_shifts[["Combo", "Cambio en winrate (%)"]],
+            top_shifts[["Combo", "Cambio de winrate (puntos porcentuales)"]],
             use_container_width=True,
             hide_index=True
         )
