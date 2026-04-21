@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import os
+import numpy as np
 from collections import Counter
 
 # ----------------------------
@@ -50,8 +51,7 @@ def detectar_prefijos(df):
     for blade in df["Blade"]:
         partes = blade.split()
         if len(partes) >= 3:
-            prefijo = " ".join(partes[:-1])
-            posibles.append(prefijo)
+            posibles.append(" ".join(partes[:-1]))
 
     conteo = Counter(posibles)
     return {p for p, c in conteo.items() if c >= 2}
@@ -134,7 +134,7 @@ with tab:
     st.info(
         "¿Qué es la Wilson Score?\n\n"
         "La Wilson score estima la fiabilidad de un winrate teniendo en cuenta "
-        "el número de partidas. Penaliza muestras pequeñas."
+        "el número de partidas."
     )
 
     # Slider
@@ -175,8 +175,6 @@ with tab:
             ["Todos"] + sorted(df_main["Bit"].dropna().unique())
         )
 
-    st.caption(f"Mostrando datos con al menos {min_partidas} partidas")
-
     # Filtrado
     df_filtered = df_main.copy()
     df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
@@ -196,7 +194,6 @@ with tab:
     # Agregados
     df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
 
-    # UI principal
     mostrar_top10(df_filtered, "Combos")
 
     st.divider()
@@ -218,7 +215,6 @@ with tab:
 
     st.subheader("📈 Evolución de un combo")
 
-    # Default = top 1 actual
     df_top = df_filtered.sort_values(by="Wilson Score", ascending=False).head(1)
 
     blade_options = sorted(df_history["Blade"].dropna().unique())
@@ -229,20 +225,11 @@ with tab:
     default_ratchet = df_top.iloc[0]["Ratchet"] if not df_top.empty else ratchet_options[0]
     default_bit = df_top.iloc[0]["Bit"] if not df_top.empty else bit_options[0]
 
-    blade_index = blade_options.index(default_blade) if default_blade in blade_options else 0
-    ratchet_index = ratchet_options.index(default_ratchet) if default_ratchet in ratchet_options else 0
-    bit_index = bit_options.index(default_bit) if default_bit in bit_options else 0
-
     col1, col2, col3 = st.columns(3)
 
-    with col1:
-        blade_sel = st.selectbox("Blade", blade_options, index=blade_index)
-
-    with col2:
-        ratchet_sel = st.selectbox("Ratchet", ratchet_options, index=ratchet_index)
-
-    with col3:
-        bit_sel = st.selectbox("Bit", bit_options, index=bit_index)
+    blade_sel = col1.selectbox("Blade", blade_options, index=blade_options.index(default_blade))
+    ratchet_sel = col2.selectbox("Ratchet", ratchet_options, index=ratchet_options.index(default_ratchet))
+    bit_sel = col3.selectbox("Bit", bit_options, index=bit_options.index(default_bit))
 
     df_combo = df_history[
         (df_history["Blade"] == blade_sel) &
@@ -252,68 +239,48 @@ with tab:
 
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
-
-        df_combo_grouped = df_combo.groupby("fecha").agg({
-            "Win %": "mean"
-        })
-
+        df_combo_grouped = df_combo.groupby("fecha").agg({"Win %": "mean"})
         st.line_chart(df_combo_grouped)
-    else:
-        st.warning("No hay datos para ese combo")
-
-   st.subheader("🔥 Trending Combos")
-st.caption("Combos en tendencia según crecimiento relativo, uso y rendimiento")
-
-if not df_history.empty:
-
-    df_history["combo"] = (
-        df_history["Blade"] + " | " +
-        df_history["Ratchet"] + " | " +
-        df_history["Bit"]
-    )
-
-    df_sorted = df_history.sort_values("fecha")
-
-    latest = df_sorted.groupby("combo").tail(1)
-    previous = df_sorted.groupby("combo").nth(-2)
-
-    merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
-
-    # ----------------------------
-    # Métricas
-    # ----------------------------
-
-    # Crecimiento absoluto
-    merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
-
-    # Crecimiento relativo (%)
-    merged["growth_pct"] = (
-        merged["delta_partidas"] / merged["Partidas_old"]
-    ).replace([float("inf"), -float("inf")], 0).fillna(0)
 
     # ----------------------------
     # Trending Score
     # ----------------------------
 
-        import numpy as np
-    
+    st.subheader("🔥 Trending Combos (Score)")
+    st.caption("Ranking basado en crecimiento relativo, uso y winrate")
+
+    if not df_history.empty:
+
+        df_history["combo"] = (
+            df_history["Blade"] + " | " +
+            df_history["Ratchet"] + " | " +
+            df_history["Bit"]
+        )
+
+        df_sorted = df_history.sort_values("fecha")
+
+        latest = df_sorted.groupby("combo").tail(1)
+        previous = df_sorted.groupby("combo").nth(-2)
+
+        merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
+
+        merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
+
+        merged["growth_pct"] = (
+            merged["delta_partidas"] / merged["Partidas_old"]
+        ).replace([np.inf, -np.inf], 0).fillna(0)
+
         merged["trending_score"] = (
             merged["growth_pct"] *
             np.log1p(merged["Partidas_new"]) *
             (merged["Win %_new"] / 100)
         )
-    
-        # ----------------------------
-        # Ranking
-        # ----------------------------
-    
+
         top_trending = merged.sort_values("trending_score", ascending=False).head(10)
-    
-        # Formato visual
+
         top_trending["Crecimiento (%)"] = (top_trending["growth_pct"] * 100).round(1)
         top_trending["Winrate (%)"] = top_trending["Win %_new"].round(1)
-    
-        # Mostrar
+
         st.dataframe(
             top_trending[[
                 "combo",
@@ -324,28 +291,6 @@ if not df_history.empty:
                 "combo": "Combo",
                 "trending_score": "Trending Score"
             }),
-            use_container_width=True,
-            hide_index=True
-        )
-
-        # ----------------------------
-        # Meta shifts
-        # ----------------------------
-
-        st.subheader("⚡ Meta Shifts")
-        st.caption("Cambio en winrate entre el último snapshot y el anterior")
-
-        merged["delta_winrate"] = merged["Win %_new"] - merged["Win %_old"]
-
-        top_shifts = merged.sort_values("delta_winrate", ascending=False).head(10)
-
-        top_shifts = top_shifts.rename(columns={
-            "combo": "Combo",
-            "delta_winrate": "Cambio de winrate (puntos porcentuales)"
-        })
-
-        st.dataframe(
-            top_shifts[["Combo", "Cambio de winrate (puntos porcentuales)"]],
             use_container_width=True,
             hide_index=True
         )
