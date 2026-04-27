@@ -1,8 +1,11 @@
 name: Clean History Data
 
 on:
-  workflow_dispatch:  # 👈 esto crea el botón en GitHub
-
+  workflow_dispatch: 
+  
+permissions:
+  contents: write
+  
 jobs:
   clean:
     runs-on: ubuntu-latest
