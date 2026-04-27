@@ -210,109 +210,109 @@ with tab:
     with col3:
         mostrar_top10(df_bit, "Bits")
 
-# ----------------------------
-# Evolución (filtros dependientes)
-# ----------------------------
-
-st.subheader("📈 Evolución de un combo")
-
-if df_history.empty:
-    st.warning("No hay datos históricos")
-    st.stop()
-
-df_history["combo"] = (
-    df_history["Blade"] + " | " +
-    df_history["Ratchet"] + " | " +
-    df_history["Bit"]
-)
-
-col1, col2, col3 = st.columns(3)
-
-# ----------------------------
-# Blade
-# ----------------------------
-
-blade_options = sorted(df_history["Blade"].dropna().unique())
-
-blade_sel = col1.selectbox(
-    "Blade",
-    blade_options,
-    index=None,
-    placeholder="Selecciona Blade"
-)
-
-# ----------------------------
-# Ratchet depende de Blade
-# ----------------------------
-
-df_temp = df_history.copy()
-
-if blade_sel:
-    df_temp = df_temp[df_temp["Blade"] == blade_sel]
-
-ratchet_options = sorted(df_temp["Ratchet"].dropna().unique())
-
-ratchet_sel = col2.selectbox(
-    "Ratchet",
-    ratchet_options,
-    index=None,
-    placeholder="Selecciona Ratchet"
-)
-
-# ----------------------------
-# Bit depende de Blade + Ratchet
-# ----------------------------
-
-if ratchet_sel:
-    df_temp = df_temp[df_temp["Ratchet"] == ratchet_sel]
-
-bit_options = sorted(df_temp["Bit"].dropna().unique())
-
-bit_sel = col3.selectbox(
-    "Bit",
-    bit_options,
-    index=None,
-    placeholder="Selecciona Bit"
-)
-
-# ----------------------------
-# Mostrar gráfico solo si completo
-# ----------------------------
-
-if blade_sel and ratchet_sel and bit_sel:
-
-    df_combo = df_history[
-        (df_history["Blade"] == blade_sel) &
-        (df_history["Ratchet"] == ratchet_sel) &
-        (df_history["Bit"] == bit_sel)
-    ]
-
-    if not df_combo.empty:
-
-        df_combo = df_combo.sort_values("fecha")
-
-        df_combo_grouped = df_combo.groupby("fecha").agg({"Win %": "mean"})
-        df_plot = df_combo_grouped.reset_index()
-
-        y_min = df_plot["Win %"].min()
-        y_max = df_plot["Win %"].max()
-        padding = (y_max - y_min) * 0.2 if y_max != y_min else 1
-
-        fig = px.line(
-            df_plot,
-            x="fecha",
-            y="Win %",
-            markers=True
-        )
-
-        fig.update_layout(
-            yaxis=dict(range=[y_min - padding, y_max + padding])
-        )
-
-        st.plotly_chart(fig, use_container_width=True)
-
-else:
-    st.info("Selecciona un combo para ver su evolución")
+    # ----------------------------
+    # Evolución (filtros dependientes)
+    # ----------------------------
+    
+    st.subheader("📈 Evolución de un combo")
+    
+    if df_history.empty:
+        st.warning("No hay datos históricos")
+        st.stop()
+    
+    df_history["combo"] = (
+        df_history["Blade"] + " | " +
+        df_history["Ratchet"] + " | " +
+        df_history["Bit"]
+    )
+    
+    col1, col2, col3 = st.columns(3)
+    
+    # ----------------------------
+    # Blade
+    # ----------------------------
+    
+    blade_options = sorted(df_history["Blade"].dropna().unique())
+    
+    blade_sel = col1.selectbox(
+        "Blade",
+        blade_options,
+        index=None,
+        placeholder="Selecciona Blade"
+    )
+    
+    # ----------------------------
+    # Ratchet depende de Blade
+    # ----------------------------
+    
+    df_temp = df_history.copy()
+    
+    if blade_sel:
+        df_temp = df_temp[df_temp["Blade"] == blade_sel]
+    
+    ratchet_options = sorted(df_temp["Ratchet"].dropna().unique())
+    
+    ratchet_sel = col2.selectbox(
+        "Ratchet",
+        ratchet_options,
+        index=None,
+        placeholder="Selecciona Ratchet"
+    )
+    
+    # ----------------------------
+    # Bit depende de Blade + Ratchet
+    # ----------------------------
+    
+    if ratchet_sel:
+        df_temp = df_temp[df_temp["Ratchet"] == ratchet_sel]
+    
+    bit_options = sorted(df_temp["Bit"].dropna().unique())
+    
+    bit_sel = col3.selectbox(
+        "Bit",
+        bit_options,
+        index=None,
+        placeholder="Selecciona Bit"
+    )
+    
+    # ----------------------------
+    # Mostrar gráfico solo si completo
+    # ----------------------------
+    
+    if blade_sel and ratchet_sel and bit_sel:
+    
+        df_combo = df_history[
+            (df_history["Blade"] == blade_sel) &
+            (df_history["Ratchet"] == ratchet_sel) &
+            (df_history["Bit"] == bit_sel)
+        ]
+    
+        if not df_combo.empty:
+    
+            df_combo = df_combo.sort_values("fecha")
+    
+            df_combo_grouped = df_combo.groupby("fecha").agg({"Win %": "mean"})
+            df_plot = df_combo_grouped.reset_index()
+    
+            y_min = df_plot["Win %"].min()
+            y_max = df_plot["Win %"].max()
+            padding = (y_max - y_min) * 0.2 if y_max != y_min else 1
+    
+            fig = px.line(
+                df_plot,
+                x="fecha",
+                y="Win %",
+                markers=True
+            )
+    
+            fig.update_layout(
+                yaxis=dict(range=[y_min - padding, y_max + padding])
+            )
+    
+            st.plotly_chart(fig, use_container_width=True)
+    
+    else:
+        st.info("Selecciona un combo para ver su evolución")
     # ----------------------------
     # Trending Score
     # ----------------------------
