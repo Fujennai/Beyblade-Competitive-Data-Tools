@@ -213,9 +213,21 @@ with tab:
     # ----------------------------
     # Evolución
     # ----------------------------
-
+    
     st.subheader("📈 Evolución de un combo")
-
+    
+    # ----------------------------
+    # Opciones (PRIMERO)
+    # ----------------------------
+    
+    if df_history.empty:
+        st.warning("No hay datos históricos")
+        st.stop()
+    
+    blade_options = sorted(df_history["Blade"].dropna().unique())
+    ratchet_options = sorted(df_history["Ratchet"].dropna().unique())
+    bit_options = sorted(df_history["Bit"].dropna().unique())
+    
     # ----------------------------
     # Default = combo más trending
     # ----------------------------
@@ -224,28 +236,26 @@ with tab:
     default_ratchet = ratchet_options[0]
     default_bit = bit_options[0]
     
-    if not df_history.empty:
+    df_history["combo"] = (
+        df_history["Blade"] + " | " +
+        df_history["Ratchet"] + " | " +
+        df_history["Bit"]
+    )
     
-        df_history["combo"] = (
-            df_history["Blade"] + " | " +
-            df_history["Ratchet"] + " | " +
-            df_history["Bit"]
-        )
+    df_sorted = df_history.sort_values("fecha")
     
-        df_sorted = df_history.sort_values("fecha")
+    latest = df_sorted.groupby("combo").tail(1)
+    previous = df_sorted.groupby("combo").nth(-2)
     
-        latest = df_sorted.groupby("combo").tail(1)
-        previous = df_sorted.groupby("combo").nth(-2)
+    merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
     
-        merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
+    if not merged.empty:
     
         merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
     
         merged["growth_pct"] = (
             merged["delta_partidas"] / merged["Partidas_old"]
-        ).replace([float("inf"), -float("inf")], 0).fillna(0)
-    
-        import numpy as np
+        ).replace([np.inf, -np.inf], 0).fillna(0)
     
         merged["trending_score"] = (
             merged["growth_pct"] *
@@ -253,50 +263,57 @@ with tab:
             (merged["Win %_new"] / 100)
         )
     
-        if not merged.empty:
-            top = merged.sort_values("trending_score", ascending=False).iloc[0]
+        top = merged.sort_values("trending_score", ascending=False).iloc[0]
     
-            # Separar combo
-            blade, ratchet, bit = top["combo"].split(" | ")
+        blade, ratchet, bit = top["combo"].split(" | ")
     
-            if blade in blade_options:
-                default_blade = blade
-            if ratchet in ratchet_options:
-                default_ratchet = ratchet
-            if bit in bit_options:
-                default_bit = bit
-
-    blade_options = sorted(df_history["Blade"].dropna().unique())
-    ratchet_options = sorted(df_history["Ratchet"].dropna().unique())
-    bit_options = sorted(df_history["Bit"].dropna().unique())
-
-    default_blade = df_top.iloc[0]["Blade"] if not df_top.empty else blade_options[0]
-    default_ratchet = df_top.iloc[0]["Ratchet"] if not df_top.empty else ratchet_options[0]
-    default_bit = df_top.iloc[0]["Bit"] if not df_top.empty else bit_options[0]
-
+        if blade in blade_options:
+            default_blade = blade
+        if ratchet in ratchet_options:
+            default_ratchet = ratchet
+        if bit in bit_options:
+            default_bit = bit
+    
+    # ----------------------------
+    # Selectores
+    # ----------------------------
+    
     col1, col2, col3 = st.columns(3)
-
+    
     blade_sel = col1.selectbox("Blade", blade_options, index=blade_options.index(default_blade))
     ratchet_sel = col2.selectbox("Ratchet", ratchet_options, index=ratchet_options.index(default_ratchet))
     bit_sel = col3.selectbox("Bit", bit_options, index=bit_options.index(default_bit))
-
+    
+    # ----------------------------
+    # Datos combo
+    # ----------------------------
+    
     df_combo = df_history[
         (df_history["Blade"] == blade_sel) &
         (df_history["Ratchet"] == ratchet_sel) &
         (df_history["Bit"] == bit_sel)
     ]
+    
+    # ----------------------------
+    # DEBUG (puedes quitar luego)
+    # ----------------------------
+    
     st.write(df_combo[["fecha", "Win %"]])
+    
+    # ----------------------------
+    # Gráfico
+    # ----------------------------
+    
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
+    
         df_combo_grouped = df_combo.groupby("fecha").agg({"Win %": "mean"})
         df_plot = df_combo_grouped.reset_index()
-
-        # Calcular rango dinámico (zoom)
+    
         y_min = df_plot["Win %"].min()
         y_max = df_plot["Win %"].max()
-        
         padding = (y_max - y_min) * 0.2 if y_max != y_min else 1
-        
+    
         fig = px.line(
             df_plot,
             x="fecha",
@@ -304,13 +321,13 @@ with tab:
             markers=True,
             title="Evolución del Winrate"
         )
-        
+    
         fig.update_layout(
             yaxis=dict(range=[y_min - padding, y_max + padding]),
             xaxis_title="Fecha",
             yaxis_title="Winrate (%)"
         )
-        
+    
         st.plotly_chart(fig, use_container_width=True)
 
     # ----------------------------
