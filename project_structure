@@ -1,0 +1,33 @@
+project/
+│
+├── app.py                
+│
+├── pages/
+│   ├── 1_META_Tracker.py
+│   ├── 2_Arquetipos.py
+│   ├── 3_Predictor.py
+│   ├── 4_Recomendador.py
+│   ├── 5_Meta_Oculto.py
+│
+├── data/
+│   ├── loader.py
+│
+├── core/                 
+│   ├── metrics.py        
+│   ├── trending.py
+│   ├── filtering.py
+│
+├── models/               
+│   ├── predictor.py
+│   ├── recommender.py
+│
+├── features/             
+│   ├── archetypes.py
+│   ├── meta_discovery.py
+│
+├── components/           
+│   ├── filters.py
+│   ├── charts.py
+│   ├── tables.py
+│
+└── history/
