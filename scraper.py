@@ -28,7 +28,6 @@ params = {
 
 ratchets_especiales = ["Turbo", "Operate", "Zillion"]
 
-
 # ----------------------------
 # Funciones auxiliares
 # ----------------------------
@@ -81,47 +80,16 @@ def wilson_score(wins, total, z=1.96):
 
 def generar_datasets_agregados(df):
 
-    # Blade
-    df_blade = (
-        df[["Blade", "Wins", "Losses", "Partidas"]]
-        .groupby("Blade")
-        .sum()
-        .reset_index()
-    )
+    df_blade = df.groupby("Blade")[["Wins", "Losses", "Partidas"]].sum().reset_index()
+    df_ratchet = df.groupby("Ratchet")[["Wins", "Losses", "Partidas"]].sum().reset_index()
+    df_bit = df.groupby("Bit")[["Wins", "Losses", "Partidas"]].sum().reset_index()
 
-    df_blade["Wilson Score"] = df_blade.apply(
-        lambda row: wilson_score(row["Wins"], row["Partidas"])
-        if row["Partidas"] > 0 else None,
-        axis=1
-    )
-
-    # Ratchet
-    df_ratchet = (
-        df[["Ratchet", "Wins", "Losses", "Partidas"]]
-        .groupby("Ratchet")
-        .sum()
-        .reset_index()
-    )
-
-    df_ratchet["Wilson Score"] = df_ratchet.apply(
-        lambda row: wilson_score(row["Wins"], row["Partidas"])
-        if row["Partidas"] > 0 else None,
-        axis=1
-    )
-
-    # Bit
-    df_bit = (
-        df[["Bit", "Wins", "Losses", "Partidas"]]
-        .groupby("Bit")
-        .sum()
-        .reset_index()
-    )
-
-    df_bit["Wilson Score"] = df_bit.apply(
-        lambda row: wilson_score(row["Wins"], row["Partidas"])
-        if row["Partidas"] > 0 else None,
-        axis=1
-    )
+    for df_ in [df_blade, df_ratchet, df_bit]:
+        df_["Wilson Score"] = df_.apply(
+            lambda row: wilson_score(row["Wins"], row["Partidas"])
+            if row["Partidas"] > 0 else None,
+            axis=1
+        )
 
     return df_blade, df_ratchet, df_bit
 
@@ -160,7 +128,7 @@ def scrape():
             partidas_text = cols[2].get_text(strip=True)
             eficiencia_text = cols[3].get_text(strip=True)
 
-            # Formato con "•"
+            # Separar bit si viene con "•"
             if "•" in combo_text:
                 parte_principal, bit = combo_text.split("•", 1)
                 bit = bit.strip()
@@ -230,7 +198,29 @@ def scrape():
     if df.empty:
         raise Exception("El dataframe está vacío")
 
-    # Wilson Score global
+    # ----------------------------
+    # 🔥 ELIMINAR DUPLICADOS (FIX)
+    # ----------------------------
+
+    before = len(df)
+
+    df = df.groupby(["Blade", "Ratchet", "Bit"], as_index=False).agg({
+        "Win %": "mean",
+        "Wins": "sum",
+        "Losses": "sum",
+        "Partidas": "sum",
+        "Eficiencia": "mean",
+        "Pts Ganados/Combate": "mean",
+        "Pts Cedidos/Combate": "mean"
+    })
+
+    after = len(df)
+    logging.info(f"Duplicados eliminados: {before - after}")
+
+    # ----------------------------
+    # Wilson Score
+    # ----------------------------
+
     df["Wilson Score"] = df.apply(
         lambda row: wilson_score(row["Wins"], row["Partidas"])
         if pd.notna(row["Wins"]) and row["Partidas"] > 0 else None,
@@ -247,22 +237,16 @@ def scrape():
     logging.info(f"Filas finales: {len(df)}")
 
     # ----------------------------
-    # Exportar datasets
+    # Exportar
     # ----------------------------
 
-    # Crear carpeta si no existe
     os.makedirs("history", exist_ok=True)
-    
-    # Fecha actual
+
     fecha = datetime.now().strftime("%Y-%m-%d")
-    
-    # Guardar histórico
+
     df.to_csv(f"history/beyblade_stats_{fecha}.csv", index=False)
-    
-    # Guardar última versión (como hasta ahora)
     df.to_csv("beyblade_stats.csv", index=False)
 
-    # Agregados
     df_blade, df_ratchet, df_bit = generar_datasets_agregados(df)
 
     df_blade.to_csv("blade_stats.csv", index=False)
