@@ -3,6 +3,7 @@ import pandas as pd
 import os
 import numpy as np
 from collections import Counter
+import plotly.express as px
 
 # ----------------------------
 # History
@@ -236,11 +237,33 @@ with tab:
         (df_history["Ratchet"] == ratchet_sel) &
         (df_history["Bit"] == bit_sel)
     ]
-    st.write(df_combo[["fecha", "Win %"]])
+    
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
         df_combo_grouped = df_combo.groupby("fecha").agg({"Win %": "mean"})
-        st.line_chart(df_combo_grouped)
+        df_plot = df_combo_grouped.reset_index()
+
+        # Calcular rango dinámico (zoom)
+        y_min = df_plot["Win %"].min()
+        y_max = df_plot["Win %"].max()
+        
+        padding = (y_max - y_min) * 0.2 if y_max != y_min else 1
+        
+        fig = px.line(
+            df_plot,
+            x="fecha",
+            y="Win %",
+            markers=True,
+            title="Evolución del Winrate"
+        )
+        
+        fig.update_layout(
+            yaxis=dict(range=[y_min - padding, y_max + padding]),
+            xaxis_title="Fecha",
+            yaxis_title="Winrate (%)"
+        )
+        
+        st.plotly_chart(fig, use_container_width=True)
 
     # ----------------------------
     # Trending Score
