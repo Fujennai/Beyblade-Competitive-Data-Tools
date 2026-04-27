@@ -216,7 +216,55 @@ with tab:
 
     st.subheader("📈 Evolución de un combo")
 
-    df_top = df_filtered.sort_values(by="Wilson Score", ascending=False).head(1)
+    # ----------------------------
+    # Default = combo más trending
+    # ----------------------------
+    
+    default_blade = blade_options[0]
+    default_ratchet = ratchet_options[0]
+    default_bit = bit_options[0]
+    
+    if not df_history.empty:
+    
+        df_history["combo"] = (
+            df_history["Blade"] + " | " +
+            df_history["Ratchet"] + " | " +
+            df_history["Bit"]
+        )
+    
+        df_sorted = df_history.sort_values("fecha")
+    
+        latest = df_sorted.groupby("combo").tail(1)
+        previous = df_sorted.groupby("combo").nth(-2)
+    
+        merged = latest.merge(previous, on="combo", suffixes=("_new", "_old"))
+    
+        merged["delta_partidas"] = merged["Partidas_new"] - merged["Partidas_old"]
+    
+        merged["growth_pct"] = (
+            merged["delta_partidas"] / merged["Partidas_old"]
+        ).replace([float("inf"), -float("inf")], 0).fillna(0)
+    
+        import numpy as np
+    
+        merged["trending_score"] = (
+            merged["growth_pct"] *
+            np.log1p(merged["Partidas_new"]) *
+            (merged["Win %_new"] / 100)
+        )
+    
+        if not merged.empty:
+            top = merged.sort_values("trending_score", ascending=False).iloc[0]
+    
+            # Separar combo
+            blade, ratchet, bit = top["combo"].split(" | ")
+    
+            if blade in blade_options:
+                default_blade = blade
+            if ratchet in ratchet_options:
+                default_ratchet = ratchet
+            if bit in bit_options:
+                default_bit = bit
 
     blade_options = sorted(df_history["Blade"].dropna().unique())
     ratchet_options = sorted(df_history["Ratchet"].dropna().unique())
@@ -237,7 +285,7 @@ with tab:
         (df_history["Ratchet"] == ratchet_sel) &
         (df_history["Bit"] == bit_sel)
     ]
-    
+    st.write(df_combo[["fecha", "Win %"]])
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
         df_combo_grouped = df_combo.groupby("fecha").agg({"Win %": "mean"})
