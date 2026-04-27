@@ -236,7 +236,7 @@ with tab:
         (df_history["Ratchet"] == ratchet_sel) &
         (df_history["Bit"] == bit_sel)
     ]
-
+    st.write(df_combo[["fecha", "Win %"]])
     if not df_combo.empty:
         df_combo = df_combo.sort_values("fecha")
         df_combo_grouped = df_combo.groupby("fecha").agg({"Win %": "mean"})
