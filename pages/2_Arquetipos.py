@@ -38,7 +38,7 @@ with col1:
         "Mínimo de partidas",
         0,
         int(df["Partidas"].max()),
-        50
+        10
     )
 
 with col2:
@@ -46,7 +46,7 @@ with col2:
         "Winrate mínimo (%)",
         0,
         100,
-        0
+        50
     )
 
 df_filtered = df.copy()
