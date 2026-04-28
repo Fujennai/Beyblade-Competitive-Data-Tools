@@ -56,7 +56,11 @@ else:
 # ----------------------------
 # Gráfico (LO PRINCIPAL)
 # ----------------------------
-
+color_map = {
+    "🔥 Agresivo": "#1f77ff",    # azul (ataque)
+    "🛡️ Defensivo": "#2ecc71",  # verde (defensa)
+    "⚖️ Equilibrado": "#e74c3c" # rojo (balance)
+}
 fig = px.scatter(
     df_filtered,
     x="Pts Ganados/Combate",
