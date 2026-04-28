@@ -25,11 +25,29 @@ st.info(
 df = load_data()
 
 # ----------------------------
-# Filtros base
+# Filtros base (UI)
 # ----------------------------
 
-df = df[df["Partidas"] >= 10]
-df = df[df["Win %"] >= 50]
+col1, col2 = st.columns(2)
+
+with col1:
+    min_partidas = st.slider(
+        "Mínimo de partidas",
+        min_value=0,
+        max_value=int(df["Partidas"].max()),
+        value=10
+    )
+
+with col2:
+    min_winrate = st.slider(
+        "Winrate mínimo (%)",
+        min_value=0,
+        max_value=100,
+        value=50
+    )
+
+df = df[df["Partidas"] >= min_partidas]
+df = df[df["Win %"] >= min_winrate]
 
 # ----------------------------
 # Clasificación
@@ -49,7 +67,7 @@ df["tipo_victoria"] = df["Pts Ganados/Combate"].apply(categorizar)
 df["tipo_derrota"] = df["Pts Cedidos/Combate"].apply(categorizar)
 
 # ----------------------------
-# Labels con emojis
+# Labels con visualización
 # ----------------------------
 
 map_victoria = {
@@ -221,7 +239,7 @@ st.dataframe(
         "Partidas": st.column_config.ProgressColumn(
             "Partidas",
             min_value=0,
-            max_value=df["Partidas"].max(),
+            max_value=int(df["Partidas"].max()),
         ),
     }
 )
