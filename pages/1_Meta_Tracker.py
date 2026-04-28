@@ -60,6 +60,35 @@ with col3:
 
 st.divider()
 
+
+# ----------------------------
+# Trending
+# ----------------------------
+
+st.subheader("🔥 Trending")
+
+st.info(
+    "¿Qué significa el Trending Score?\n\n"
+    "Este ranking mide qué combos están ganando relevancia recientemente.\n\n"
+    "Se calcula combinando:\n"
+    "- 📈 Crecimiento en número de partidas (uso)\n"
+    "- 🎯 Winrate actual\n"
+    "- ⚖️ Volumen total de partidas\n\n"
+    "👉 Un valor alto indica que el combo está creciendo rápido, se usa bastante y además tiene buen rendimiento.\n\n"
+    "⚠️ No significa necesariamente que sea el mejor combo, sino el que está más 'de moda' ahora mismo."
+)
+
+df_trending = calcular_trending(df_history).head(10)
+
+st.dataframe(
+    df_trending[["combo", "trending_score"]].rename(columns={
+        "combo": "Combo",
+        "trending_score": "Trending Score (popularidad reciente)"
+    }),
+    use_container_width=True,
+    hide_index=True
+)
+
 # ----------------------------
 # Evolución (desde Trending)
 # ----------------------------
@@ -99,108 +128,5 @@ if combo_sel:
 
         plot_winrate(df_plot, key="chart_trending")
 
-# ----------------------------
-# Evolución (solo con variación)
-# ----------------------------
 
-st.subheader("📈 Evolución (Combos con cambios reales)")
 
-df_history["combo"] = (
-    df_history["Blade"] + " | " +
-    df_history["Ratchet"] + " | " +
-    df_history["Bit"]
-)
-
-# calcular variación
-df_var = df_history.groupby("combo")["Win %"].agg(lambda x: x.max() - x.min())
-
-# umbral configurable
-threshold = st.slider("Variación mínima (%)", 0.0, 10.0, 2.0)
-
-combos_interesantes = df_var[df_var > threshold].index.tolist()
-
-if combos_interesantes:
-
-    combo_sel = st.selectbox(
-        "Selecciona combo con variación",
-        combos_interesantes,
-        key="evo_variation"
-    )
-
-    blade_h, ratchet_h, bit_h = combo_sel.split(" | ")
-
-    df_combo = df_history[
-        (df_history["Blade"] == blade_h) &
-        (df_history["Ratchet"] == ratchet_h) &
-        (df_history["Bit"] == bit_h)
-    ]
-
-    df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
-
-    plot_winrate(df_plot, key="chart_variation")
-
-else:
-    st.warning("No hay combos con esa variación")
-
-# ----------------------------
-# Evolución (volatilidad)
-# ----------------------------
-
-st.subheader("📈 Evolución (Más volátiles)")
-
-df_history["combo"] = (
-    df_history["Blade"] + " | " +
-    df_history["Ratchet"] + " | " +
-    df_history["Bit"]
-)
-
-# calcular desviación estándar
-df_vol = df_history.groupby("combo")["Win %"].std().sort_values(ascending=False)
-
-top_vol = df_vol.head(15).index.tolist()
-
-combo_sel = st.selectbox(
-    "Selecciona combo volátil",
-    top_vol,
-    key="evo_volatility"
-)
-
-blade_h, ratchet_h, bit_h = combo_sel.split(" | ")
-
-df_combo = df_history[
-    (df_history["Blade"] == blade_h) &
-    (df_history["Ratchet"] == ratchet_h) &
-    (df_history["Bit"] == bit_h)
-]
-
-df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
-
-plot_winrate(df_plot, key="chart_volatility")
-
-# ----------------------------
-# Trending
-# ----------------------------
-
-st.subheader("🔥 Trending")
-
-st.info(
-    "¿Qué significa el Trending Score?\n\n"
-    "Este ranking mide qué combos están ganando relevancia recientemente.\n\n"
-    "Se calcula combinando:\n"
-    "- 📈 Crecimiento en número de partidas (uso)\n"
-    "- 🎯 Winrate actual\n"
-    "- ⚖️ Volumen total de partidas\n\n"
-    "👉 Un valor alto indica que el combo está creciendo rápido, se usa bastante y además tiene buen rendimiento.\n\n"
-    "⚠️ No significa necesariamente que sea el mejor combo, sino el que está más 'de moda' ahora mismo."
-)
-
-df_trending = calcular_trending(df_history).head(10)
-
-st.dataframe(
-    df_trending[["combo", "trending_score"]].rename(columns={
-        "combo": "Combo",
-        "trending_score": "Trending Score (popularidad reciente)"
-    }),
-    use_container_width=True,
-    hide_index=True
-)
