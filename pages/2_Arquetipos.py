@@ -2,20 +2,21 @@ import streamlit as st
 import plotly.express as px
 
 from data.loader import load_data
-from core.archetypes import calcular_arquetipos, etiquetar_arquetipos
 
 st.set_page_config(layout="wide")
 
-st.title("🧠 Arquetipos del META")
+st.title("🧠 Análisis del META")
 
 # ----------------------------
 # Explicación
 # ----------------------------
 
 st.info(
-    "Los arquetipos se calculan en base al comportamiento real.\n\n"
-    "X = daño que haces\n"
-    "Y = daño que recibes (invertido → abajo es mejor)"
+    "Mapa del rendimiento real de los combos.\n\n"
+    "➡️ Eje X = daño infligido (Pts Ganados/Combate)\n"
+    "⬇️ Eje Y = daño recibido (invertido → abajo es mejor)\n"
+    "🎨 Color = eficiencia global\n"
+    "🔵 Tamaño = número de partidas (fiabilidad)"
 )
 
 # ----------------------------
@@ -25,63 +26,61 @@ st.info(
 df = load_data()
 
 # ----------------------------
-# Clustering GLOBAL (IMPORTANTE)
+# Filtros
 # ----------------------------
 
-df_clustered, kmeans, k = calcular_arquetipos(df)
-df_clustered = etiquetar_arquetipos(df_clustered)
+col1, col2 = st.columns(2)
 
-st.caption(f"Arquetipos detectados: {k}")
+with col1:
+    min_partidas = st.slider(
+        "Mínimo de partidas",
+        0,
+        int(df["Partidas"].max()),
+        50
+    )
 
-# ----------------------------
-# Filtros (SOLO visuales)
-# ----------------------------
+with col2:
+    min_winrate = st.slider(
+        "Winrate mínimo (%)",
+        0,
+        100,
+        0
+    )
 
-min_partidas = st.slider(
-    "Mínimo de partidas",
-    0,
-    int(df_clustered["Partidas"].max()),
-    50
-)
-
-tipos = ["Todos"] + sorted(df_clustered["arquetipo"].dropna().unique())
-
-tipo_sel = st.selectbox(
-    "Filtrar por arquetipo",
-    tipos
-)
-
-# aplicar filtros SOBRE dataset ya clusterizado
-df_filtered = df_clustered.copy()
+df_filtered = df.copy()
 
 df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
+df_filtered = df_filtered[df_filtered["Win %"] >= min_winrate]
 
-if tipo_sel != "Todos":
-    df_filtered = df_filtered[df_filtered["arquetipo"] == tipo_sel]
+st.caption(f"{len(df_filtered)} combos tras filtros")
 
 # ----------------------------
-# Gráfico
+# Mapa de eficiencia
 # ----------------------------
 
-color_map = {
-    "🔥 Agresivo": "#1f77ff",
-    "🛡️ Defensivo": "#2ecc71",
-    "⚖️ Equilibrado": "#e74c3c"
-}
+st.subheader("🗺️ Mapa de eficiencia del META")
 
 fig = px.scatter(
     df_filtered,
     x="Pts Ganados/Combate",
     y="Pts Cedidos/Combate",
-    color="arquetipo",
-    color_discrete_map=color_map,
-    hover_data=["Blade", "Ratchet", "Bit"],
+    size="Partidas",
+    color="Eficiencia",
+    color_continuous_scale="RdYlGn",
+    hover_data=[
+        "Blade",
+        "Ratchet",
+        "Bit",
+        "Win %",
+        "Partidas",
+        "Eficiencia"
+    ],
     opacity=0.7
 )
 
 fig.update_layout(
-    xaxis_title="Pts Ganados/Combate",
-    yaxis_title="Pts Cedidos/Combate"
+    xaxis_title="Daño infligido",
+    yaxis_title="Daño recibido"
 )
 
 # invertir eje Y (clave)
@@ -89,16 +88,31 @@ fig.update_yaxes(autorange="reversed")
 
 st.plotly_chart(fig, use_container_width=True)
 
-st.caption("⬇️ Menos puntos cedidos = mejor")
+st.caption(
+    "📌 Abajo-derecha = zona óptima (alto daño, bajo daño recibido)\n"
+    "📌 Tamaño grande = datos fiables\n"
+    "📌 Color verde = alta eficiencia global"
+)
 
 # ----------------------------
-# Tabla
+# Ranking
 # ----------------------------
 
-st.subheader("Combos en este arquetipo")
+st.subheader("🏆 Ranking de combos")
+
+df_ranked = df_filtered.sort_values("Eficiencia", ascending=False)
 
 st.dataframe(
-    df_filtered[["Blade", "Ratchet", "Bit", "Partidas", "arquetipo"]],
+    df_ranked[[
+        "Blade",
+        "Ratchet",
+        "Bit",
+        "Partidas",
+        "Win %",
+        "Eficiencia",
+        "Pts Ganados/Combate",
+        "Pts Cedidos/Combate"
+    ]],
     use_container_width=True,
     hide_index=True
 )
