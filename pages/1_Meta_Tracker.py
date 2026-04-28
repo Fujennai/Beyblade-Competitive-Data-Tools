@@ -29,7 +29,7 @@ min_partidas = st.slider(
 )
 
 # Filtros dependientes (devuelven DF ya filtrado)
-df_filtered, blade, ratchet, bit = filtros_dependientes(df_main)
+df_filtered, blade, ratchet, bit = filtros_dependientes(df_main, key_prefix="main")
 
 # Aplicar filtro de partidas DESPUÉS
 df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
@@ -70,13 +70,22 @@ if df_history.empty:
     st.warning("No hay histórico")
     st.stop()
 
-blade, ratchet, bit = filtros_dependientes(df_history)
+df_hist_filtered, blade_h, ratchet_h, bit_h = filtros_dependientes(df_history, key_prefix="history")
 
-df_combo = df_history[
-    (df_history["Blade"] == blade) &
-    (df_history["Ratchet"] == ratchet) &
-    (df_history["Bit"] == bit)
-]
+if blade_h and ratchet_h and bit_h:
+
+    df_combo = df_history[
+        (df_history["Blade"] == blade_h) &
+        (df_history["Ratchet"] == ratchet_h) &
+        (df_history["Bit"] == bit_h)
+    ]
+
+    if not df_combo.empty:
+        df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
+        plot_winrate(df_plot)
+
+else:
+    st.info("Selecciona un combo para ver su evolución")
 
 if not df_combo.empty:
     df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()

@@ -2,7 +2,7 @@ import streamlit as st
 
 import streamlit as st
 
-def filtros_dependientes(df):
+def filtros_dependientes(df, key_prefix=""):
 
     col1, col2, col3 = st.columns(3)
 
@@ -17,7 +17,8 @@ def filtros_dependientes(df):
         "Blade",
         blade_options,
         index=None,
-        placeholder="Selecciona Blade"
+        placeholder="Selecciona Blade",
+        key=f"{key_prefix}_blade"
     )
 
     if blade_sel:
@@ -32,7 +33,8 @@ def filtros_dependientes(df):
         "Ratchet",
         ratchet_options,
         index=None,
-        placeholder="Selecciona Ratchet"
+        placeholder="Selecciona Ratchet",
+        key=f"{key_prefix}_ratchet"
     )
 
     if ratchet_sel:
@@ -47,7 +49,8 @@ def filtros_dependientes(df):
         "Bit",
         bit_options,
         index=None,
-        placeholder="Selecciona Bit"
+        placeholder="Selecciona Bit",
+        key=f"{key_prefix}_bit"
     )
 
     if bit_sel:
