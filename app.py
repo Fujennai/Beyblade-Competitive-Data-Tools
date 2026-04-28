@@ -1,3 +1,14 @@
 import streamlit as st
 
-st.switch_page("Home.py")
+st.title("🏠 Inicio")
+
+st.write("""
+Bienvenido al sistema de análisis competitivo.
+
+Usa el menú lateral para navegar:
+- META Tracker
+- Arquetipos
+- Predictor
+- Recomendador
+- META oculto
+""")
