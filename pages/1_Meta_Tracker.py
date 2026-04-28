@@ -1,4 +1,5 @@
 import streamlit as st
+st.set_page_config(layout="wide")
 import pandas as pd
 
 from data.loader import load_data, load_history
@@ -7,7 +8,6 @@ from core.trending import calcular_trending
 from components.charts import plot_winrate
 from components.tables import mostrar_top10
 from components.filters import filtros_dependientes
-
 
 st.title("📊 META Tracker")
 
@@ -25,7 +25,7 @@ min_partidas = st.slider(
     "Mínimo de partidas",
     0,
     int(df_main["Partidas"].max()),
-    50
+    0
 )
 
 # Filtros dependientes (devuelven DF ya filtrado)
