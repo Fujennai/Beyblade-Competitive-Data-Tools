@@ -13,9 +13,9 @@ st.title("🧠 Arquetipos del META (scoring real)")
 
 st.info(
     "Análisis basado en el sistema de puntuación.\n\n"
-    "➡️ X = tipo de victoria\n"
-    "⬇️ Y = tipo de derrota (invertido → abajo es mejor)\n\n"
-    "Puedes ver cómo gana y cómo pierde cada combo."
+    "➡️ X = puntos que ganas cuando ganas\n"
+    "⬇️ Y = puntos que cedes cuando pierdes (invertido → abajo es mejor)\n\n"
+    "Colores según tipo de victoria o derrota."
 )
 
 # ----------------------------
@@ -49,25 +49,29 @@ df["tipo_victoria"] = df["Pts Ganados/Combate"].apply(categorizar)
 df["tipo_derrota"] = df["Pts Cedidos/Combate"].apply(categorizar)
 
 # ----------------------------
-# Labels
+# Labels con emojis
 # ----------------------------
 
 map_victoria = {
-    0: "Siempre pierde",
-    1: "Spin finish",
-    2: "Burst / Over",
-    3: "Xtreme finish"
+    0: "⚫ Siempre pierde",
+    1: "🔵 Spin finish",
+    2: "🟠 Burst / Over",
+    3: "🟢 Xtreme finish"
 }
 
 map_derrota = {
-    0: "Siempre gana",
-    1: "Pierde por spin",
-    2: "Pierde por burst/over",
-    3: "Pierde por xtreme"
+    0: "🟡 Siempre gana",
+    1: "🔵 Pierde por spin",
+    2: "🟠 Pierde por burst/over",
+    3: "🟢 Pierde por xtreme"
 }
 
 df["victoria_label"] = df["tipo_victoria"].map(map_victoria)
 df["derrota_label"] = df["tipo_derrota"].map(map_derrota)
+
+# 🔥 IMPORTANTE: convertir a string para colores discretos
+df["tipo_victoria_str"] = df["tipo_victoria"].astype(str)
+df["tipo_derrota_str"] = df["tipo_derrota"].astype(str)
 
 # ----------------------------
 # Filtros dependientes (piezas)
@@ -110,30 +114,27 @@ color_mode = st.radio(
     ["Victoria", "Derrota"]
 )
 
-# 🎨 Colores definidos por ti
-color_map_victoria = {
-    0: "#888888",  # gris → siempre pierde
-    1: "#6EC1E4",  # azul claro → spin
-    2: "#F39C12",  # naranja → burst/over
-    3: "#2ECC71"   # verde → xtreme
-}
-
-color_map_derrota = {
-    0: "#F4D03F",  # amarillo → siempre gana
-    1: "#6EC1E4",  # azul claro
-    2: "#F39C12",  # naranja
-    3: "#2ECC71"   # verde
-}
-
 if color_mode == "Victoria":
-    color_col = "tipo_victoria"
-    color_map = color_map_victoria
+    color_col = "tipo_victoria_str"
+    color_map = {
+        "0": "#888888",
+        "1": "#6EC1E4",
+        "2": "#F39C12",
+        "3": "#2ECC71"
+    }
+    legend_map = map_victoria
 else:
-    color_col = "tipo_derrota"
-    color_map = color_map_derrota
+    color_col = "tipo_derrota_str"
+    color_map = {
+        "0": "#F4D03F",
+        "1": "#6EC1E4",
+        "2": "#F39C12",
+        "3": "#2ECC71"
+    }
+    legend_map = map_derrota
 
 # ----------------------------
-# Gráfico (NO afectado por arquetipos)
+# Gráfico
 # ----------------------------
 
 st.subheader("🗺️ Mapa de arquetipos")
@@ -161,9 +162,15 @@ fig.update_traces(marker=dict(size=6))
 fig.update_layout(
     xaxis_title="Puntos ganados por combate",
     yaxis_title="Puntos cedidos por combate",
+    legend_title="Tipo"
 )
 
 fig.update_yaxes(autorange="reversed")
+
+# 🔥 cambiar nombres de leyenda a emojis
+for trace in fig.data:
+    key = int(trace.name)
+    trace.name = legend_map[key]
 
 st.plotly_chart(fig, use_container_width=True)
 
@@ -196,21 +203,25 @@ if derrota_sel != "Todos":
     df_table = df_table[df_table["derrota_label"] == derrota_sel]
 
 # ----------------------------
-# Tabla
+# Tabla con barras
 # ----------------------------
 
 st.subheader("📊 Datos")
 
 st.dataframe(
-    df_table[[
-        "Blade",
-        "Ratchet",
-        "Bit",
-        "Partidas",
-        "Win %",
-        "victoria_label",
-        "derrota_label"
-    ]],
+    df_table,
     use_container_width=True,
-    hide_index=True
+    hide_index=True,
+    column_config={
+        "Win %": st.column_config.ProgressColumn(
+            "Winrate",
+            min_value=0,
+            max_value=100,
+        ),
+        "Partidas": st.column_config.ProgressColumn(
+            "Partidas",
+            min_value=0,
+            max_value=df["Partidas"].max(),
+        ),
+    }
 )
