@@ -1,27 +1,21 @@
 import streamlit as st
 import plotly.express as px
-import pandas as pd
-
-from sklearn.preprocessing import StandardScaler
-from sklearn.cluster import KMeans
 
 from data.loader import load_data
 
 st.set_page_config(layout="wide")
 
-st.title("🧠 Análisis del META")
+st.title("🧠 Análisis del comportamiento del META")
 
 # ----------------------------
 # Explicación
 # ----------------------------
 
 st.info(
-    "Mapa del rendimiento real de los combos.\n\n"
+    "Este gráfico muestra el comportamiento real de los combos en combate.\n\n"
     "➡️ Eje X = daño infligido (Pts Ganados/Combate)\n"
-    "⬇️ Eje Y = daño recibido (invertido → abajo es mejor)\n"
-    "🎨 Color = eficiencia global\n"
-    "🔵 Tamaño = número de partidas (fiabilidad)\n\n"
-    "Activa clustering para explorar la estructura oculta del meta."
+    "⬇️ Eje Y = daño recibido (invertido → abajo es mejor)\n\n"
+    "El objetivo es identificar builds que hacen mucho daño y reciben poco."
 )
 
 # ----------------------------
@@ -59,112 +53,51 @@ df_filtered = df_filtered[df_filtered["Win %"] >= min_winrate]
 st.caption(f"{len(df_filtered)} combos tras filtros")
 
 # ----------------------------
-# Clustering (opcional)
+# Gráfico principal
 # ----------------------------
 
-st.divider()
-st.subheader("⚙️ Análisis avanzado")
-
-usar_clusters = st.checkbox("Activar clustering")
-
-if usar_clusters:
-
-    n_clusters = st.slider("Número de clusters (k)", 2, 6, 3)
-
-    features = df_filtered[[
-        "Pts Ganados/Combate",
-        "Pts Cedidos/Combate"
-    ]].dropna()
-
-    if len(features) >= n_clusters:
-
-        scaler = StandardScaler()
-        X_scaled = scaler.fit_transform(features)
-
-        kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
-        clusters = kmeans.fit_predict(X_scaled)
-
-        df_filtered.loc[features.index, "cluster"] = clusters
-
-        st.caption("Clusters detectados automáticamente")
-
-    else:
-        st.warning("No hay suficientes datos para aplicar clustering")
-        usar_clusters = False
-
-# ----------------------------
-# Mapa de eficiencia
-# ----------------------------
-
-st.subheader("🗺️ Mapa de eficiencia del META")
-
-st.caption(
-    "➡️ Derecha = más daño infligido\n"
-    "⬇️ Abajo = menos daño recibido (mejor)"
-)
-
-color_col = "Eficiencia"
-
-if usar_clusters:
-    color_col = "cluster"
+st.subheader("🗺️ Mapa de comportamiento del META")
 
 fig = px.scatter(
     df_filtered,
     x="Pts Ganados/Combate",
     y="Pts Cedidos/Combate",
-    size="Partidas",
-    color=color_col,
-    color_continuous_scale="RdYlGn" if not usar_clusters else None,
     hover_data=[
         "Blade",
         "Ratchet",
         "Bit",
         "Win %",
-        "Partidas",
-        "Eficiencia"
+        "Partidas"
     ],
-    opacity=0.7
+    opacity=0.6
 )
+
+# tamaño fijo para evitar ruido visual
+fig.update_traces(marker=dict(size=6))
 
 fig.update_layout(
     xaxis_title="Daño infligido",
     yaxis_title="Daño recibido"
 )
 
-# invertir eje Y
+# invertir eje Y (clave)
 fig.update_yaxes(autorange="reversed")
 
 st.plotly_chart(fig, use_container_width=True)
 
 st.caption(
-    "📌 Abajo-derecha = zona óptima\n"
-    "📌 Tamaño grande = datos fiables\n"
-    "📌 Color = eficiencia o cluster"
+    "📌 Derecha = más daño\n"
+    "📌 Abajo = menos daño recibido (mejor)\n"
+    "📌 Zona óptima → abajo a la derecha"
 )
 
 # ----------------------------
-# Info de clusters (modo avanzado)
-# ----------------------------
-
-if usar_clusters:
-    st.subheader("📊 Análisis de clusters")
-
-    resumen = df_filtered.groupby("cluster").agg({
-        "Pts Ganados/Combate": "mean",
-        "Pts Cedidos/Combate": "mean",
-        "Win %": "mean",
-        "Partidas": "mean"
-    }).round(2)
-
-    st.dataframe(resumen, use_container_width=True)
-
-# ----------------------------
-# Ranking
+# Ranking (secundario)
 # ----------------------------
 
 st.subheader("🏆 Ranking de combos")
 
-df_ranked = df_filtered.sort_values("Eficiencia", ascending=False)
+df_ranked = df_filtered.sort_values("Win %", ascending=False)
 
 st.dataframe(
     df_ranked[[
@@ -173,7 +106,6 @@ st.dataframe(
         "Bit",
         "Partidas",
         "Win %",
-        "Eficiencia",
         "Pts Ganados/Combate",
         "Pts Cedidos/Combate"
     ]],
