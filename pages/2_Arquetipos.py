@@ -67,32 +67,32 @@ df["tipo_victoria"] = df["Pts Ganados/Combate"].apply(categorizar)
 df["tipo_derrota"] = df["Pts Cedidos/Combate"].apply(categorizar)
 
 # ----------------------------
-# Labels con visualización
+# Labels con emojis
 # ----------------------------
 
 map_victoria = {
-    0: "⚫ Siempre pierde",
+    0: "⚫ Alta tendencia a perder",
     1: "🔵 Spin finish",
     2: "🟠 Burst / Over",
     3: "🟢 Xtreme finish"
 }
 
 map_derrota = {
-    0: "🟡 Siempre gana",
+    0: "🟡 Alta tendencia a ganar",
     1: "🔵 Pierde por spin",
     2: "🟠 Pierde por burst/over",
     3: "🟢 Pierde por xtreme"
 }
 
-df["victoria_label"] = df["tipo_victoria"].map(map_victoria)
-df["derrota_label"] = df["tipo_derrota"].map(map_derrota)
+df["Arquetipo de victoria"] = df["tipo_victoria"].map(map_victoria)
+df["Arquetipo de derrota"] = df["tipo_derrota"].map(map_derrota)
 
-# 🔥 IMPORTANTE: convertir a string para colores discretos
+# 🔥 convertir a string para colores discretos
 df["tipo_victoria_str"] = df["tipo_victoria"].astype(str)
 df["tipo_derrota_str"] = df["tipo_derrota"].astype(str)
 
 # ----------------------------
-# Filtros dependientes (piezas)
+# Filtros dependientes
 # ----------------------------
 
 st.subheader("🔍 Filtros por piezas")
@@ -169,8 +169,8 @@ fig = px.scatter(
         "Bit",
         "Win %",
         "Partidas",
-        "victoria_label",
-        "derrota_label"
+        "Arquetipo de victoria",
+        "Arquetipo de derrota"
     ],
     opacity=0.7
 )
@@ -185,7 +185,7 @@ fig.update_layout(
 
 fig.update_yaxes(autorange="reversed")
 
-# 🔥 cambiar nombres de leyenda a emojis
+# renombrar leyenda con emojis
 for trace in fig.data:
     key = int(trace.name)
     trace.name = legend_map[key]
@@ -193,7 +193,7 @@ for trace in fig.data:
 st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------
-# Filtro arquetipos (SOLO tabla)
+# Filtro arquetipos (tabla)
 # ----------------------------
 
 st.subheader("🎯 Filtro de arquetipos (tabla)")
@@ -203,31 +203,57 @@ col1, col2 = st.columns(2)
 with col1:
     victoria_sel = st.selectbox(
         "Filtrar por victoria",
-        ["Todos"] + sorted(df_filtered["victoria_label"].unique())
+        ["Todos"] + sorted(df_filtered["Arquetipo de victoria"].unique())
     )
 
 with col2:
     derrota_sel = st.selectbox(
         "Filtrar por derrota",
-        ["Todos"] + sorted(df_filtered["derrota_label"].unique())
+        ["Todos"] + sorted(df_filtered["Arquetipo de derrota"].unique())
     )
 
 df_table = df_filtered.copy()
 
 if victoria_sel != "Todos":
-    df_table = df_table[df_table["victoria_label"] == victoria_sel]
+    df_table = df_table[df_table["Arquetipo de victoria"] == victoria_sel]
 
 if derrota_sel != "Todos":
-    df_table = df_table[df_table["derrota_label"] == derrota_sel]
+    df_table = df_table[df_table["Arquetipo de derrota"] == derrota_sel]
 
 # ----------------------------
-# Tabla con barras
+# LIMPIEZA FINAL TABLA
+# ----------------------------
+
+# arreglar winrate si viene mal
+if df_table["Win %"].max() > 100:
+    df_table["Win %"] = df_table["Win %"] / 100
+
+df_table["Win %"] = df_table["Win %"].clip(0, 100).round(1)
+
+# eliminar columnas innecesarias
+df_table = df_table.drop(columns=[
+    "tipo_victoria",
+    "tipo_derrota",
+    "tipo_victoria_str",
+    "tipo_derrota_str"
+], errors="ignore")
+
+# ----------------------------
+# Tabla final
 # ----------------------------
 
 st.subheader("📊 Datos")
 
 st.dataframe(
-    df_table,
+    df_table[[
+        "Blade",
+        "Ratchet",
+        "Bit",
+        "Partidas",
+        "Win %",
+        "Arquetipo de victoria",
+        "Arquetipo de derrota"
+    ]],
     use_container_width=True,
     hide_index=True,
     column_config={
@@ -236,10 +262,8 @@ st.dataframe(
             min_value=0,
             max_value=100,
         ),
-        "Partidas": st.column_config.ProgressColumn(
-            "Partidas",
-            min_value=0,
-            max_value=int(df["Partidas"].max()),
+        "Partidas": st.column_config.NumberColumn(
+            "Partidas"
         ),
     }
 )
