@@ -13,38 +13,36 @@ st.title("🧠 Arquetipos del META")
 # ----------------------------
 
 st.info(
-    "Los arquetipos se calculan automáticamente en base al comportamiento real en partida.\n\n"
-    "Eje X = puntos ganados por combate (daño que haces)\n"
-    "Eje Y = puntos cedidos por combate (daño que recibes)"
+    "Los arquetipos se calculan en base al comportamiento real.\n\n"
+    "X = daño que haces\n"
+    "Y = daño que recibes (invertido → abajo es mejor)"
 )
 
 # ----------------------------
-# Datos + filtro global
+# Datos
 # ----------------------------
 
 df = load_data()
 
-min_partidas = st.slider(
-    "Mínimo de partidas",
-    0,
-    int(df["Partidas"].max()),
-    50
-)
-
-df = df[df["Partidas"] >= min_partidas]
-
 # ----------------------------
-# Clustering
+# Clustering GLOBAL (IMPORTANTE)
 # ----------------------------
 
 df_clustered, kmeans, k = calcular_arquetipos(df)
 df_clustered = etiquetar_arquetipos(df_clustered)
 
-st.caption(f"Número de arquetipos detectados automáticamente: {k}")
+st.caption(f"Arquetipos detectados: {k}")
 
 # ----------------------------
-# Filtro por arquetipo
+# Filtros (SOLO visuales)
 # ----------------------------
+
+min_partidas = st.slider(
+    "Mínimo de partidas",
+    0,
+    int(df_clustered["Partidas"].max()),
+    50
+)
 
 tipos = ["Todos"] + sorted(df_clustered["arquetipo"].dropna().unique())
 
@@ -53,10 +51,13 @@ tipo_sel = st.selectbox(
     tipos
 )
 
+# aplicar filtros SOBRE dataset ya clusterizado
+df_filtered = df_clustered.copy()
+
+df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
+
 if tipo_sel != "Todos":
-    df_filtered = df_clustered[df_clustered["arquetipo"] == tipo_sel]
-else:
-    df_filtered = df_clustered
+    df_filtered = df_filtered[df_filtered["arquetipo"] == tipo_sel]
 
 # ----------------------------
 # Gráfico
@@ -83,9 +84,12 @@ fig.update_layout(
     yaxis_title="Pts Cedidos/Combate"
 )
 
+# invertir eje Y (clave)
 fig.update_yaxes(autorange="reversed")
 
 st.plotly_chart(fig, use_container_width=True)
+
+st.caption("⬇️ Menos puntos cedidos = mejor")
 
 # ----------------------------
 # Tabla
@@ -94,7 +98,7 @@ st.plotly_chart(fig, use_container_width=True)
 st.subheader("Combos en este arquetipo")
 
 st.dataframe(
-    df_filtered[["Blade", "Ratchet", "Bit", "arquetipo"]],
+    df_filtered[["Blade", "Ratchet", "Bit", "Partidas", "arquetipo"]],
     use_container_width=True,
     hide_index=True
 )

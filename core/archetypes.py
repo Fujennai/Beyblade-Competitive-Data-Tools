@@ -8,17 +8,21 @@ def encontrar_mejor_k(X_scaled, k_range=(2, 5)):
 
     resultados = []
 
-    for k in range(k_range[0], k_range[1] + 1):
+    n_samples = X_scaled.shape[0]
+    max_k = min(k_range[1], n_samples)
+
+    for k in range(k_range[0], max_k + 1):
+
+        if k >= n_samples:
+            continue
 
         kmeans = KMeans(n_clusters=k, random_state=42, n_init=10)
         labels = kmeans.fit_predict(X_scaled)
 
-        # evitar errores si solo hay un cluster real
         if len(set(labels)) > 1:
             score = silhouette_score(X_scaled, labels)
             resultados.append((k, score))
 
-    # ordenar por mejor score
     resultados.sort(key=lambda x: x[1], reverse=True)
 
     return resultados
@@ -34,23 +38,21 @@ def calcular_arquetipos(df, n_clusters=None):
     scaler = StandardScaler()
     X_scaled = scaler.fit_transform(features)
 
-    # elegir k automáticamente si no se pasa
     n_samples = X_scaled.shape[0]
 
-    # evitar casos con pocos datos
-    max_clusters = min(5, n_samples)
-
-    if n_clusters is None:
-        if n_samples < 3:
-            n_clusters = 1
-        else:
-            resultados = encontrar_mejor_k(X_scaled, k_range=(2, max_clusters))
-            n_clusters = resultados[0][0] if resultados else min(3, n_samples)
-
+    # dataset muy pequeño → no cluster
     if n_samples < 3:
-        df_out = df.copy()
+        df_out = df.loc[features.index].copy()
         df_out["cluster"] = 0
         return df_out, None, 1
+
+    if n_clusters is None:
+        resultados = encontrar_mejor_k(X_scaled)
+
+        if resultados:
+            n_clusters = resultados[0][0]
+        else:
+            n_clusters = min(3, n_samples)
 
     kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
     clusters = kmeans.fit_predict(X_scaled)
