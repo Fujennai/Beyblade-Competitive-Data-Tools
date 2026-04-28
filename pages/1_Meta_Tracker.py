@@ -15,8 +15,10 @@ df_main = load_data()
 df_history = load_history()
 
 # ----------------------------
-# Filtros básicos
+# Filtros
 # ----------------------------
+
+st.subheader("🔍 Filtros")
 
 min_partidas = st.slider(
     "Mínimo de partidas",
@@ -24,6 +26,25 @@ min_partidas = st.slider(
     int(df_main["Partidas"].max()),
     50
 )
+
+# filtros dependientes
+blade, ratchet, bit = filtros_dependientes(df_main)
+
+# aplicar filtros
+df_filtered = df_main.copy()
+
+df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
+
+if blade:
+    df_filtered = df_filtered[df_filtered["Blade"] == blade]
+
+if ratchet:
+    df_filtered = df_filtered[df_filtered["Ratchet"] == ratchet]
+
+if bit:
+    df_filtered = df_filtered[df_filtered["Bit"] == bit]
+
+st.caption(f"{len(df_filtered)} combinaciones")
 
 df_filtered = df_main[df_main["Partidas"] >= min_partidas]
 
