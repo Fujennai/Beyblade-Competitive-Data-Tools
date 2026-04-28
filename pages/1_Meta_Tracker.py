@@ -61,18 +61,22 @@ with col3:
 st.divider()
 
 # ----------------------------
-# Evolución
+# Evolución (desde Trending)
 # ----------------------------
 
-st.subheader("📈 Evolución")
+st.subheader("📈 Evolución (Trending)")
 
-if df_history.empty:
-    st.warning("No hay histórico")
-    st.stop()
+df_trending = calcular_trending(df_history).head(10)
 
-df_hist_filtered, blade_h, ratchet_h, bit_h = filtros_dependientes(df_history, key_prefix="history")
+combo_sel = st.selectbox(
+    "Selecciona un combo trending",
+    df_trending["combo"].tolist(),
+    key="evo_trending"
+)
 
-if blade_h and ratchet_h and bit_h:
+if combo_sel:
+
+    blade_h, ratchet_h, bit_h = combo_sel.split(" | ")
 
     df_combo = df_history[
         (df_history["Blade"] == blade_h) &
@@ -81,15 +85,97 @@ if blade_h and ratchet_h and bit_h:
     ]
 
     if not df_combo.empty:
+
         df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
+
+        # métrica de cambio
+        delta = df_plot["Win %"].iloc[-1] - df_plot["Win %"].iloc[0]
+
+        st.metric(
+            "Cambio total de winrate",
+            f"{df_plot['Win %'].iloc[-1]:.2f}%",
+            delta=f"{delta:.2f}%"
+        )
+
         plot_winrate(df_plot)
-    else:
-        st.warning("No hay datos para ese combo")
+
+# ----------------------------
+# Evolución (solo con variación)
+# ----------------------------
+
+st.subheader("📈 Evolución (Combos con cambios reales)")
+
+df_history["combo"] = (
+    df_history["Blade"] + " | " +
+    df_history["Ratchet"] + " | " +
+    df_history["Bit"]
+)
+
+# calcular variación
+df_var = df_history.groupby("combo")["Win %"].agg(lambda x: x.max() - x.min())
+
+# umbral configurable
+threshold = st.slider("Variación mínima (%)", 0.0, 10.0, 2.0)
+
+combos_interesantes = df_var[df_var > threshold].index.tolist()
+
+if combos_interesantes:
+
+    combo_sel = st.selectbox(
+        "Selecciona combo con variación",
+        combos_interesantes,
+        key="evo_variation"
+    )
+
+    blade_h, ratchet_h, bit_h = combo_sel.split(" | ")
+
+    df_combo = df_history[
+        (df_history["Blade"] == blade_h) &
+        (df_history["Ratchet"] == ratchet_h) &
+        (df_history["Bit"] == bit_h)
+    ]
+
+    df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
+
+    plot_winrate(df_plot)
 
 else:
-    st.info("Selecciona un combo para ver su evolución")
+    st.warning("No hay combos con esa variación")
 
-st.divider()
+# ----------------------------
+# Evolución (volatilidad)
+# ----------------------------
+
+st.subheader("📈 Evolución (Más volátiles)")
+
+df_history["combo"] = (
+    df_history["Blade"] + " | " +
+    df_history["Ratchet"] + " | " +
+    df_history["Bit"]
+)
+
+# calcular desviación estándar
+df_vol = df_history.groupby("combo")["Win %"].std().sort_values(ascending=False)
+
+top_vol = df_vol.head(15).index.tolist()
+
+combo_sel = st.selectbox(
+    "Selecciona combo volátil",
+    top_vol,
+    key="evo_volatility"
+)
+
+blade_h, ratchet_h, bit_h = combo_sel.split(" | ")
+
+df_combo = df_history[
+    (df_history["Blade"] == blade_h) &
+    (df_history["Ratchet"] == ratchet_h) &
+    (df_history["Bit"] == bit_h)
+]
+
+df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
+
+plot_winrate(df_plot)
 
 # ----------------------------
 # Trending
