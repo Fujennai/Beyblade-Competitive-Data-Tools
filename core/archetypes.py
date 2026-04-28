@@ -35,9 +35,22 @@ def calcular_arquetipos(df, n_clusters=None):
     X_scaled = scaler.fit_transform(features)
 
     # elegir k automáticamente si no se pasa
+    n_samples = X_scaled.shape[0]
+
+    # evitar casos con pocos datos
+    max_clusters = min(5, n_samples)
+
     if n_clusters is None:
-        resultados = encontrar_mejor_k(X_scaled)
-        n_clusters = resultados[0][0] if resultados else 3
+        if n_samples < 3:
+            n_clusters = 1
+        else:
+            resultados = encontrar_mejor_k(X_scaled, k_range=(2, max_clusters))
+            n_clusters = resultados[0][0] if resultados else min(3, n_samples)
+
+    if n_samples < 3:
+        df_out = df.copy()
+        df_out["cluster"] = 0
+        return df_out, None, 1
 
     kmeans = KMeans(n_clusters=n_clusters, random_state=42, n_init=10)
     clusters = kmeans.fit_predict(X_scaled)
