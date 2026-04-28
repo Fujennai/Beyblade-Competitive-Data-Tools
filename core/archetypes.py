@@ -25,7 +25,8 @@ def calcular_arquetipos(df, n_clusters=4):
 
     return df_clustered, kmeans
 
-    def etiquetar_arquetipos(df):
+
+def etiquetar_arquetipos(df):
 
     resumen = df.groupby("cluster").agg({
         "Win %": "mean",
@@ -43,12 +44,16 @@ def calcular_arquetipos(df, n_clusters=4):
 
         if atk > 1.4 and defn > 1.4:
             etiquetas[cluster] = "🔥 Agresivo"
+
         elif defn < 1.2:
             etiquetas[cluster] = "🛡️ Defensivo"
+
         elif abs(atk - defn) < 0.2:
             etiquetas[cluster] = "⚖️ Equilibrado"
+
         elif wr > 75 and atk > 1.3:
             etiquetas[cluster] = "🎲 High Risk / High Reward"
+
         else:
             etiquetas[cluster] = "🔄 Híbrido"
 
