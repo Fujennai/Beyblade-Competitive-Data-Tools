@@ -33,7 +33,14 @@ st.caption(f"Número de arquetipos detectados automáticamente: {k}")
 # ----------------------------
 # Filtro
 # ----------------------------
+min_partidas = st.slider(
+    "Mínimo de partidas",
+    0,
+    int(df["Partidas"].max()),
+    50
+)
 
+df = df[df["Partidas"] >= min_partidas]
 tipos = ["Todos"] + sorted(df_clustered["arquetipo"].dropna().unique())
 
 tipo_sel = st.selectbox(
@@ -55,6 +62,7 @@ fig = px.scatter(
     x="Pts Ganados/Combate",
     y="Pts Cedidos/Combate",
     color="arquetipo",
+    color_discrete_map=color_map,
     hover_data=["Blade", "Ratchet", "Bit"],
     opacity=0.7
 )
@@ -64,15 +72,18 @@ fig.update_layout(
     yaxis_title="Pts Cedidos/Combate"
 )
 
+fig.update_yaxes(autorange="reversed")
+
 st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------
 # Tabla (secundaria)
 # ----------------------------
 
-with st.expander("Ver combos"):
-    st.dataframe(
-        df_filtered[["Blade", "Ratchet", "Bit", "arquetipo"]],
-        use_container_width=True,
-        hide_index=True
-    )
+st.subheader("Combos en este arquetipo")
+
+st.dataframe(
+    df_filtered[["Blade", "Ratchet", "Bit", "arquetipo"]],
+    use_container_width=True,
+    hide_index=True
+)
