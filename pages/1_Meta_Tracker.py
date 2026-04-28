@@ -111,7 +111,10 @@ st.info(
 df_trending = calcular_trending(df_history).head(10)
 
 st.dataframe(
-    df_trending[["combo", "trending_score"]],
+    df_trending[["combo", "trending_score"]].rename(columns={
+        "combo": "Combo",
+        "trending_score": "Trending Score (popularidad reciente)"
+    }),
     use_container_width=True,
     hide_index=True
 )
