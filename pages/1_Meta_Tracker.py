@@ -83,13 +83,11 @@ if blade_h and ratchet_h and bit_h:
     if not df_combo.empty:
         df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
         plot_winrate(df_plot)
+    else:
+        st.warning("No hay datos para ese combo")
 
 else:
     st.info("Selecciona un combo para ver su evolución")
-
-if not df_combo.empty:
-    df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
-    plot_winrate(df_plot)
 
 st.divider()
 
