@@ -97,7 +97,7 @@ if combo_sel:
             delta=f"{delta:.2f}%"
         )
 
-        plot_winrate(df_plot)
+        plot_winrate(df_plot, key="chart_trending")
 
 # ----------------------------
 # Evolución (solo con variación)
@@ -137,7 +137,7 @@ if combos_interesantes:
 
     df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
 
-    plot_winrate(df_plot)
+    plot_winrate(df_plot, key="chart_variation")
 
 else:
     st.warning("No hay combos con esa variación")
@@ -175,7 +175,7 @@ df_combo = df_history[
 
 df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
 
-plot_winrate(df_plot)
+plot_winrate(df_plot, key="chart_volatility")
 
 # ----------------------------
 # Trending
