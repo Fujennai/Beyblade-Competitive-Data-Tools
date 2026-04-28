@@ -97,6 +97,17 @@ st.divider()
 
 st.subheader("🔥 Trending")
 
+st.info(
+    "¿Qué significa el Trending Score?\n\n"
+    "Este ranking mide qué combos están ganando relevancia recientemente.\n\n"
+    "Se calcula combinando:\n"
+    "- 📈 Crecimiento en número de partidas (uso)\n"
+    "- 🎯 Winrate actual\n"
+    "- ⚖️ Volumen total de partidas\n\n"
+    "👉 Un valor alto indica que el combo está creciendo rápido, se usa bastante y además tiene buen rendimiento.\n\n"
+    "⚠️ No significa necesariamente que sea el mejor combo, sino el que está más 'de moda' ahora mismo."
+)
+
 df_trending = calcular_trending(df_history).head(10)
 
 st.dataframe(
