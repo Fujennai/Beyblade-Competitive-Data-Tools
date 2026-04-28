@@ -4,7 +4,6 @@ import plotly.express as px
 from data.loader import load_data
 from core.archetypes import calcular_arquetipos, etiquetar_arquetipos
 
-
 st.set_page_config(layout="wide")
 
 st.title("🧠 Arquetipos del META")
@@ -20,19 +19,11 @@ st.info(
 )
 
 # ----------------------------
-# Datos
+# Datos + filtro global
 # ----------------------------
 
 df = load_data()
 
-df_clustered, kmeans, k = calcular_arquetipos(df)
-df_clustered = etiquetar_arquetipos(df_clustered)
-
-st.caption(f"Número de arquetipos detectados automáticamente: {k}")
-
-# ----------------------------
-# Filtro
-# ----------------------------
 min_partidas = st.slider(
     "Mínimo de partidas",
     0,
@@ -41,6 +32,20 @@ min_partidas = st.slider(
 )
 
 df = df[df["Partidas"] >= min_partidas]
+
+# ----------------------------
+# Clustering
+# ----------------------------
+
+df_clustered, kmeans, k = calcular_arquetipos(df)
+df_clustered = etiquetar_arquetipos(df_clustered)
+
+st.caption(f"Número de arquetipos detectados automáticamente: {k}")
+
+# ----------------------------
+# Filtro por arquetipo
+# ----------------------------
+
 tipos = ["Todos"] + sorted(df_clustered["arquetipo"].dropna().unique())
 
 tipo_sel = st.selectbox(
@@ -54,13 +59,15 @@ else:
     df_filtered = df_clustered
 
 # ----------------------------
-# Gráfico (LO PRINCIPAL)
+# Gráfico
 # ----------------------------
+
 color_map = {
-    "🔥 Agresivo": "#1f77ff",    # azul (ataque)
-    "🛡️ Defensivo": "#2ecc71",  # verde (defensa)
-    "⚖️ Equilibrado": "#e74c3c" # rojo (balance)
+    "🔥 Agresivo": "#1f77ff",
+    "🛡️ Defensivo": "#2ecc71",
+    "⚖️ Equilibrado": "#e74c3c"
 }
+
 fig = px.scatter(
     df_filtered,
     x="Pts Ganados/Combate",
@@ -81,7 +88,7 @@ fig.update_yaxes(autorange="reversed")
 st.plotly_chart(fig, use_container_width=True)
 
 # ----------------------------
-# Tabla (secundaria)
+# Tabla
 # ----------------------------
 
 st.subheader("Combos en este arquetipo")
