@@ -5,20 +5,17 @@ from data.loader import load_data
 
 st.set_page_config(layout="wide")
 
-st.title("🧠 Arquetipos del META (basados en scoring)")
+st.title("🧠 Arquetipos del META (scoring real)")
 
 # ----------------------------
 # Explicación
 # ----------------------------
 
 st.info(
-    "Los arquetipos se derivan directamente del sistema de puntuación.\n\n"
-    "➡️ Eje X = puntos que ganas cuando ganas (tipo de victoria)\n"
-    "⬇️ Eje Y = puntos que cedes cuando pierdes (tipo de derrota)\n\n"
-    "Esto permite identificar estilos reales:\n"
-    "- Spin finish → defensivo\n"
-    "- Burst / Over → balance/agresivo\n"
-    "- Xtreme → muy agresivo"
+    "Clasificación basada en el sistema de puntuación.\n\n"
+    "➡️ X = tipo de victoria\n"
+    "⬇️ Y = tipo de derrota\n\n"
+    "Puedes analizar cómo gana y cómo pierde cada combo."
 )
 
 # ----------------------------
@@ -28,35 +25,17 @@ st.info(
 df = load_data()
 
 # ----------------------------
-# Filtros
+# Filtros base (fijos)
 # ----------------------------
 
-col1, col2 = st.columns(2)
+min_partidas = 10
+min_winrate = 50
 
-with col1:
-    min_partidas = st.slider(
-        "Mínimo de partidas",
-        0,
-        int(df["Partidas"].max()),
-        10
-    )
-
-with col2:
-    min_winrate = st.slider(
-        "Winrate mínimo (%)",
-        0,
-        100,
-        50
-    )
-
-df_filtered = df.copy()
-df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
-df_filtered = df_filtered[df_filtered["Win %"] >= min_winrate]
-
-st.caption(f"{len(df_filtered)} combos tras filtros")
+df = df[df["Partidas"] >= min_partidas]
+df = df[df["Win %"] >= min_winrate]
 
 # ----------------------------
-# Clasificación por scoring
+# Clasificación scoring
 # ----------------------------
 
 def categorizar(valor):
@@ -69,40 +48,119 @@ def categorizar(valor):
     else:
         return 3
 
-df_filtered["tipo_victoria"] = df_filtered["Pts Ganados/Combate"].apply(categorizar)
-df_filtered["tipo_derrota"] = df_filtered["Pts Cedidos/Combate"].apply(categorizar)
+df["tipo_victoria"] = df["Pts Ganados/Combate"].apply(categorizar)
+df["tipo_derrota"] = df["Pts Cedidos/Combate"].apply(categorizar)
 
 # ----------------------------
-# Etiquetas legibles
+# Labels
 # ----------------------------
 
 map_victoria = {
-    0: "❌ No gana",
-    1: "🛡️ Spin finish",
-    2: "⚖️ Burst/Over",
-    3: "🔥 Xtreme"
+    0: "0 - No gana",
+    1: "1 - Spin finish",
+    2: "2 - Burst/Over",
+    3: "3 - Xtreme"
 }
 
 map_derrota = {
-    0: "🏆 Casi no pierde",
-    1: "🛡️ Pierde por spin",
-    2: "⚖️ Pierde por burst/over",
-    3: "🔥 Pierde por xtreme"
+    0: "0 - No pierde",
+    1: "1 - Pierde spin",
+    2: "2 - Pierde burst/over",
+    3: "3 - Pierde xtreme"
 }
 
-df_filtered["victoria_label"] = df_filtered["tipo_victoria"].map(map_victoria)
-df_filtered["derrota_label"] = df_filtered["tipo_derrota"].map(map_derrota)
+df["victoria_label"] = df["tipo_victoria"].map(map_victoria)
+df["derrota_label"] = df["tipo_derrota"].map(map_derrota)
 
 # ----------------------------
-# Arquetipo combinado
+# Filtros dependientes (pieza)
 # ----------------------------
 
-df_filtered["arquetipo"] = (
-    df_filtered["victoria_label"] + " / " + df_filtered["derrota_label"]
+st.subheader("🔍 Filtros por piezas")
+
+col1, col2, col3 = st.columns(3)
+
+df_temp = df.copy()
+
+with col1:
+    blade_options = sorted(df_temp["Blade"].unique())
+    blade_sel = st.selectbox("Blade", ["Todos"] + blade_options)
+
+if blade_sel != "Todos":
+    df_temp = df_temp[df_temp["Blade"] == blade_sel]
+
+with col2:
+    ratchet_options = sorted(df_temp["Ratchet"].unique())
+    ratchet_sel = st.selectbox("Ratchet", ["Todos"] + ratchet_options)
+
+if ratchet_sel != "Todos":
+    df_temp = df_temp[df_temp["Ratchet"] == ratchet_sel]
+
+with col3:
+    bit_options = sorted(df_temp["Bit"].unique())
+    bit_sel = st.selectbox("Bit", ["Todos"] + bit_options)
+
+if bit_sel != "Todos":
+    df_temp = df_temp[df_temp["Bit"] == bit_sel]
+
+df_filtered = df_temp.copy()
+
+# ----------------------------
+# Filtros de arquetipo
+# ----------------------------
+
+st.subheader("🎯 Filtros de arquetipo")
+
+col1, col2 = st.columns(2)
+
+with col1:
+    victorias = ["Todos"] + sorted(df_filtered["victoria_label"].unique())
+    victoria_sel = st.selectbox("Arquetipo de victoria", victorias)
+
+with col2:
+    derrotas = ["Todos"] + sorted(df_filtered["derrota_label"].unique())
+    derrota_sel = st.selectbox("Arquetipo de derrota", derrotas)
+
+if victoria_sel != "Todos":
+    df_filtered = df_filtered[df_filtered["victoria_label"] == victoria_sel]
+
+if derrota_sel != "Todos":
+    df_filtered = df_filtered[df_filtered["derrota_label"] == derrota_sel]
+
+# ----------------------------
+# Selector de color
+# ----------------------------
+
+st.subheader("🎨 Color del gráfico")
+
+color_mode = st.radio(
+    "Colorear por:",
+    ["Tipo de victoria", "Tipo de derrota"]
 )
 
+color_map_victoria = {
+    0: "#aaaaaa",
+    1: "#2ecc71",
+    2: "#f1c40f",
+    3: "#e74c3c"
+}
+
+color_map_derrota = {
+    0: "#2ecc71",
+    1: "#3498db",
+    2: "#f1c40f",
+    3: "#e74c3c"
+}
+
+color_col = "tipo_victoria"
+color_map = color_map_victoria
+
+if color_mode == "Tipo de derrota":
+    color_col = "tipo_derrota"
+    color_map = color_map_derrota
+
 # ----------------------------
-# Gráfico principal
+# Gráfico
 # ----------------------------
 
 st.subheader("🗺️ Mapa de arquetipos")
@@ -111,14 +169,16 @@ fig = px.scatter(
     df_filtered,
     x="Pts Ganados/Combate",
     y="Pts Cedidos/Combate",
-    color="tipo_victoria",  # color por estilo de ataque
+    color=color_col,
+    color_discrete_map=color_map,
     hover_data=[
         "Blade",
         "Ratchet",
         "Bit",
         "Win %",
         "Partidas",
-        "arquetipo"
+        "victoria_label",
+        "derrota_label"
     ],
     opacity=0.7
 )
@@ -128,43 +188,20 @@ fig.update_traces(marker=dict(size=6))
 fig.update_layout(
     xaxis_title="Puntos ganados por combate",
     yaxis_title="Puntos cedidos por combate",
-    legend_title="Tipo de victoria"
 )
 
-# invertir eje Y
 fig.update_yaxes(autorange="reversed")
 
 st.plotly_chart(fig, use_container_width=True)
-
-st.caption(
-    "📌 Derecha = tipo de victoria más agresivo\n"
-    "📌 Abajo = pierde menos (más sólido)\n"
-    "📌 Cada punto tiene un arquetipo basado en cómo gana y pierde"
-)
-
-# ----------------------------
-# Filtro por arquetipo
-# ----------------------------
-
-st.subheader("🔍 Filtrar por arquetipo")
-
-arquetipos = ["Todos"] + sorted(df_filtered["arquetipo"].unique())
-
-arquetipo_sel = st.selectbox("Selecciona arquetipo", arquetipos)
-
-if arquetipo_sel != "Todos":
-    df_view = df_filtered[df_filtered["arquetipo"] == arquetipo_sel]
-else:
-    df_view = df_filtered
 
 # ----------------------------
 # Tabla
 # ----------------------------
 
-st.subheader("📊 Combos")
+st.subheader("📊 Datos")
 
 st.dataframe(
-    df_view[[
+    df_filtered[[
         "Blade",
         "Ratchet",
         "Bit",
