@@ -25,8 +25,10 @@ st.info(
 
 df = load_data()
 
-df_clustered = calcular_arquetipos(df)
+df_clustered, kmeans, k = calcular_arquetipos(df)
 df_clustered = etiquetar_arquetipos(df_clustered)
+
+st.caption(f"Número de arquetipos detectados automáticamente: {k}")
 
 # ----------------------------
 # Filtro
