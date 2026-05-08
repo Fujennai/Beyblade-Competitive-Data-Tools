@@ -53,6 +53,12 @@ for i in range(3):
 st.divider()
 
 # ── Optimización ──────────────────────────────────────────────────────────────
+total_fijadas = sum(len(bey) for bey in fijados)
+
+if total_fijadas < 3:
+    st.info(f"🔒 Fija al menos 3 piezas para generar recomendaciones ({total_fijadas}/3 seleccionadas).")
+    st.stop()
+
 with st.spinner("Optimizando deck..."):
     resultado = optimizar_deck(df, fijados)
 
