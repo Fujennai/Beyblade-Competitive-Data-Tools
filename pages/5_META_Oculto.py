@@ -34,18 +34,40 @@ with col2:
 with col3:
     bit = st.selectbox("Bit", ["Todos"] + sorted(df_nuevos["Bit"].unique()))
 
+INSUFICIENTE = "⚪ Datos insuficientes"
+
+def ordenar_arquetipos(valores):
+    sin_insuf = sorted(v for v in valores if v != INSUFICIENTE)
+    return sin_insuf + ([INSUFICIENTE] if INSUFICIENTE in valores else [])
+
+# Opciones fijas con todos los valores posibles, no solo los presentes
+TODOS_VICTORIA = [
+    "⚫ Alta tendencia a perder",
+    "🔵 Spin finish",
+    "🟠 Burst / Over",
+    "🟢 Xtreme finish",
+    INSUFICIENTE,
+]
+TODOS_DERROTA = [
+    "🟡 Alta tendencia a ganar",
+    "🔵 Pierde por spin",
+    "🟠 Pierde por burst/over",
+    "🟢 Pierde por xtreme",
+    INSUFICIENTE,
+]
+
 col4, col5 = st.columns(2)
 
 with col4:
     arq_victoria = st.selectbox(
         "Arquetipo victoria",
-        ["Todos"] + sorted(df_nuevos["Arquetipo victoria"].unique())
+        ["Todos"] + TODOS_VICTORIA
     )
 
 with col5:
     arq_derrota = st.selectbox(
         "Arquetipo derrota",
-        ["Todos"] + sorted(df_nuevos["Arquetipo derrota"].unique())
+        ["Todos"] + TODOS_DERROTA
     )
 
 # ── Aplicar filtros ───────────────────────────────────────────────────────────
