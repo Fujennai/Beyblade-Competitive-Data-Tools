@@ -98,7 +98,6 @@ for bey in deck:
         return f"🔒 {val}" if fijado else f"✨ {val}"
 
     rows.append({
-        "Bey":                f"Bey {bey['Bey']}",
         "Blade":              label(bey["Blade"],   bey["Blade fijada"]),
         "Ratchet":            label(bey["Ratchet"], bey["Ratchet fijado"]),
         "Bit":                label(bey["Bit"],     bey["Bit fijado"]),
@@ -190,7 +189,16 @@ for i, bey in enumerate(deck):
             cambios = " · ".join(diferencias)
             delta = alt["Wilson Score Predicho"] - bey["Wilson Score"]
             signo = "+" if delta >= 0 else ""
+            if delta > 0:
+                color = "#2ECC71"
+            elif delta < 0:
+                color = "#E74C3C"
+            else:
+                color = "#888888"
+            delta_str = f"{signo}{delta:.4f}"
             st.markdown(
                 f"- {alt_blade} / {alt_ratchet} / {alt_bit} &nbsp; "
-                f"({cambios}) &nbsp; `{signo}{delta:.4f}`"
+                f"({cambios}) &nbsp; "
+                f'<span style="color:{color};font-family:monospace">{delta_str}</span>',
+                unsafe_allow_html=True
             )
