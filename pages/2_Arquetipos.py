@@ -25,7 +25,7 @@ with col1:
         "Mínimo de partidas",
         min_value=0,
         max_value=int(df["Partidas"].max()),
-        value=10
+        value=0
     )
 
 with col2:
@@ -130,7 +130,27 @@ df_filtered["Combo"] = (
     df_filtered["Bit"]
 )
 
+# ----------------------------
+# Estado checkbox
+# ----------------------------
 
+mostrar_insuficientes = st.session_state.get(
+    "mostrar_insuficientes",
+    False
+)
+
+# ----------------------------
+# Dataset gráfico
+# ----------------------------
+
+df_plot = df_filtered.copy()
+
+if not mostrar_insuficientes:
+
+    df_plot = df_plot[
+        (df_plot["tipo_victoria"] != -1) &
+        (df_plot["tipo_derrota"] != -1)
+    ]
 
 # ----------------------------
 # Config color
@@ -236,22 +256,19 @@ st.plotly_chart(
 )
 
 # ----------------------------
-# Mostrar insuficientes
+# Checkbox debajo gráfico
 # ----------------------------
 
 mostrar_insuficientes = st.checkbox(
     "Mostrar casos con datos insuficientes",
-    value=False
+    value=mostrar_insuficientes,
+    key="mostrar_insuficientes"
 )
 
-df_plot = df_filtered.copy()
+if mostrar_insuficientes != st.session_state.get("prev_insuficientes"):
 
-if not mostrar_insuficientes:
-
-    df_plot = df_plot[
-        (df_plot["tipo_victoria"] != -1) &
-        (df_plot["tipo_derrota"] != -1)
-    ]
+    st.session_state["prev_insuficientes"] = mostrar_insuficientes
+    st.rerun()
 
 # ----------------------------
 # Selector color
