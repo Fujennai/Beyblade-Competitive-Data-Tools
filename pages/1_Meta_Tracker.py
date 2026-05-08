@@ -8,6 +8,7 @@ from core.trending import calcular_trending
 from components.charts import plot_winrate
 from components.tables import mostrar_top10
 from components.filters import filtros_dependientes
+from components.view_toggle import view_toggle
 
 st.title("📊 META Tracker")
 
@@ -27,7 +28,6 @@ st.info(
 )
 
 with st.expander("ℹ️ Explicación detallada de la Wilson Score"):
-
     st.markdown("""
 La Wilson Score es una métrica estadística utilizada para estimar
 la fiabilidad real de un winrate.
@@ -58,7 +58,6 @@ priorizando resultados más consistentes y representativos.
 
 st.subheader("🔍 Filtros")
 
-# Slider primero
 min_partidas = st.slider(
     "Mínimo de partidas",
     0,
@@ -66,13 +65,9 @@ min_partidas = st.slider(
     0
 )
 
-# Filtros dependientes (devuelven DF ya filtrado)
 df_filtered, blade, ratchet, bit = filtros_dependientes(df_main, key_prefix="main")
-
-# Aplicar filtro de partidas DESPUÉS
 df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
 
-# Info útil
 st.caption(f"{len(df_filtered)} combinaciones encontradas")
 
 st.divider()
@@ -81,23 +76,61 @@ st.divider()
 # Top combos
 # ----------------------------
 
-mostrar_top10(df_filtered, "Combos")
+st.subheader("🏆 Top 10 Combos (Wilson Score)")
 
+modo_combos = view_toggle(key="meta_tracker_view")
+
+df_top = df_filtered.sort_values("Wilson Score", ascending=False).head(10)
+
+if modo_combos == "cards":
+    if df_top.empty:
+        st.warning("No hay datos")
+    else:
+        cols = st.columns(4)
+        for idx, (_, row) in enumerate(df_top.iterrows()):
+            ws      = row["Wilson Score"]
+            bar_pct = int(ws * 100)
+            winpct  = row["Win %"]
+            partidas= int(row["Partidas"])
+            r_blade  = row["Blade"]
+            r_ratchet= row["Ratchet"]
+            r_bit    = row["Bit"]
+            arq_v   = row.get("Arquetipo victoria", "")
+            arq_d   = row.get("Arquetipo derrota", "")
+            arq_str = f'<div style="margin-top:8px;font-size:0.72em;color:#666">{arq_v}<br>{arq_d}</div>' if arq_v else ""
+            card = (
+                '<div style="background:#1a1a2e;border-radius:12px;padding:14px 16px;border:1px solid #2a2a4a;margin-bottom:8px">' +
+                f'<div style="font-weight:700;font-size:0.95em;color:#fff;margin-bottom:4px">{r_blade}</div>' +
+                f'<div style="font-size:0.82em;color:#aaa;margin-bottom:2px">{r_ratchet} &nbsp;·&nbsp; {r_bit}</div>' +
+                f'<div style="font-size:0.78em;color:#666;margin-bottom:8px">{partidas} partidas · {winpct:.1f}% WR</div>' +
+                '<div style="margin:6px 0 4px">' +
+                f'<div style="background:#2a2a4a;border-radius:4px;height:5px">' +
+                f'<div style="background:#6EC1E4;width:{bar_pct}%;height:5px;border-radius:4px"></div>' +
+                '</div></div>' +
+                f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888">' +
+                f'<span>Wilson Score</span><span style="color:#fff;font-weight:700">{ws:.4f}</span></div>' +
+                arq_str +
+                '</div>'
+            )
+            with cols[idx % 4]:
+                st.markdown(card, unsafe_allow_html=True)
+else:
+    mostrar_top10(df_filtered, "Combos")
+
+st.divider()
+
+# Piezas individuales (siempre en tabla)
 df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
 
 col1, col2, col3 = st.columns(3)
-
 with col1:
     mostrar_top10(df_blade, "Blades")
-
 with col2:
     mostrar_top10(df_ratchet, "Ratchets")
-
 with col3:
     mostrar_top10(df_bit, "Bits")
 
 st.divider()
-
 
 # ----------------------------
 # Trending
@@ -142,7 +175,6 @@ combo_sel = st.selectbox(
 )
 
 if combo_sel:
-
     blade_h, ratchet_h, bit_h = combo_sel.split(" | ")
 
     df_combo = df_history[
@@ -152,10 +184,7 @@ if combo_sel:
     ]
 
     if not df_combo.empty:
-
         df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
-
-        # métrica de cambio
         delta = df_plot["Win %"].iloc[-1] - df_plot["Win %"].iloc[0]
 
         st.metric(
@@ -165,6 +194,3 @@ if combo_sel:
         )
 
         plot_winrate(df_plot, key="chart_trending")
-
-
-

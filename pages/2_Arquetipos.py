@@ -3,6 +3,7 @@ import plotly.express as px
 
 from data.loader import load_data
 from components.filters import filtros_dependientes
+from components.view_toggle import view_toggle
 
 st.set_page_config(layout="wide")
 
@@ -413,33 +414,64 @@ df_table = df_table.drop(
 
 st.subheader("📊 Datos")
 
-st.dataframe(
-    df_table[[
-        "Blade",
-        "Ratchet",
-        "Bit",
-        "Partidas",
-        "Winrate_bar",
-        "Win %",
-        "Arquetipo de victoria",
-        "Arquetipo de derrota"
-    ]],
-    use_container_width=True,
-    hide_index=True,
-    column_config={
+modo = view_toggle(key="arquetipos_view")
 
-        "Winrate_bar": st.column_config.ProgressColumn(
-            "Winrate",
-            min_value=0,
-            max_value=1,
-        ),
-
-        "Win %": st.column_config.NumberColumn(
-            "Winrate (%)"
-        ),
-
-        "Partidas": st.column_config.NumberColumn(
-            "Partidas"
-        ),
-    }
-)
+if modo == "cards":
+    if df_table.empty:
+        st.warning("No hay datos")
+    else:
+        cols = st.columns(4)
+        for idx, (_, row) in enumerate(df_table.iterrows()):
+            ws      = row["Winrate_bar"]
+            bar_pct = int(ws * 100)
+            winpct  = row["Win %"]
+            partidas= int(row["Partidas"])
+            r_blade  = row["Blade"]
+            r_ratchet= row["Ratchet"]
+            r_bit    = row["Bit"]
+            arq_v   = row["Arquetipo de victoria"]
+            arq_d   = row["Arquetipo de derrota"]
+            card = (
+                '<div style="background:#1a1a2e;border-radius:12px;padding:14px 16px;border:1px solid #2a2a4a;margin-bottom:8px">' +
+                f'<div style="font-weight:700;font-size:0.95em;color:#fff;margin-bottom:4px">{r_blade}</div>' +
+                f'<div style="font-size:0.82em;color:#aaa;margin-bottom:2px">{r_ratchet} &nbsp;·&nbsp; {r_bit}</div>' +
+                f'<div style="font-size:0.78em;color:#666;margin-bottom:8px">{partidas} partidas</div>' +
+                '<div style="margin:6px 0 4px">' +
+                f'<div style="background:#2a2a4a;border-radius:4px;height:5px">' +
+                f'<div style="background:#6EC1E4;width:{bar_pct}%;height:5px;border-radius:4px"></div>' +
+                '</div></div>' +
+                f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888">' +
+                f'<span>Winrate</span><span style="color:#fff;font-weight:700">{winpct:.1f}%</span></div>' +
+                f'<div style="margin-top:8px;font-size:0.72em;color:#666">{arq_v}<br>{arq_d}</div>' +
+                '</div>'
+            )
+            with cols[idx % 4]:
+                st.markdown(card, unsafe_allow_html=True)
+else:
+    st.dataframe(
+        df_table[[
+            "Blade",
+            "Ratchet",
+            "Bit",
+            "Partidas",
+            "Winrate_bar",
+            "Win %",
+            "Arquetipo de victoria",
+            "Arquetipo de derrota"
+        ]],
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Winrate_bar": st.column_config.ProgressColumn(
+                "Winrate",
+                min_value=0,
+                max_value=1,
+            ),
+            "Win %": st.column_config.NumberColumn(
+                "Winrate (%)"
+            ),
+            "Partidas": st.column_config.NumberColumn(
+                "Partidas"
+            ),
+        }
+    )
