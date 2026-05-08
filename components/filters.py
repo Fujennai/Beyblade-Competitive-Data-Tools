@@ -7,16 +7,40 @@ def filtros_dependientes(df, key_prefix="filter"):
 
     col1, col2, col3 = st.columns(3)
 
-    # ----------------------------
-    # Estado actual
-    # ----------------------------
+    # ==================================================
+    # ESTADO ACTUAL
+    # ==================================================
 
     blade_sel = st.session_state.get(f"{key_prefix}_blade", "Todos")
     ratchet_sel = st.session_state.get(f"{key_prefix}_ratchet", "Todos")
     bit_sel = st.session_state.get(f"{key_prefix}_bit", "Todos")
 
     # ==================================================
-    # BLADE OPTIONS
+    # HELPERS
+    # ==================================================
+
+    def build_options(values, counts, selected):
+
+        options = ["Todos"]
+
+        for val in sorted(values):
+
+            if val == selected:
+                options.append(val)
+            else:
+                options.append(f"{val} ({counts[val]})")
+
+        return options
+
+    def clean_value(display):
+
+        if display == "Todos":
+            return "Todos"
+
+        return display.split(" (")[0]
+
+    # ==================================================
+    # BLADE
     # ==================================================
 
     df_blade = df.copy()
@@ -27,20 +51,16 @@ def filtros_dependientes(df, key_prefix="filter"):
     if bit_sel != "Todos":
         df_blade = df_blade[df_blade["Bit"] == bit_sel]
 
-    blade_values = sorted(df_blade["Blade"].dropna().unique())
+    blade_counts = df_blade["Blade"].value_counts().to_dict()
 
-    blade_options = ["Todos"]
-
-    for blade in blade_values:
-
-        if blade == blade_sel:
-            blade_options.append(blade)
-        else:
-            count = len(df_blade[df_blade["Blade"] == blade])
-            blade_options.append(f"{blade} ({count})")
+    blade_options = build_options(
+        blade_counts.keys(),
+        blade_counts,
+        blade_sel
+    )
 
     # ==================================================
-    # RATCHET OPTIONS
+    # RATCHET
     # ==================================================
 
     df_ratchet = df.copy()
@@ -51,20 +71,16 @@ def filtros_dependientes(df, key_prefix="filter"):
     if bit_sel != "Todos":
         df_ratchet = df_ratchet[df_ratchet["Bit"] == bit_sel]
 
-    ratchet_values = sorted(df_ratchet["Ratchet"].dropna().unique())
+    ratchet_counts = df_ratchet["Ratchet"].value_counts().to_dict()
 
-    ratchet_options = ["Todos"]
-
-    for ratchet in ratchet_values:
-
-        if ratchet == ratchet_sel:
-            ratchet_options.append(ratchet)
-        else:
-            count = len(df_ratchet[df_ratchet["Ratchet"] == ratchet])
-            ratchet_options.append(f"{ratchet} ({count})")
+    ratchet_options = build_options(
+        ratchet_counts.keys(),
+        ratchet_counts,
+        ratchet_sel
+    )
 
     # ==================================================
-    # BIT OPTIONS
+    # BIT
     # ==================================================
 
     df_bit = df.copy()
@@ -75,17 +91,13 @@ def filtros_dependientes(df, key_prefix="filter"):
     if ratchet_sel != "Todos":
         df_bit = df_bit[df_bit["Ratchet"] == ratchet_sel]
 
-    bit_values = sorted(df_bit["Bit"].dropna().unique())
+    bit_counts = df_bit["Bit"].value_counts().to_dict()
 
-    bit_options = ["Todos"]
-
-    for bit in bit_values:
-
-        if bit == bit_sel:
-            bit_options.append(bit)
-        else:
-            count = len(df_bit[df_bit["Bit"] == bit])
-            bit_options.append(f"{bit} ({count})")
+    bit_options = build_options(
+        bit_counts.keys(),
+        bit_counts,
+        bit_sel
+    )
 
     # ==================================================
     # SELECTBOXES
@@ -94,30 +106,36 @@ def filtros_dependientes(df, key_prefix="filter"):
     blade_display = col1.selectbox(
         "Blade",
         blade_options,
-        key=f"{key_prefix}_blade_display"
+        index=blade_options.index(blade_sel)
+        if blade_sel in blade_options else 0,
+        key=f"{key_prefix}_blade_box"
     )
 
     ratchet_display = col2.selectbox(
         "Ratchet",
         ratchet_options,
-        key=f"{key_prefix}_ratchet_display"
+        index=ratchet_options.index(ratchet_sel)
+        if ratchet_sel in ratchet_options else 0,
+        key=f"{key_prefix}_ratchet_box"
     )
 
     bit_display = col3.selectbox(
         "Bit",
         bit_options,
-        key=f"{key_prefix}_bit_display"
+        index=bit_options.index(bit_sel)
+        if bit_sel in bit_options else 0,
+        key=f"{key_prefix}_bit_box"
     )
 
-    # ----------------------------
-    # limpiar "(X)"
-    # ----------------------------
+    # ==================================================
+    # LIMPIAR VALORES
+    # ==================================================
 
-    blade_sel = blade_display.split(" (")[0]
-    ratchet_sel = ratchet_display.split(" (")[0]
-    bit_sel = bit_display.split(" (")[0]
+    blade_sel = clean_value(blade_display)
+    ratchet_sel = clean_value(ratchet_display)
+    bit_sel = clean_value(bit_display)
 
-    # guardar estado
+    # guardar
     st.session_state[f"{key_prefix}_blade"] = blade_sel
     st.session_state[f"{key_prefix}_ratchet"] = ratchet_sel
     st.session_state[f"{key_prefix}_bit"] = bit_sel
