@@ -26,17 +26,47 @@ params = {
     "fecha_fin": ""
 }
 
-ratchets_especiales = ["Turbo", "Operate", "Zillion"]
+# Ratchets "especiales" con nombre en lugar de formato N-N. Son válidos.
+ratchets_especiales = ["Turbo", "Operate"]
+
+# Palabras que aparecen en la web como si fueran un Ratchet pero en realidad
+# son Assist Blades (parte del Blade). Los combos que las muestren como
+# Ratchet se descartan, ya que el verdadero Ratchet (formato N-N) no se
+# pudo parsear o no existe.
+ASSIST_BLADES = {"Zillion"}
+
+# Un Ratchet numérico válido tiene formato "N-N" (p.ej. "1-60", "3-80").
+RATCHET_REGEX = re.compile(r"^\d+-\d+$")
+
+
+def es_ratchet_valido(ratchet):
+    """True si el Ratchet es N-N o un especial reconocido (Turbo/Operate)."""
+    if ratchet is None:
+        return False
+    s = str(ratchet).strip()
+    if s in ASSIST_BLADES:
+        return False
+    return bool(RATCHET_REGEX.match(s)) or s in ratchets_especiales
+
 
 # ----------------------------
 # Funciones auxiliares
 # ----------------------------
 
 def separar_componentes(texto):
+    """
+    Devuelve (blade, ratchet, bit). Considera como Ratchet los tokens que
+    cumplen `\\d+-\\d+` o que son uno de los ratchets especiales (Turbo,
+    Operate). Las Assist Blades (Zillion) NO se reconocen como Ratchet:
+    se quedan como parte del nombre del Blade y la búsqueda continúa hasta
+    encontrar un Ratchet real más adelante.
+    """
     partes = texto.split()
 
     for i, p in enumerate(partes):
-        if re.match(r"\d+-\d+", p) or p in ratchets_especiales:
+        if p in ASSIST_BLADES:
+            continue  # ignorar Assist Blades, son parte del nombre del Blade
+        if RATCHET_REGEX.match(p) or p in ratchets_especiales:
             blade = " ".join(partes[:i])
             ratchet = p
 
@@ -141,10 +171,18 @@ def scrape():
                 i += 2
                 continue
 
+            # Defensivo: descartar Assist Blades (Zillion) si por algún motivo
+            # llegan hasta aquí como Ratchet.
+            if ratchet in ASSIST_BLADES:
+                logging.info(f"Descartado por Assist Blade como Ratchet: {blade} / {ratchet} / {bit}")
+                i += 2
+                continue
+
             if bit is None:
                 bit = bit_text
 
-            # Ratchets especiales
+            # Ratchets especiales (Turbo, Operate): si no hay bit detectado,
+            # mantenemos la lógica original de mover el ratchet al bit.
             if ratchet in ratchets_especiales:
                 if not bit:
                     bit = ratchet

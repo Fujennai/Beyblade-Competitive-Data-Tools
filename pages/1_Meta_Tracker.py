@@ -151,14 +151,36 @@ st.info(
 
 df_trending = calcular_trending(df_history).head(10)
 
-st.dataframe(
-    df_trending[["combo", "trending_score"]].rename(columns={
-        "combo": "Combo",
-        "trending_score": "Trending Score (popularidad reciente)"
-    }),
-    use_container_width=True,
-    hide_index=True
-)
+if df_trending.empty:
+    st.warning("No hay suficientes datos históricos para calcular el trending.")
+else:
+    df_trending_show = df_trending[[
+        "combo", "Partidas_new", "delta_partidas", "growth_pct", "trending_score", "delta_winrate"
+    ]].rename(columns={
+        "combo":          "Combo",
+        "Partidas_new":   "Partidas actuales",
+        "delta_partidas": "Nuevas partidas",
+        "growth_pct":     "Crecimiento",
+        "trending_score": "Trending Score",
+        "delta_winrate":  "Δ Winrate (%)",
+    })
+
+    st.dataframe(
+        df_trending_show,
+        use_container_width=True,
+        hide_index=True,
+        column_config={
+            "Crecimiento": st.column_config.NumberColumn(
+                "Crecimiento", format="%.1%"
+            ),
+            "Trending Score": st.column_config.ProgressColumn(
+                "Trending Score", format="%.3f", min_value=0, max_value=float(df_trending_show["Trending Score"].max()) or 1
+            ),
+            "Δ Winrate (%)": st.column_config.NumberColumn(
+                "Δ Winrate (%)", format="%.2f"
+            ),
+        }
+    )
 
 # ----------------------------
 # Evolución (desde Trending)
