@@ -1,4 +1,21 @@
 import streamlit as st
+from pathlib import Path
+
+PAGES_DIR = Path(__file__).parent / "pages"
+
+
+def _find_page(prefix: str):
+    """Encuentra el archivo en pages/ que empieza por el prefijo dado.
+
+    Es resistente a variaciones de mayúsculas/minúsculas en el nombre del
+    archivo (Streamlit Cloud usa Linux y es case-sensitive, mientras que
+    Windows no lo es).
+    """
+    if PAGES_DIR.exists():
+        for f in sorted(PAGES_DIR.iterdir()):
+            if f.suffix == ".py" and f.name.startswith(prefix):
+                return f"pages/{f.name}"
+    return None
 
 
 # ─────────────────────────────────────────────────────────────────────────────
@@ -121,14 +138,16 @@ def inicio():
     st.markdown("<div class='section-title'>🚀 Herramientas disponibles</div>", unsafe_allow_html=True)
 
     features = [
-        ("📊", "META Tracker", "Sigue la evolución de combos y winrates con Wilson Score.", "pages/1_META_Tracker.py"),
-        ("🧠", "Arquetipos", "Descubre familias estratégicas con scoring real del meta.", "pages/2_Arquetipos.py"),
-        ("🔧", "Recomendador", "Builds sugeridas según parámetros y filtros.", "pages/3_Recomendador.py"),
-        ("🧬", "META Oculto", "Predice combos nuevos infrarrepresentados con potencial.", "pages/5_META_Oculto.py"),
-        ("🧩", "Deckbuilder", "Optimiza decks de 3 combos con compatibilidad de piezas.", "pages/6_Deckbuilder.py"),
-        ("⚔️", "Matchup 1v1", "Probabilidades cabeza a cabeza entre combos.", "pages/7_Matchup.py"),
-        ("🥊", "Deck Match", "Simula enfrentamientos entre decks completos.", "pages/8_Deck_Match.py"),
+        ("📊", "META Tracker", "Sigue la evolución de combos y winrates con Wilson Score.", _find_page("1_")),
+        ("🧠", "Arquetipos", "Descubre familias estratégicas con scoring real del meta.", _find_page("2_")),
+        ("🔧", "Recomendador", "Builds sugeridas según parámetros y filtros.", _find_page("3_")),
+        ("🧬", "META Oculto", "Predice combos nuevos infrarrepresentados con potencial.", _find_page("5_")),
+        ("🧩", "Deckbuilder", "Optimiza decks de 3 combos con compatibilidad de piezas.", _find_page("6_")),
+        ("⚔️", "Matchup 1v1", "Probabilidades cabeza a cabeza entre combos.", _find_page("7_")),
+        ("🥊", "Deck Match", "Simula enfrentamientos entre decks completos.", _find_page("8_")),
     ]
+    # Filtra páginas que no se encontraron
+    features = [f for f in features if f[3]]
 
     # 3 columnas por fila
     rows = [features[i:i + 3] for i in range(0, len(features), 3)]
@@ -166,16 +185,21 @@ def inicio():
 # ─────────────────────────────────────────────────────────────────────────────
 # Navegación con nombres personalizados
 # ─────────────────────────────────────────────────────────────────────────────
-pages = [
-    st.Page(inicio, title="Inicio", icon="🏠", default=True, url_path="inicio"),
-    st.Page("pages/1_META_Tracker.py", title="META Tracker", icon="📊"),
-    st.Page("pages/2_Arquetipos.py", title="Arquetipos", icon="🧠"),
-    st.Page("pages/3_Recomendador.py", title="Recomendador", icon="🔧"),
-    st.Page("pages/5_META_Oculto.py", title="META Oculto", icon="🧬"),
-    st.Page("pages/6_Deckbuilder.py", title="Deckbuilder", icon="🧩"),
-    st.Page("pages/7_Matchup.py", title="Matchup 1v1", icon="⚔️"),
-    st.Page("pages/8_Deck_Match.py", title="Deck Match", icon="🥊"),
+_PAGE_REGISTRY = [
+    ("1_", "META Tracker", "📊"),
+    ("2_", "Arquetipos", "🧠"),
+    ("3_", "Recomendador", "🔧"),
+    ("5_", "META Oculto", "🧬"),
+    ("6_", "Deckbuilder", "🧩"),
+    ("7_", "Matchup 1v1", "⚔️"),
+    ("8_", "Deck Match", "🥊"),
 ]
+
+pages = [st.Page(inicio, title="Inicio", icon="🏠", default=True, url_path="inicio")]
+for prefix, title, icon in _PAGE_REGISTRY:
+    path = _find_page(prefix)
+    if path:
+        pages.append(st.Page(path, title=title, icon=icon))
 
 pg = st.navigation(pages)
 pg.run()
