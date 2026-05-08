@@ -8,10 +8,13 @@ st.set_page_config(layout="wide")
 
 st.title("🧬 Descubridor de META oculto")
 
-df = load_data()
+@st.cache_data(ttl=3600)
+def get_combos_nuevos():
+    df = load_data()
+    return df, predecir_combos_nuevos(df, muestra=2000)
 
 with st.spinner("Calculando combos no explorados..."):
-    df_nuevos = predecir_combos_nuevos(df, muestra=2000)
+    df, df_nuevos = get_combos_nuevos()
 
 if df_nuevos.empty:
     st.warning("No se encontraron combos nuevos.")
@@ -48,19 +51,19 @@ with col5:
 # ── Aplicar filtros ───────────────────────────────────────────────────────────
 df_fil = df_nuevos.copy()
 
-if blade   != "Todos": df_fil = df_fil[df_fil["Blade"]   == blade]
-if ratchet != "Todos": df_fil = df_fil[df_fil["Ratchet"] == ratchet]
-if bit     != "Todos": df_fil = df_fil[df_fil["Bit"]     == bit]
-if arq_victoria != "Todos": df_fil = df_fil[df_fil["Arquetipo victoria"] == arq_victoria]
-if arq_derrota  != "Todos": df_fil = df_fil[df_fil["Arquetipo derrota"]  == arq_derrota]
+if blade        != "Todos": df_fil = df_fil[df_fil["Blade"]               == blade]
+if ratchet      != "Todos": df_fil = df_fil[df_fil["Ratchet"]             == ratchet]
+if bit          != "Todos": df_fil = df_fil[df_fil["Bit"]                 == bit]
+if arq_victoria != "Todos": df_fil = df_fil[df_fil["Arquetipo victoria"]  == arq_victoria]
+if arq_derrota  != "Todos": df_fil = df_fil[df_fil["Arquetipo derrota"]   == arq_derrota]
 
 # ── Métricas ──────────────────────────────────────────────────────────────────
 st.divider()
 
 m1, m2, m3 = st.columns(3)
-m1.metric("Combos encontrados",    len(df_fil))
-m2.metric("Mejor Wilson Score",    f"{df_fil['Wilson Score Predicho'].max():.4f}" if not df_fil.empty else "—")
-m3.metric("Mejor Win % Predicho",  f"{df_fil['Win % Predicho'].max():.2f}%"       if not df_fil.empty else "—")
+m1.metric("Combos encontrados",   len(df_fil))
+m2.metric("Mejor Wilson Score",   f"{df_fil['Wilson Score Predicho'].max():.4f}" if not df_fil.empty else "—")
+m3.metric("Mejor Win % Predicho", f"{df_fil['Win % Predicho'].max():.2f}%"       if not df_fil.empty else "—")
 
 st.divider()
 
@@ -89,5 +92,4 @@ else:
             "Arquetipo derrota":  st.column_config.TextColumn("Arquetipo derrota"),
         },
     )
-
     st.caption("Combos sin partidas registradas. Wilson Score y arquetipos son estimaciones del modelo.")
