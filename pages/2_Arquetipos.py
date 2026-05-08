@@ -259,21 +259,21 @@ for trace in fig.data:
 
 if color_mode == "Victoria":
 
-    categorias = {
-        "0": "⚫ Alta tendencia a perder",
-        "1": "🔵 Spin finish",
-        "2": "🟠 Burst / Over",
-        "3": "🟢 Xtreme finish"
-    }
+    categorias = [
+        ("1", "🔵 Spin finish"),
+        ("2", "🟠 Burst / Over"),
+        ("3", "🟢 Xtreme finish"),
+        ("0", "⚫ Alta tendencia a perder"),
+    ]
 
 else:
 
-    categorias = {
-        "0": "🟡 Alta tendencia a ganar",
-        "1": "🔵 Pierde por spin",
-        "2": "🟠 Pierde por burst/over",
-        "3": "🟢 Pierde por xtreme"
-    }
+    categorias = [
+        ("1", "🔵 Pierde por spin"),
+        ("2", "🟠 Pierde por burst/over"),
+        ("3", "🟢 Pierde por xtreme"),
+        ("0", "🟡 Alta tendencia a ganar"),
+    ]
 
 presentes = [trace.name for trace in fig.data]
 
