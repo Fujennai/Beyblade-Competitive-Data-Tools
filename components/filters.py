@@ -1,7 +1,7 @@
 import streamlit as st
 
 
-def render_piece_filters(df, key_prefix="filter"):
+def filtros_dependientes(df, key_prefix="filter"):
 
     st.subheader("🔎 Filtros por piezas")
 
