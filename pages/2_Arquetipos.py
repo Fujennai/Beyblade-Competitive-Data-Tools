@@ -245,10 +245,53 @@ fig.update_yaxes(
     autorange="reversed"
 )
 
-# emojis leyenda
+# ----------------------------
+# Leyenda emojis
+# ----------------------------
+
 for trace in fig.data:
 
     trace.name = legend_map[int(trace.name)]
+
+# ----------------------------
+# Forzar leyenda completa
+# ----------------------------
+
+if color_mode == "Victoria":
+
+    categorias = {
+        "0": "⚫ Alta tendencia a perder",
+        "1": "🔵 Spin finish",
+        "2": "🟠 Burst / Over",
+        "3": "🟢 Xtreme finish"
+    }
+
+else:
+
+    categorias = {
+        "0": "🟡 Alta tendencia a ganar",
+        "1": "🔵 Pierde por spin",
+        "2": "🟠 Pierde por burst/over",
+        "3": "🟢 Pierde por xtreme"
+    }
+
+presentes = [trace.name for trace in fig.data]
+
+for key, label in categorias.items():
+
+    if label not in presentes:
+
+        fig.add_scatter(
+            x=[None],
+            y=[None],
+            mode="markers",
+            marker=dict(
+                size=8,
+                color=color_map[key]
+            ),
+            showlegend=True,
+            name=label
+        )
 
 st.plotly_chart(
     fig,
@@ -288,15 +331,9 @@ if color_mode != st.session_state.get("prev_color_mode"):
     st.session_state["prev_color_mode"] = color_mode
     st.rerun()
 
-
-
-
-
 # ----------------------------
-# Filtro tabla
+# Disclaimer tabla
 # ----------------------------
-
-st.subheader("🎯 Filtro de arquetipos (tabla)")
 
 st.info(
     "ℹ️ ¿Echas de menos un filtro?\n\n"
@@ -304,6 +341,12 @@ st.info(
     "el winrate mínimo o seleccionar más piezas "
     "en los filtros de la parte superior."
 )
+
+# ----------------------------
+# Filtro tabla
+# ----------------------------
+
+st.subheader("🎯 Filtro de arquetipos (tabla)")
 
 col1, col2 = st.columns(2)
 
