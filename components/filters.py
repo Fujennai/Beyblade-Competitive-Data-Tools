@@ -7,109 +7,158 @@ def filtros_dependientes(df, key_prefix="filter"):
 
     col1, col2, col3 = st.columns(3)
 
-    df_temp = df.copy()
-
     # ----------------------------
-    # Blade
+    # Estado actual
     # ----------------------------
 
-    blade_counts = (
-        df_temp["Blade"]
-        .value_counts()
-        .sort_index()
-    )
+    blade_sel = st.session_state.get(f"{key_prefix}_blade", "Todos")
+    ratchet_sel = st.session_state.get(f"{key_prefix}_ratchet", "Todos")
+    bit_sel = st.session_state.get(f"{key_prefix}_bit", "Todos")
 
-    blade_map = {
-        f"{blade} ({count})": blade
-        for blade, count in blade_counts.items()
-    }
+    # ==================================================
+    # BLADE OPTIONS
+    # ==================================================
 
-    blade_options = ["Todos"] + list(blade_map.keys())
+    df_blade = df.copy()
+
+    if ratchet_sel != "Todos":
+        df_blade = df_blade[df_blade["Ratchet"] == ratchet_sel]
+
+    if bit_sel != "Todos":
+        df_blade = df_blade[df_blade["Bit"] == bit_sel]
+
+    blade_values = sorted(df_blade["Blade"].dropna().unique())
+
+    blade_options = ["Todos"]
+
+    for blade in blade_values:
+
+        if blade == blade_sel:
+            blade_options.append(blade)
+        else:
+            count = len(df_blade[df_blade["Blade"] == blade])
+            blade_options.append(f"{blade} ({count})")
+
+    # ==================================================
+    # RATCHET OPTIONS
+    # ==================================================
+
+    df_ratchet = df.copy()
+
+    if blade_sel != "Todos":
+        df_ratchet = df_ratchet[df_ratchet["Blade"] == blade_sel]
+
+    if bit_sel != "Todos":
+        df_ratchet = df_ratchet[df_ratchet["Bit"] == bit_sel]
+
+    ratchet_values = sorted(df_ratchet["Ratchet"].dropna().unique())
+
+    ratchet_options = ["Todos"]
+
+    for ratchet in ratchet_values:
+
+        if ratchet == ratchet_sel:
+            ratchet_options.append(ratchet)
+        else:
+            count = len(df_ratchet[df_ratchet["Ratchet"] == ratchet])
+            ratchet_options.append(f"{ratchet} ({count})")
+
+    # ==================================================
+    # BIT OPTIONS
+    # ==================================================
+
+    df_bit = df.copy()
+
+    if blade_sel != "Todos":
+        df_bit = df_bit[df_bit["Blade"] == blade_sel]
+
+    if ratchet_sel != "Todos":
+        df_bit = df_bit[df_bit["Ratchet"] == ratchet_sel]
+
+    bit_values = sorted(df_bit["Bit"].dropna().unique())
+
+    bit_options = ["Todos"]
+
+    for bit in bit_values:
+
+        if bit == bit_sel:
+            bit_options.append(bit)
+        else:
+            count = len(df_bit[df_bit["Bit"] == bit])
+            bit_options.append(f"{bit} ({count})")
+
+    # ==================================================
+    # SELECTBOXES
+    # ==================================================
 
     blade_display = col1.selectbox(
         "Blade",
         blade_options,
-        key=f"{key_prefix}_blade"
+        key=f"{key_prefix}_blade_display"
     )
-
-    blade_sel = None if blade_display == "Todos" else blade_map[blade_display]
-
-    if blade_sel:
-        df_temp = df_temp[df_temp["Blade"] == blade_sel]
-
-    # ----------------------------
-    # Ratchet
-    # ----------------------------
-
-    ratchet_counts = (
-        df_temp["Ratchet"]
-        .value_counts()
-        .sort_index()
-    )
-
-    ratchet_map = {
-        f"{ratchet} ({count})": ratchet
-        for ratchet, count in ratchet_counts.items()
-    }
-
-    ratchet_options = ["Todos"] + list(ratchet_map.keys())
 
     ratchet_display = col2.selectbox(
         "Ratchet",
         ratchet_options,
-        key=f"{key_prefix}_ratchet"
+        key=f"{key_prefix}_ratchet_display"
     )
-
-    ratchet_sel = None if ratchet_display == "Todos" else ratchet_map[ratchet_display]
-
-    if ratchet_sel:
-        df_temp = df_temp[df_temp["Ratchet"] == ratchet_sel]
-
-    # ----------------------------
-    # Bit
-    # ----------------------------
-
-    bit_counts = (
-        df_temp["Bit"]
-        .value_counts()
-        .sort_index()
-    )
-
-    bit_map = {
-        f"{bit} ({count})": bit
-        for bit, count in bit_counts.items()
-    }
-
-    bit_options = ["Todos"] + list(bit_map.keys())
 
     bit_display = col3.selectbox(
         "Bit",
         bit_options,
-        key=f"{key_prefix}_bit"
+        key=f"{key_prefix}_bit_display"
     )
 
-    bit_sel = None if bit_display == "Todos" else bit_map[bit_display]
-
-    if bit_sel:
-        df_temp = df_temp[df_temp["Bit"] == bit_sel]
-
     # ----------------------------
-    # Información dinámica
+    # limpiar "(X)"
     # ----------------------------
 
-    if len(df_temp) == 0:
+    blade_sel = blade_display.split(" (")[0]
+    ratchet_sel = ratchet_display.split(" (")[0]
+    bit_sel = bit_display.split(" (")[0]
+
+    # guardar estado
+    st.session_state[f"{key_prefix}_blade"] = blade_sel
+    st.session_state[f"{key_prefix}_ratchet"] = ratchet_sel
+    st.session_state[f"{key_prefix}_bit"] = bit_sel
+
+    # ==================================================
+    # FILTRADO FINAL
+    # ==================================================
+
+    df_filtered = df.copy()
+
+    if blade_sel != "Todos":
+        df_filtered = df_filtered[df_filtered["Blade"] == blade_sel]
+
+    if ratchet_sel != "Todos":
+        df_filtered = df_filtered[df_filtered["Ratchet"] == ratchet_sel]
+
+    if bit_sel != "Todos":
+        df_filtered = df_filtered[df_filtered["Bit"] == bit_sel]
+
+    # ==================================================
+    # INFO
+    # ==================================================
+
+    if len(df_filtered) == 0:
 
         st.warning("No hay resultados")
 
     else:
 
-        winrate_medio = round(df_temp["Win %"].mean(), 1)
-        partidas_totales = int(df_temp["Partidas"].sum())
+        winrate_medio = round(df_filtered["Win %"].mean(), 1)
+        partidas_totales = int(df_filtered["Partidas"].sum())
 
         st.caption(
-            f"📊 {len(df_temp)} combinaciones | "
+            f"📊 {len(df_filtered)} combinaciones | "
             f"Winrate medio: {winrate_medio}% | "
             f"Partidas totales: {partidas_totales}"
         )
 
-    return df_temp, blade_sel, ratchet_sel, bit_sel
+    return (
+        df_filtered,
+        None if blade_sel == "Todos" else blade_sel,
+        None if ratchet_sel == "Todos" else ratchet_sel,
+        None if bit_sel == "Todos" else bit_sel
+    )
