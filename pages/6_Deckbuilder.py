@@ -3,6 +3,7 @@ import pandas as pd
 
 from data.loader import load_data
 from core.deckbuilder import optimizar_deck
+from core.compatibility import ratchets_validos
 
 st.set_page_config(layout="wide")
 
@@ -32,9 +33,14 @@ for i in range(3):
             key=f"blade_{i}"
         )
     with col2:
+        blade_sel = st.session_state.get(f"blade_{i}", "—")
+        r_opts = ratchets_validos(
+            blade_sel,
+            sorted(df["Ratchet"].unique())
+        ) if blade_sel != "—" else sorted(df["Ratchet"].unique())
         ratchet = st.selectbox(
             f"Ratchet {i+1}",
-            ["—"] + sorted(df["Ratchet"].unique()),
+            ["—"] + r_opts,
             key=f"ratchet_{i}"
         )
     with col3:
@@ -50,16 +56,15 @@ for i in range(3):
     if bit     != "—": bey["Bit"]     = bit
     fijados.append(bey)
 
-    # Detectar cambio y forzar rerun para actualizar el contador
-    prev_key = f"prev_fijado_{i}"
-    if st.session_state.get(prev_key) != bey:
-        st.session_state[prev_key] = bey
-        st.rerun()
-
 st.divider()
 
-# ── Optimización ──────────────────────────────────────────────────────────────
-total_fijadas = sum(len(bey) for bey in fijados)
+# ── Optimización: leer total directamente del session_state ───────────────────
+total_fijadas = sum(
+    (1 if st.session_state.get(f"blade_{i}",   "—") != "—" else 0) +
+    (1 if st.session_state.get(f"ratchet_{i}", "—") != "—" else 0) +
+    (1 if st.session_state.get(f"bit_{i}",     "—") != "—" else 0)
+    for i in range(3)
+)
 
 if total_fijadas < 3:
     st.info(f"🔒 Fija al menos 3 piezas para generar recomendaciones ({total_fijadas}/3 seleccionadas).")

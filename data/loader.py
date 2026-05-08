@@ -1,9 +1,17 @@
 import pandas as pd
 import os
+import streamlit as st
 
+from core.compatibility import filtrar_df
+
+
+@st.cache_data(ttl=3600)
 def load_data():
-    return pd.read_csv("beyblade_stats.csv")
+    df = pd.read_csv("beyblade_stats.csv")
+    return filtrar_df(df)
 
+
+@st.cache_data(ttl=3600)
 def load_history():
     files = sorted(os.listdir("history"))
     dfs = []

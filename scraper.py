@@ -230,6 +230,24 @@ def scrape():
     df = df[(df['Pts Ganados/Combate'] >= 0) & (df['Pts Ganados/Combate'] <= 3)]
     df = df[(df['Pts Cedidos/Combate'] >= 0) & (df['Pts Cedidos/Combate'] <= 3)]
 
+    # ----------------------------
+    # Compatibilidad de piezas
+    # ----------------------------
+
+    BLADE_RATCHET_COMPAT = {
+        "Clock Mirage": lambda r: r.endswith("5"),
+    }
+
+    def es_compatible(row):
+        blade = row["Blade"]
+        if blade in BLADE_RATCHET_COMPAT:
+            return BLADE_RATCHET_COMPAT[blade](row["Ratchet"])
+        return True
+
+    antes = len(df)
+    df = df[df.apply(es_compatible, axis=1)]
+    logging.info(f"Combos incompatibles eliminados: {antes - len(df)}")
+
     logging.info(f"Filas finales: {len(df)}")
 
 
