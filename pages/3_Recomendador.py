@@ -28,6 +28,10 @@ ratchet = None if ratchet == "Todos" else ratchet
 bit     = None if bit     == "Todos" else bit
 
 # ── Resultados ────────────────────────────────────────────────────────────────
+if not any([blade, ratchet, bit]):
+    st.info("🔎 Selecciona al menos una pieza para ver recomendaciones.")
+    st.stop()
+
 with st.spinner("Calculando recomendaciones..."):
     df_rec = recomendar_builds(df, blade, ratchet, bit, top_n=int(top_n))
 
