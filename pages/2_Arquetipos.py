@@ -288,9 +288,15 @@ if color_mode != st.session_state.get("prev_color_mode"):
     st.session_state["prev_color_mode"] = color_mode
     st.rerun()
 
+
+
+
+
 # ----------------------------
-# Disclaimer tabla
+# Filtro tabla
 # ----------------------------
+
+st.subheader("🎯 Filtro de arquetipos (tabla)")
 
 st.info(
     "ℹ️ ¿Echas de menos un filtro?\n\n"
@@ -298,12 +304,6 @@ st.info(
     "el winrate mínimo o seleccionar más piezas "
     "en los filtros de la parte superior."
 )
-
-# ----------------------------
-# Filtro tabla
-# ----------------------------
-
-st.subheader("🎯 Filtro de arquetipos (tabla)")
 
 col1, col2 = st.columns(2)
 
