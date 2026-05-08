@@ -8,16 +8,23 @@ def filtros_dependientes(df, key_prefix="filter"):
 
     if st.button("🔄 Resetear filtros"):
 
+        # valores reales
         st.session_state[f"{key_prefix}_blade"] = "Todos"
         st.session_state[f"{key_prefix}_ratchet"] = "Todos"
         st.session_state[f"{key_prefix}_bit"] = "Todos"
 
+        # widgets visuales
+        st.session_state[f"{key_prefix}_blade_box"] = "Todos"
+        st.session_state[f"{key_prefix}_ratchet_box"] = "Todos"
+        st.session_state[f"{key_prefix}_bit_box"] = "Todos"
+
+        # estados previos
         st.session_state[f"{key_prefix}_prev_blade"] = "Todos"
         st.session_state[f"{key_prefix}_prev_ratchet"] = "Todos"
         st.session_state[f"{key_prefix}_prev_bit"] = "Todos"
 
         st.rerun()
-        
+
     col1, col2, col3 = st.columns(3)
 
     # ==================================================
