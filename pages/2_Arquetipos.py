@@ -49,7 +49,7 @@ def categorizar(valor, partidas, winrate):
     if partidas < 10:
         return -1
 
-    # winrate sospechoso con pocas partidas
+    # winrate sospechoso
     if winrate >= 95 and partidas < 25:
         return -1
 
@@ -131,6 +131,24 @@ df_filtered["Combo"] = (
 )
 
 # ----------------------------
+# Mostrar insuficientes
+# ----------------------------
+
+mostrar_insuficientes = st.checkbox(
+    "Mostrar casos con datos insuficientes",
+    value=False
+)
+
+df_plot = df_filtered.copy()
+
+if not mostrar_insuficientes:
+
+    df_plot = df_plot[
+        (df_plot["tipo_victoria"] != -1) &
+        (df_plot["tipo_derrota"] != -1)
+    ]
+
+# ----------------------------
 # Config color
 # ----------------------------
 
@@ -174,7 +192,7 @@ else:
 st.subheader("🗺️ Mapa de arquetipos")
 
 fig = px.scatter(
-    df_filtered,
+    df_plot,
 
     x="Pts Ganados/Combate",
     y="Pts Cedidos/Combate",
