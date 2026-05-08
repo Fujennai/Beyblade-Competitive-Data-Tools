@@ -23,10 +23,10 @@ def filtrar_df(df):
     Elimina del DataFrame las filas con combinaciones incompatibles.
     Se llama una sola vez en el loader.
     """
-    mask = df.apply(
-        lambda row: row["Ratchet"] not in BLADE_RATCHET_COMPAT.get(
-            row["Blade"], {}
-        ) or BLADE_RATCHET_COMPAT[row["Blade"]](row["Ratchet"]),
-        axis=1
-    )
-    return df[mask]
+    def es_compatible(row):
+        blade = row["Blade"]
+        if blade in BLADE_RATCHET_COMPAT:
+            return BLADE_RATCHET_COMPAT[blade](row["Ratchet"])
+        return True
+
+    return df[df.apply(es_compatible, axis=1)]
