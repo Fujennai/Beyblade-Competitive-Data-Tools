@@ -123,12 +123,19 @@ def optimizar_deck(df, fijados):
         scores = [blade_ws.get(b, ws_mean), ratchet_ws.get(r, ws_mean), bit_ws.get(bt, ws_mean)]
         return round(np.mean(scores), 4)
 
-    # Candidatos por bey respetando lo fijado
+    TOP_N = 10  # máximo de opciones por pieza libre antes del bucle exhaustivo
+
+    def top_n_por_ws(opciones, ws_dict, n):
+        if len(opciones) <= n:
+            return opciones
+        return sorted(opciones, key=lambda x: ws_dict.get(x, ws_mean), reverse=True)[:n]
+
+    # Candidatos por bey respetando lo fijado, limitados a top N si son libres
     candidatos = []
     for bey in fijados:
-        b_opts  = [bey["Blade"]]   if "Blade"   in bey else blades
-        r_opts  = [bey["Ratchet"]] if "Ratchet" in bey else ratchets
-        bt_opts = [bey["Bit"]]     if "Bit"     in bey else bits
+        b_opts  = [bey["Blade"]]   if "Blade"   in bey else top_n_por_ws(blades,   blade_ws,   TOP_N)
+        r_opts  = [bey["Ratchet"]] if "Ratchet" in bey else top_n_por_ws(ratchets, ratchet_ws, TOP_N)
+        bt_opts = [bey["Bit"]]     if "Bit"     in bey else top_n_por_ws(bits,     bit_ws,     TOP_N)
         candidatos.append(list(iproduct(b_opts, r_opts, bt_opts)))
 
     mejor_score = -1
