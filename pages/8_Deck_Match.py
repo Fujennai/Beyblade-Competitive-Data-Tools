@@ -1,214 +1,150 @@
 import streamlit as st
 import pandas as pd
-import plotly.graph_objects as go
+from itertools import permutations
 
 from data.loader import load_data
 from core.matchup import simular_deck_match, orden_optimo
 
 st.set_page_config(layout="wide")
 
-st.title("🥊 Deck Match")
-
-st.caption(
-    "Simula un enfrentamiento entre dos decks de 3 combos mediante "
-    "Monte Carlo. Cada combate se resuelve por Wilson Score relativo "
-    "y los puntos se acumulan hasta llegar a 4."
-)
+st.title("🏟️ Simulador de Deck Match")
 
 df = load_data()
 
-if df.empty:
-    st.warning("No hay datos disponibles.")
+st.caption("Introduce los dos decks y simula quién tiene más probabilidades de ganar. Indica cuál es el tuyo para ver el orden óptimo.")
+
+# ── Helper ────────────────────────────────────────────────────────────────────
+def get_combo_data(df, blade, ratchet, bit, nombre):
+    row = df[(df["Blade"] == blade) & (df["Ratchet"] == ratchet) & (df["Bit"] == bit)]
+    if not row.empty:
+        r = row.iloc[0]
+        return {
+            "nombre":      nombre,
+            "ws":          float(r["Wilson Score"]),
+            "pts_ganados": float(r["Pts Ganados/Combate"]),
+            "pts_cedidos": float(r["Pts Cedidos/Combate"]),
+            "real":        True,
+        }
+    ws_vals, pts_g, pts_c = [], [], []
+    for col, val in [("Blade", blade), ("Ratchet", ratchet), ("Bit", bit)]:
+        s = df[df[col] == val]
+        if not s.empty:
+            ws_vals.append(s["Wilson Score"].mean())
+            pts_g.append(s["Pts Ganados/Combate"].mean())
+            pts_c.append(s["Pts Cedidos/Combate"].mean())
+    return {
+        "nombre":      nombre,
+        "ws":          round(float(sum(ws_vals)/len(ws_vals)), 4) if ws_vals else 0.5,
+        "pts_ganados": round(float(sum(pts_g)/len(pts_g)), 3)    if pts_g   else 1.0,
+        "pts_cedidos": round(float(sum(pts_c)/len(pts_c)), 3)    if pts_c   else 1.0,
+        "real":        False,
+    }
+
+# ── Selección de decks ────────────────────────────────────────────────────────
+col_mio, col_rival = st.columns(2)
+
+deck_mio   = []
+deck_rival = []
+completo   = True
+
+for col, deck_list, prefix, label in [
+    (col_mio,   deck_mio,   "mio",   "🔵 Mi deck"),
+    (col_rival, deck_rival, "rival", "🔴 Deck rival"),
+]:
+    with col:
+        st.subheader(label)
+        for i in range(3):
+            st.markdown(f"**Bey {i+1}**")
+            c1, c2, c3 = st.columns(3)
+            blade   = c1.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key=f"{prefix}_blade_{i}")
+            ratchet = c2.selectbox("Ratchet", ["—"] + sorted(df["Ratchet"].unique()), key=f"{prefix}_ratchet_{i}")
+            bit     = c3.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key=f"{prefix}_bit_{i}")
+            if any(v == "—" for v in [blade, ratchet, bit]):
+                completo = False
+            else:
+                nombre = f"{blade} / {ratchet} / {bit}"
+                deck_list.append(get_combo_data(df, blade, ratchet, bit, nombre))
+
+if not completo or len(deck_mio) < 3 or len(deck_rival) < 3:
+    st.info("🔎 Completa los dos decks para ver la simulación.")
     st.stop()
 
-
-# ── Helpers ──────────────────────────────────────────────────────────────────
-def combo_label(row):
-    return f"{row['Blade']} / {row['Ratchet']} / {row['Bit']}"
-
-
-df = df.copy()
-df["combo"] = df.apply(combo_label, axis=1)
-
-min_partidas = st.slider(
-    "Partidas mínimas por combo",
-    min_value=1,
-    max_value=int(df["Partidas"].max()) if "Partidas" in df.columns else 50,
-    value=10,
-)
-
-df_filt = df[df["Partidas"] >= min_partidas].sort_values(
-    "Wilson Score", ascending=False
-)
-
-if len(df_filt) < 6:
-    st.warning("Necesitas al menos 6 combos disponibles. Baja el slider de partidas.")
-    st.stop()
-
-opciones = df_filt["combo"].tolist()
-
-
-def construir_deck(label, key_prefix, default_offset):
-    st.subheader(label)
-    deck = []
-    for i in range(3):
-        idx_default = (default_offset + i) % len(opciones)
-        sel = st.selectbox(
-            f"Bey {i+1}",
-            opciones,
-            index=idx_default,
-            key=f"{key_prefix}_{i}",
-        )
-        row = df_filt[df_filt["combo"] == sel].iloc[0]
-        deck.append({
-            "nombre": sel,
-            "ws": float(row["Wilson Score"]),
-            "pts_ganados": float(row.get("Pts Ganados/Combate", 1.0)),
-            "pts_cedidos": float(row.get("Pts Cedidos/Combate", 1.0)),
-        })
-    return deck
-
-
-# ── Selección de decks ───────────────────────────────────────────────────────
-col_a, col_vs, col_b = st.columns([5, 1, 5])
-
-with col_a:
-    deck_a = construir_deck("🔵 Tu Deck", "deck_a", 0)
-
-with col_vs:
-    st.markdown(
-        "<div style='text-align:center;font-size:2.5rem;padding-top:8rem'>🥊</div>",
-        unsafe_allow_html=True,
-    )
-
-with col_b:
-    deck_b = construir_deck("🔴 Deck Rival", "deck_b", 3)
-
-# Validar combos únicos dentro de cada deck
-nombres_a = [b["nombre"] for b in deck_a]
-nombres_b = [b["nombre"] for b in deck_b]
-
-if len(set(nombres_a)) < 3 or len(set(nombres_b)) < 3:
-    st.warning("Cada deck debe tener 3 combos distintos.")
-    st.stop()
-
+# ── Simulación global ─────────────────────────────────────────────────────────
 st.divider()
 
-# ── Configuración de simulación ──────────────────────────────────────────────
-with st.expander("⚙️ Configuración de simulación"):
-    n_sims = st.slider(
-        "Nº de simulaciones",
-        min_value=1_000, max_value=20_000, value=5_000, step=1_000,
-    )
-    calcular_orden = st.checkbox(
-        "Calcular orden óptimo (más lento)",
-        value=False,
-        help="Prueba todas las permutaciones de tu deck contra todas las del rival.",
-    )
-
-# ── Simulación principal ─────────────────────────────────────────────────────
 with st.spinner("Simulando deck match..."):
-    p_a = simular_deck_match(deck_a, deck_b, n_sims=n_sims)
+    # Probabilidad global: promedio sobre todos los órdenes de ambos decks
+    todas_probs = []
+    for mp in permutations(range(3)):
+        for rp in permutations(range(3)):
+            mi_orden    = [deck_mio[i]   for i in mp]
+            rival_orden = [deck_rival[i] for i in rp]
+            todas_probs.append(simular_deck_match(mi_orden, rival_orden, n_sims=2000))
 
-p_b = 1 - p_a
+    p_mio   = round(sum(todas_probs) / len(todas_probs), 4)
+    p_rival = round(1 - p_mio, 4)
 
-st.subheader("🎯 Probabilidad de ganar el deck match")
+# ── Resultado visual ──────────────────────────────────────────────────────────
+bar_mio   = int(p_mio * 100)
+bar_rival = int(p_rival * 100)
 
-fig = go.Figure()
-fig.add_trace(go.Bar(
-    y=[""], x=[p_a * 100],
-    name="Tu deck",
-    orientation="h",
-    marker=dict(color="#3498DB"),
-    text=[f"{p_a*100:.1f}%"],
-    textposition="inside",
-    insidetextanchor="middle",
-    textfont=dict(color="white", size=18, family="monospace"),
-))
-fig.add_trace(go.Bar(
-    y=[""], x=[p_b * 100],
-    name="Rival",
-    orientation="h",
-    marker=dict(color="#E74C3C"),
-    text=[f"{p_b*100:.1f}%"],
-    textposition="inside",
-    insidetextanchor="middle",
-    textfont=dict(color="white", size=18, family="monospace"),
-))
-fig.update_layout(
-    barmode="stack",
-    height=120,
-    margin=dict(l=10, r=10, t=10, b=10),
-    showlegend=False,
-    xaxis=dict(range=[0, 100], visible=False),
-    yaxis=dict(visible=False),
-)
-st.plotly_chart(fig, use_container_width=True)
-
-m1, m2, m3 = st.columns(3)
-m1.metric("🔵 P(ganas tú)", f"{p_a*100:.1f}%")
-m2.metric("🔴 P(gana rival)", f"{p_b*100:.1f}%")
-m3.metric("Simulaciones", f"{n_sims:,}".replace(",", "."))
+st.markdown(f"""
+<div style="background:#1a1a2e;border-radius:12px;padding:20px;border:1px solid #2a2a4a;margin-bottom:16px">
+    <div style="text-align:center;font-size:1.1em;color:#aaa;margin-bottom:12px">Probabilidad de ganar el deck match</div>
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="color:#3498DB;font-weight:700;width:80px">Mi deck</span>
+        <div style="flex:1;background:#2a2a4a;border-radius:4px;height:22px;overflow:hidden">
+            <div style="background:#3498DB;width:{bar_mio}%;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px">
+                <span style="color:#fff;font-size:0.85em;font-weight:700">{p_mio*100:.1f}%</span>
+            </div>
+        </div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+        <span style="color:#E74C3C;font-weight:700;width:80px">Rival</span>
+        <div style="flex:1;background:#2a2a4a;border-radius:4px;height:22px;overflow:hidden">
+            <div style="background:#E74C3C;width:{bar_rival}%;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px">
+                <span style="color:#fff;font-size:0.85em;font-weight:700">{p_rival*100:.1f}%</span>
+            </div>
+        </div>
+    </div>
+</div>
+""", unsafe_allow_html=True)
 
 st.divider()
 
-# ── Detalle de los decks ─────────────────────────────────────────────────────
-st.subheader("📋 Detalle de los decks")
+# ── Orden óptimo ──────────────────────────────────────────────────────────────
+st.subheader("📋 Orden óptimo de mi deck")
+st.caption("Ordenado por probabilidad media de ganar contra cualquier orden del rival.")
 
-c1, c2 = st.columns(2)
-with c1:
-    st.markdown("**🔵 Tu deck**")
-    st.dataframe(
-        pd.DataFrame([
-            {"Bey": i+1, "Combo": b["nombre"], "Wilson Score": round(b["ws"], 4),
-             "Pts Ganados": b["pts_ganados"]}
-            for i, b in enumerate(deck_a)
-        ]),
-        hide_index=True, use_container_width=True,
+with st.spinner("Calculando orden óptimo..."):
+    ranking = orden_optimo(deck_mio, deck_rival, n_sims=2000)
+
+for rank_idx, (perm, orden, prob) in enumerate(ranking):
+    color_rank = "#2ECC71" if rank_idx == 0 else "#888"
+    tag = " 👑 Óptimo" if rank_idx == 0 else ""
+
+    beys_html = "".join([
+        f'<div style="font-size:0.85em;color:#aaa;margin:2px 0">'
+        f'<span style="color:#666">Bey {j+1}</span> &nbsp; '
+        f'<span style="color:#fff;font-weight:600">{b["nombre"]}</span>'
+        f'{"<span style=\'color:#888;font-size:0.8em\'> · estimado</span>" if not b["real"] else ""}'
+        f'</div>'
+        for j, b in enumerate(orden)
+    ])
+
+    card = (
+        f'<div style="background:#1a1a2e;border-radius:10px;padding:14px 16px;'
+        f'border:1px solid {"#2ECC71" if rank_idx == 0 else "#2a2a4a"};margin-bottom:8px">'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
+        f'<span style="color:{color_rank};font-weight:700">#{rank_idx+1}{tag}</span>'
+        f'<span style="color:{color_rank};font-family:monospace;font-weight:700">{prob*100:.1f}% de victorias</span>'
+        f'</div>'
+        f'{beys_html}'
+        f'</div>'
     )
-with c2:
-    st.markdown("**🔴 Deck rival**")
-    st.dataframe(
-        pd.DataFrame([
-            {"Bey": i+1, "Combo": b["nombre"], "Wilson Score": round(b["ws"], 4),
-             "Pts Ganados": b["pts_ganados"]}
-            for i, b in enumerate(deck_b)
-        ]),
-        hide_index=True, use_container_width=True,
-    )
+    st.markdown(card, unsafe_allow_html=True)
 
-# ── Orden óptimo (opcional) ──────────────────────────────────────────────────
-if calcular_orden:
-    st.divider()
-    st.subheader("🧮 Orden óptimo de tu deck")
-
-    with st.spinner("Probando permutaciones..."):
-        resultados = orden_optimo(deck_a, deck_b, n_sims=max(1_000, n_sims // 5))
-
-    rows = []
-    for perm, deck_orden, prob in resultados:
-        rows.append({
-            "Orden": " → ".join(b["nombre"].split(" / ")[0] for b in deck_orden),
-            "P(victoria)": f"{prob*100:.1f}%",
-            "_sort": prob,
-        })
-    df_orden = pd.DataFrame(rows).sort_values("_sort", ascending=False).drop(columns="_sort")
-    st.dataframe(df_orden, hide_index=True, use_container_width=True)
-
-    mejor = resultados[0]
-    st.success(
-        f"🏆 Mejor orden: **{' → '.join(b['nombre'] for b in mejor[1])}** "
-        f"con {mejor[2]*100:.1f}% de probabilidad media."
-    )
-
-with st.expander("ℹ️ ¿Cómo funciona la simulación?"):
-    st.markdown(
-        """
-- Se enfrentan los Bey 1 de cada deck. El ganador suma sus **Pts Ganados**.
-- El perdedor cambia al siguiente Bey de su deck; el ganador sigue.
-- El primero en llegar a **4 puntos** gana el deck match.
-- La probabilidad de cada combate se calcula con **Wilson Score relativo**:
-  `P(A gana) = WS(A) / (WS(A) + WS(B))`.
-- Se repite el proceso N veces (Monte Carlo) para estimar la probabilidad final.
-        """
-    )
+st.caption(
+    "La probabilidad se calcula promediando contra todos los posibles órdenes del rival. "
+    "El bey 3 puede no jugarse si se alcanzan 4 puntos antes."
+)
