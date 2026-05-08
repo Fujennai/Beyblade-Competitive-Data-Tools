@@ -8,7 +8,7 @@ st.title("🔧 Recomendador de Builds")
 
 df = load_data()
 
-# ── Filtros ────────────────────────────────────────────────────────────────────
+# ── Filtros ───────────────────────────────────────────────────────────────────
 col1, col2, col3, col4 = st.columns([2, 2, 2, 1])
 
 with col1:
@@ -27,21 +27,20 @@ blade   = None if blade   == "Todos" else blade
 ratchet = None if ratchet == "Todos" else ratchet
 bit     = None if bit     == "Todos" else bit
 
-if not any([blade, ratchet, bit]):
-    st.warning("⚠️ Fija al menos una pieza para obtener resultados más relevantes.")
-
-# ── Generación ────────────────────────────────────────────────────────────────
+# ── Resultados ────────────────────────────────────────────────────────────────
 with st.spinner("Calculando recomendaciones..."):
     df_rec = recomendar_builds(df, blade, ratchet, bit, top_n=int(top_n))
 
-# ── Resultados ────────────────────────────────────────────────────────────────
 if df_rec.empty:
     st.warning("No se encontraron combinaciones para los filtros seleccionados.")
 else:
+    n_reales    = len(df_rec[df_rec["Tipo"] == "✅ Real"])
+    n_predichos = len(df_rec[df_rec["Tipo"] == "🔮 Predicho"])
+
     m1, m2, m3 = st.columns(3)
-    m1.metric("Mejor Wilson Score", f"{df_rec['Wilson Score Predicho'].max():.4f}")
-    m2.metric("Promedio Top N",     f"{df_rec['Wilson Score Predicho'].mean():.4f}")
-    m3.metric("Confianza Alta",     len(df_rec[df_rec["Confianza"] == "🟢 Alta"]))
+    m1.metric("Mejor Wilson Score",  f"{df_rec['Wilson Score Predicho'].max():.4f}")
+    m2.metric("Combos con datos reales", n_reales)
+    m3.metric("Combos predichos (sin datos)", n_predichos)
 
     st.divider()
 
@@ -51,20 +50,17 @@ else:
         hide_index=True,
         column_config={
             "Wilson Score Predicho": st.column_config.ProgressColumn(
-                "Wilson Score Predicho",
+                "Wilson Score",
                 format="%.4f",
                 min_value=0,
                 max_value=1,
             ),
-            "Confianza": st.column_config.TextColumn("Confianza"),
-            "Referencia más cercana": st.column_config.TextColumn(
-                "Referencia más cercana", width="large"
-            ),
+            "Partidas": st.column_config.NumberColumn("Partidas"),
+            "Tipo": st.column_config.TextColumn("Tipo"),
         },
     )
 
     st.caption(
-        "🔍 Confianza basada en el rendimiento histórico de cada pieza: "
-        "🟢 Alta · 🟡 Media · 🔴 Baja. "
-        "Referencia más cercana: build real con Wilson Score similar."
+        "✅ Real: combo con partidas registradas. "
+        "🔮 Predicho: combo sin datos reales, estimado a partir de piezas del mismo arquetipo."
     )
