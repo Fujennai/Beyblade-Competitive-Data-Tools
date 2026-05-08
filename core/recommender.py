@@ -1,65 +1,29 @@
 """
 core/recommender.py
 -------------------
-Modelo predictivo con Gradient Boosting para recomendar builds de Beyblade
-que NO existen en el dataset, estimando su Wilson Score esperado.
+Usa el modelo compartido (model.pkl) para recomendar
+builds NO existentes en el dataset.
 """
 
-import pandas as pd
 import numpy as np
+import pandas as pd
 from itertools import product
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.preprocessing import LabelEncoder
 
-# ── Caché de modelo entrenado ─────────────────────────────────────────────────
-_model_cache: dict = {}
+from core.model_loader import cargar_modelo
 
 
-def _entrenar_modelo(df: pd.DataFrame):
-    cache_key = id(df)
-    if cache_key in _model_cache:
-        return _model_cache[cache_key]
-
-    df = df.copy()
-
-    encoders = {}
-    for col in ["Blade", "Ratchet", "Bit"]:
-        le = LabelEncoder()
-        df[col + "_enc"] = le.fit_transform(df[col].astype(str))
-        encoders[col] = le
-
-    feature_cols = ["Blade_enc", "Ratchet_enc", "Bit_enc"]
-    X = df[feature_cols].values
-    y = df["Wilson Score"].values
-
-    model = GradientBoostingRegressor(
-        n_estimators=300,
-        learning_rate=0.05,
-        max_depth=4,
-        subsample=0.8,
-        random_state=42,
-    )
-    model.fit(X, y)
-
-    _model_cache[cache_key] = (model, encoders)
-    return model, encoders
-
-
-def _combos_no_vistos(df: pd.DataFrame, blade=None, ratchet=None, bit=None) -> pd.DataFrame:
+def _combos_no_vistos(df, blade=None, ratchet=None, bit=None):
     blades   = [blade]   if blade   else sorted(df["Blade"].unique())
     ratchets = [ratchet] if ratchet else sorted(df["Ratchet"].unique())
     bits     = [bit]     if bit     else sorted(df["Bit"].unique())
 
-    existing = set(
-        zip(df["Blade"].astype(str), df["Ratchet"].astype(str), df["Bit"].astype(str))
-    )
+    existing = set(zip(df["Blade"].astype(str), df["Ratchet"].astype(str), df["Bit"].astype(str)))
 
     rows = [
         (b, r, bt)
         for b, r, bt in product(blades, ratchets, bits)
         if (str(b), str(r), str(bt)) not in existing
     ]
-
     return pd.DataFrame(rows, columns=["Blade", "Ratchet", "Bit"])
 
 
@@ -67,67 +31,64 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20):
     if df.empty or "Wilson Score" not in df.columns:
         return pd.DataFrame()
 
-    model, encoders = _entrenar_modelo(df)
+    p        = cargar_modelo()
+    model    = p["model"]
+    encoders = p["encoders"]
+    blade_dict   = p["blade_dict"]
+    ratchet_dict = p["ratchet_dict"]
+    bit_dict     = p["bit_dict"]
+    ws_mean      = p["ws_mean"]
 
     df_nuevas = _combos_no_vistos(df, blade, ratchet, bit)
-
     if df_nuevas.empty:
         return pd.DataFrame()
 
     df_enc = df_nuevas.copy()
-    valid_mask = pd.Series([True] * len(df_enc), index=df_enc.index)
 
+    # Filtrar piezas no vistas por el encoder
+    valid = pd.Series([True] * len(df_enc), index=df_enc.index)
     for col in ["Blade", "Ratchet", "Bit"]:
-        le = encoders[col]
-        known = set(le.classes_)
-        valid_mask &= df_enc[col].isin(known)
-
-    df_enc = df_enc[valid_mask].copy()
-
+        valid &= df_enc[col].isin(set(encoders[col].classes_))
+    df_enc = df_enc[valid].copy()
     if df_enc.empty:
         return pd.DataFrame()
 
+    # Encoding
     for col in ["Blade", "Ratchet", "Bit"]:
-        le = encoders[col]
-        df_enc[col + "_enc"] = le.transform(df_enc[col].astype(str))
+        df_enc[col + "_enc"] = encoders[col].transform(df_enc[col].astype(str))
 
-    X_pred = df_enc[["Blade_enc", "Ratchet_enc", "Bit_enc"]].values.astype(float)
-    y_pred = model.predict(X_pred)
-    df_enc["Wilson Score Predicho"] = np.round(y_pred, 4)
+    df_enc["Partidas_log"]  = np.log1p(50)  # volumen neutro para combos nuevos
+    df_enc["Blade_score"]   = df_enc["Blade"].map(blade_dict).fillna(ws_mean)
+    df_enc["Ratchet_score"] = df_enc["Ratchet"].map(ratchet_dict).fillna(ws_mean)
+    df_enc["Bit_score"]     = df_enc["Bit"].map(bit_dict).fillna(ws_mean)
 
-    # Confianza basada en Wilson Score histórico promedio de cada pieza
-    ws_blade   = df.groupby("Blade")["Wilson Score"].mean().to_dict()
-    ws_ratchet = df.groupby("Ratchet")["Wilson Score"].mean().to_dict()
-    ws_bit     = df.groupby("Bit")["Wilson Score"].mean().to_dict()
+    X = df_enc[p["feature_cols"]].values.astype(float)
+    df_enc["Wilson Score Predicho"] = np.round(model.predict(X), 4)
 
-    ws_global_mean = df["Wilson Score"].mean()
-    umbral_alto  = ws_global_mean + 0.05
-    umbral_medio = ws_global_mean - 0.05
-
+    # Confianza por Wilson Score histórico de cada pieza
     def confianza(row):
-        ws_medio = (
-            ws_blade.get(row["Blade"], ws_global_mean)
-            + ws_ratchet.get(row["Ratchet"], ws_global_mean)
-            + ws_bit.get(row["Bit"], ws_global_mean)
+        ws = (
+            blade_dict.get(row["Blade"], ws_mean)
+            + ratchet_dict.get(row["Ratchet"], ws_mean)
+            + bit_dict.get(row["Bit"], ws_mean)
         ) / 3
-        if ws_medio >= umbral_alto:
+        if ws >= ws_mean + 0.05:
             return "🟢 Alta"
-        elif ws_medio >= umbral_medio:
+        elif ws >= ws_mean - 0.05:
             return "🟡 Media"
         else:
             return "🔴 Baja"
 
     df_enc["Confianza"] = df_enc.apply(confianza, axis=1)
 
-    # Referencia más cercana en el dataset
+    # Referencia más cercana
     ws_reales = df["Wilson Score"].values
-
-    def referencia_cercana(ws_pred):
+    def ref_cercana(ws_pred):
         idx = np.argmin(np.abs(ws_reales - ws_pred))
-        row = df.iloc[idx]
-        return f"{row['Blade']} / {row['Ratchet']} / {row['Bit']} ({row['Wilson Score']:.4f})"
+        r = df.iloc[idx]
+        return f"{r['Blade']} / {r['Ratchet']} / {r['Bit']} ({r['Wilson Score']:.4f})"
 
-    df_enc["Referencia más cercana"] = df_enc["Wilson Score Predicho"].apply(referencia_cercana)
+    df_enc["Referencia más cercana"] = df_enc["Wilson Score Predicho"].apply(ref_cercana)
 
     return (
         df_enc[["Blade", "Ratchet", "Bit", "Wilson Score Predicho", "Confianza", "Referencia más cercana"]]

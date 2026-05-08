@@ -4,10 +4,10 @@ on:
   schedule:
     - cron: '0 3 * * 1'
   workflow_dispatch:
-  
+
 permissions:
   contents: write
-  
+
 jobs:
   run-scraper:
     runs-on: ubuntu-latest
@@ -29,10 +29,13 @@ jobs:
       - name: Run scraper
         run: python scraper.py
 
+      - name: Train recommender model
+        run: python train_model.py
+
       - name: Commit results
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-          git add *.csv history/*.csv
-          git commit -m "Update scraped data" || echo "No changes"
+          git add *.csv history/*.csv model.pkl
+          git commit -m "Update scraped data and model" || echo "No changes"
           git push
