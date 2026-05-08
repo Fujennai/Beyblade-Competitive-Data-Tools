@@ -25,7 +25,7 @@ with col1:
         "Mínimo de partidas",
         min_value=0,
         max_value=int(df["Partidas"].max()),
-        value=0
+        value=10
     )
 
 with col2:
@@ -287,6 +287,17 @@ if color_mode != st.session_state.get("prev_color_mode"):
 
     st.session_state["prev_color_mode"] = color_mode
     st.rerun()
+
+# ----------------------------
+# Disclaimer tabla
+# ----------------------------
+
+st.info(
+    "ℹ️ ¿Echas de menos un filtro?\n\n"
+    "Prueba a ajustar el mínimo de partidas, "
+    "el winrate mínimo o seleccionar más piezas "
+    "en los filtros de la parte superior."
+)
 
 # ----------------------------
 # Filtro tabla
