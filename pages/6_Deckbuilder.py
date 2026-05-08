@@ -128,3 +128,62 @@ st.dataframe(
 st.caption(
     "🔒 Pieza elegida por ti · ✨ Sugerida por el sistema"
 )
+
+st.divider()
+
+# ── Alternativas ──────────────────────────────────────────────────────────────
+st.subheader("💬 Alternativas")
+
+from core.recommender import recomendar_builds
+
+piezas_usadas = {
+    "Blade":   [b["Blade"]   for b in deck],
+    "Ratchet": [b["Ratchet"] for b in deck],
+    "Bit":     [b["Bit"]     for b in deck],
+}
+
+for i, bey in enumerate(deck):
+    piezas_libres = {k for k in ["Blade", "Ratchet", "Bit"] if not bey[f"{k} fijada" if k == "Blade" else f"{k} fijado"]}
+    if not piezas_libres:
+        continue
+
+    st.markdown(f"**Bey {bey['Bey']} — {bey['Blade']} / {bey['Ratchet']} / {bey['Bit']}**")
+
+    # Obtener alternativas manteniendo las piezas fijadas de este bey
+    blade_fijo   = bey["Blade"]   if bey["Blade fijada"]   else None
+    ratchet_fijo = bey["Ratchet"] if bey["Ratchet fijado"] else None
+    bit_fijo     = bey["Bit"]     if bey["Bit fijado"]     else None
+
+    df_alt = recomendar_builds(df, blade_fijo, ratchet_fijo, bit_fijo, top_n=50)
+
+    # Excluir el combo ya recomendado y piezas usadas en otros beys
+    otras_blades   = [b["Blade"]   for j, b in enumerate(deck) if j != i]
+    otras_ratchets = [b["Ratchet"] for j, b in enumerate(deck) if j != i]
+    otros_bits     = [b["Bit"]     for j, b in enumerate(deck) if j != i]
+
+    df_alt = df_alt[
+        ~df_alt["Blade"].isin(otras_blades) &
+        ~df_alt["Ratchet"].isin(otras_ratchets) &
+        ~df_alt["Bit"].isin(otros_bits) &
+        ~((df_alt["Blade"] == bey["Blade"]) &
+          (df_alt["Ratchet"] == bey["Ratchet"]) &
+          (df_alt["Bit"] == bey["Bit"]))
+    ].head(3)
+
+    if df_alt.empty:
+        st.caption("No hay alternativas disponibles.")
+    else:
+        for _, alt in df_alt.iterrows():
+            diferencias = []
+            if alt["Blade"]   != bey["Blade"]:   diferencias.append(f"Blade → **{alt['Blade']}**")
+            if alt["Ratchet"] != bey["Ratchet"]: diferencias.append(f"Ratchet → **{alt['Ratchet']}**")
+            if alt["Bit"]     != bey["Bit"]:     diferencias.append(f"Bit → **{alt['Bit']}**")
+            cambios = " · ".join(diferencias)
+            delta = alt["Wilson Score Predicho"] - bey["Wilson Score"]
+            signo = "+" if delta >= 0 else ""
+            delta = alt["Wilson Score Predicho"] - bey["Wilson Score"]
+            signo = "+" if delta >= 0 else ""
+            st.markdown(
+                f"- {alt['Blade']} / {alt['Ratchet']} / {alt['Bit']} &nbsp; "
+                f"({cambios}) &nbsp; `{signo}{delta:.4f}`"
+            )diría q
