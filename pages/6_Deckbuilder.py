@@ -178,27 +178,33 @@ for i, bey in enumerate(deck):
     if df_alt.empty:
         st.caption("No hay alternativas disponibles.")
     else:
-        for _, alt in df_alt.iterrows():
-            diferencias = []
+        alt_cols = st.columns(len(df_alt))
+        for col_idx, (_, alt) in enumerate(df_alt.iterrows()):
             alt_blade   = alt["Blade"]
             alt_ratchet = alt["Ratchet"]
             alt_bit     = alt["Bit"]
-            if alt_blade   != bey_blade:    diferencias.append(f"Blade → **{alt_blade}**")
-            if alt_ratchet != bey_ratchet:  diferencias.append(f"Ratchet → **{alt_ratchet}**")
-            if alt_bit     != bey_bit:      diferencias.append(f"Bit → **{alt_bit}**")
-            cambios = " · ".join(diferencias)
             delta = alt["Wilson Score Predicho"] - bey["Wilson Score"]
             signo = "+" if delta >= 0 else ""
             if delta > 0:
-                color = "#2ECC71"
+                delta_color = "#2ECC71"
             elif delta < 0:
-                color = "#E74C3C"
+                delta_color = "#E74C3C"
             else:
-                color = "#888888"
-            delta_str = f"{signo}{delta:.4f}"
-            st.markdown(
-                f"- {alt_blade} / {alt_ratchet} / {alt_bit} &nbsp; "
-                f"({cambios}) &nbsp; "
-                f'<span style="color:{color};font-family:monospace">{delta_str}</span>',
-                unsafe_allow_html=True
+                delta_color = "#888888"
+
+            def piece_html(label, val, ref):
+                c = "#F39C12" if val != ref else "#cccccc"
+                return f'<span style="color:{c};font-weight:600">{val}</span> <span style="color:#666;font-size:0.78em">{label}</span>'
+
+            card = (
+                '<div style="background:#1a1a2e;border-radius:10px;padding:14px 16px;border:1px solid #2a2a4a;margin-bottom:4px">' +
+                '<div style="line-height:2em;margin-bottom:8px">' +
+                piece_html("Blade",   alt_blade,   bey_blade)   + '<br>' +
+                piece_html("Ratchet", alt_ratchet, bey_ratchet) + '<br>' +
+                piece_html("Bit",     alt_bit,     bey_bit) +
+                '</div>' +
+                f'<div style="font-size:1.1em;font-family:monospace;font-weight:700;color:{delta_color}">{signo}{delta:.4f}</div>' +
+                '</div>'
             )
+            with alt_cols[col_idx]:
+                st.markdown(card, unsafe_allow_html=True)
