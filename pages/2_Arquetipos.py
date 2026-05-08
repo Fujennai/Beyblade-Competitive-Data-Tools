@@ -25,7 +25,7 @@ with col1:
         "Mínimo de partidas",
         min_value=0,
         max_value=int(df["Partidas"].max()),
-        value=0
+        value=10
     )
 
 with col2:
@@ -40,10 +40,18 @@ df = df[df["Partidas"] >= min_partidas]
 df = df[df["Win %"] >= min_winrate]
 
 # ----------------------------
-# Clasificación
+# Clasificación robusta
 # ----------------------------
 
-def categorizar(valor):
+def categorizar(valor, partidas, winrate):
+
+    # poca evidencia
+    if partidas < 10:
+        return -1
+
+    # winrate sospechoso con pocas partidas
+    if winrate >= 95 and partidas < 25:
+        return -1
 
     if valor < 0.5:
         return 0
@@ -58,14 +66,30 @@ def categorizar(valor):
         return 3
 
 
-df["tipo_victoria"] = df["Pts Ganados/Combate"].apply(categorizar)
-df["tipo_derrota"] = df["Pts Cedidos/Combate"].apply(categorizar)
+df["tipo_victoria"] = df.apply(
+    lambda row: categorizar(
+        row["Pts Ganados/Combate"],
+        row["Partidas"],
+        row["Win %"]
+    ),
+    axis=1
+)
+
+df["tipo_derrota"] = df.apply(
+    lambda row: categorizar(
+        row["Pts Cedidos/Combate"],
+        row["Partidas"],
+        row["Win %"]
+    ),
+    axis=1
+)
 
 # ----------------------------
 # Labels
 # ----------------------------
 
 map_victoria = {
+    -1: "⚪ Datos insuficientes",
     0: "⚫ Alta tendencia a perder",
     1: "🔵 Spin finish",
     2: "🟠 Burst / Over",
@@ -73,6 +97,7 @@ map_victoria = {
 }
 
 map_derrota = {
+    -1: "⚪ Datos insuficientes",
     0: "🟡 Alta tendencia a ganar",
     1: "🔵 Pierde por spin",
     2: "🟠 Pierde por burst/over",
@@ -106,7 +131,7 @@ df_filtered["Combo"] = (
 )
 
 # ----------------------------
-# Config color (ANTES gráfico)
+# Config color
 # ----------------------------
 
 color_mode = st.session_state.get(
@@ -119,6 +144,7 @@ if color_mode == "Victoria":
     color_col = "tipo_victoria_str"
 
     color_map = {
+        "-1": "#AAAAAA",
         "0": "#888888",
         "1": "#6EC1E4",
         "2": "#F39C12",
@@ -132,6 +158,7 @@ else:
     color_col = "tipo_derrota_str"
 
     color_map = {
+        "-1": "#AAAAAA",
         "0": "#F4D03F",
         "1": "#6EC1E4",
         "2": "#F39C12",
@@ -159,24 +186,20 @@ fig = px.scatter(
 
     hover_data={
 
-        # ocultar columnas redundantes
         "Combo": False,
         "Blade": False,
         "Ratchet": False,
         "Bit": False,
 
-        # métricas útiles
         "Win %": ":.1f",
         "Partidas": True,
 
         "Pts Ganados/Combate": ":.2f",
         "Pts Cedidos/Combate": ":.2f",
 
-        # arquetipos
         "Arquetipo de victoria": True,
         "Arquetipo de derrota": True,
 
-        # ocultar columnas técnicas
         "tipo_victoria": False,
         "tipo_derrota": False,
         "tipo_victoria_str": False,
@@ -211,7 +234,7 @@ st.plotly_chart(
 )
 
 # ----------------------------
-# Selector color (DEBAJO)
+# Selector color
 # ----------------------------
 
 st.subheader("🎨 Color del gráfico")
