@@ -140,6 +140,22 @@ def filtros_dependientes(df, key_prefix="filter"):
     st.session_state[f"{key_prefix}_ratchet"] = ratchet_sel
     st.session_state[f"{key_prefix}_bit"] = bit_sel
 
+    # detectar cambios
+    changed = (
+        blade_sel != st.session_state.get(f"{key_prefix}_prev_blade")
+        or ratchet_sel != st.session_state.get(f"{key_prefix}_prev_ratchet")
+        or bit_sel != st.session_state.get(f"{key_prefix}_prev_bit")
+    )
+
+    # guardar estados previos
+    st.session_state[f"{key_prefix}_prev_blade"] = blade_sel
+    st.session_state[f"{key_prefix}_prev_ratchet"] = ratchet_sel
+    st.session_state[f"{key_prefix}_prev_bit"] = bit_sel
+
+    # rerun inmediato
+    if changed:
+        st.rerun()
+
     # ==================================================
     # FILTRADO FINAL
     # ==================================================
