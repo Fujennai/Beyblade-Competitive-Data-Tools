@@ -82,7 +82,7 @@ map_derrota = {
 df["Arquetipo de victoria"] = df["tipo_victoria"].map(map_victoria)
 df["Arquetipo de derrota"] = df["tipo_derrota"].map(map_derrota)
 
-# Para colores
+# columnas string para colores
 df["tipo_victoria_str"] = df["tipo_victoria"].astype(str)
 df["tipo_derrota_str"] = df["tipo_derrota"].astype(str)
 
@@ -105,6 +105,40 @@ df_filtered["Combo"] = (
     df_filtered["Bit"]
 )
 
+# ----------------------------
+# Config color (ANTES gráfico)
+# ----------------------------
+
+color_mode = st.session_state.get(
+    "arquetipo_color_mode",
+    "Victoria"
+)
+
+if color_mode == "Victoria":
+
+    color_col = "tipo_victoria_str"
+
+    color_map = {
+        "0": "#888888",
+        "1": "#6EC1E4",
+        "2": "#F39C12",
+        "3": "#2ECC71"
+    }
+
+    legend_map = map_victoria
+
+else:
+
+    color_col = "tipo_derrota_str"
+
+    color_map = {
+        "0": "#F4D03F",
+        "1": "#6EC1E4",
+        "2": "#F39C12",
+        "3": "#2ECC71"
+    }
+
+    legend_map = map_derrota
 
 # ----------------------------
 # Gráfico
@@ -166,7 +200,7 @@ fig.update_yaxes(
     autorange="reversed"
 )
 
-# leyenda con emojis
+# emojis leyenda
 for trace in fig.data:
 
     trace.name = legend_map[int(trace.name)]
@@ -177,41 +211,22 @@ st.plotly_chart(
 )
 
 # ----------------------------
-# Selector color
+# Selector color (DEBAJO)
 # ----------------------------
 
 st.subheader("🎨 Color del gráfico")
 
 color_mode = st.radio(
     "Colorear por:",
-    ["Victoria", "Derrota"]
+    ["Victoria", "Derrota"],
+    index=0 if color_mode == "Victoria" else 1,
+    key="arquetipo_color_mode"
 )
 
-if color_mode == "Victoria":
+if color_mode != st.session_state.get("prev_color_mode"):
 
-    color_col = "tipo_victoria_str"
-
-    color_map = {
-        "0": "#888888",
-        "1": "#6EC1E4",
-        "2": "#F39C12",
-        "3": "#2ECC71"
-    }
-
-    legend_map = map_victoria
-
-else:
-
-    color_col = "tipo_derrota_str"
-
-    color_map = {
-        "0": "#F4D03F",
-        "1": "#6EC1E4",
-        "2": "#F39C12",
-        "3": "#2ECC71"
-    }
-
-    legend_map = map_derrota
+    st.session_state["prev_color_mode"] = color_mode
+    st.rerun()
 
 # ----------------------------
 # Filtro tabla
@@ -254,7 +269,7 @@ if derrota_sel != "Todos":
     ]
 
 # ----------------------------
-# FIX WINRATE
+# Fix winrate
 # ----------------------------
 
 df_table["Winrate_bar"] = (
@@ -272,7 +287,8 @@ df_table = df_table.drop(
         "tipo_victoria",
         "tipo_derrota",
         "tipo_victoria_str",
-        "tipo_derrota_str"
+        "tipo_derrota_str",
+        "Combo"
     ],
     errors="ignore"
 )
