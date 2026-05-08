@@ -115,10 +115,23 @@ def predecir_combos_nuevos(df, muestra=2000):
     df_nuevos["Win % Predicho"]        = np.round(df_nuevos["Wilson Score Predicho"] * 100, 2)
 
     # Arquetipos esperados
-    arq = df_nuevos.apply(
-        lambda r: _arquetipos_esperados(df, r["Blade"], r["Ratchet"], r["Bit"]),
-        axis=1
-    )
+    # Si el CSV ya tiene arquetipos precalculados, usarlos como referencia
+    tiene_arquetipos = "Arquetipo victoria" in df.columns
+
+    def get_arquetipos(row):
+        if tiene_arquetipos:
+            # Buscar combos reales con esa Blade para heredar su arquetipo
+            subset = df[df["Blade"] == row["Blade"]]
+            if not subset.empty:
+                tv = subset["Arquetipo victoria"].mode()
+                td = subset["Arquetipo derrota"].mode()
+                return (
+                    tv.iloc[0] if not tv.empty else "⚪ Datos insuficientes",
+                    td.iloc[0] if not td.empty else "⚪ Datos insuficientes"
+                )
+        return _arquetipos_esperados(df, row["Blade"], row["Ratchet"], row["Bit"])
+
+    arq = df_nuevos.apply(get_arquetipos, axis=1)
     df_nuevos["Arquetipo victoria"] = arq.apply(lambda x: x[0])
     df_nuevos["Arquetipo derrota"]  = arq.apply(lambda x: x[1])
 

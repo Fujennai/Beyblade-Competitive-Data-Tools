@@ -53,6 +53,15 @@ def _categorizar(valor, partidas, winrate):
 
 def _asignar_arquetipos(df):
     df = df.copy()
+    # Usar columnas precalculadas del CSV si existen
+    if "Arquetipo victoria" in df.columns and "Arquetipo derrota" in df.columns:
+        # Reconstruir tipo_victoria/tipo_derrota numérico para los filtros internos
+        inv_victoria = {v: k for k, v in MAP_VICTORIA.items()}
+        inv_derrota  = {v: k for k, v in MAP_DERROTA.items()}
+        df["tipo_victoria"] = df["Arquetipo victoria"].map(inv_victoria).fillna(-1).astype(int)
+        df["tipo_derrota"]  = df["Arquetipo derrota"].map(inv_derrota).fillna(-1).astype(int)
+        return df
+    # Si no existen, calcular
     df["tipo_victoria"] = df.apply(
         lambda r: _categorizar(r["Pts Ganados/Combate"], r["Partidas"], r["Win %"]), axis=1
     )

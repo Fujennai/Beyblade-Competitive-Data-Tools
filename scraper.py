@@ -232,6 +232,46 @@ def scrape():
 
     logging.info(f"Filas finales: {len(df)}")
 
+
+    # ----------------------------
+    # Arquetipos
+    # ----------------------------
+
+    def categorizar(valor, partidas, winrate):
+        if partidas < 10:
+            return -1
+        if winrate >= 95 and partidas < 25:
+            return -1
+        if valor < 0.5:   return 0
+        elif valor < 1.5: return 1
+        elif valor < 2.5: return 2
+        else:             return 3
+
+    map_victoria = {
+        -1: "⚪ Datos insuficientes",
+         0: "⚫ Alta tendencia a perder",
+         1: "🔵 Spin finish",
+         2: "🟠 Burst / Over",
+         3: "🟢 Xtreme finish"
+    }
+    map_derrota = {
+        -1: "⚪ Datos insuficientes",
+         0: "🟡 Alta tendencia a ganar",
+         1: "🔵 Pierde por spin",
+         2: "🟠 Pierde por burst/over",
+         3: "🟢 Pierde por xtreme"
+    }
+
+    df["tipo_victoria"] = df.apply(
+        lambda r: categorizar(r["Pts Ganados/Combate"], r["Partidas"], r["Win %"]), axis=1
+    )
+    df["tipo_derrota"] = df.apply(
+        lambda r: categorizar(r["Pts Cedidos/Combate"], r["Partidas"], r["Win %"]), axis=1
+    )
+    df["Arquetipo victoria"] = df["tipo_victoria"].map(map_victoria)
+    df["Arquetipo derrota"]  = df["tipo_derrota"].map(map_derrota)
+    df = df.drop(columns=["tipo_victoria", "tipo_derrota"])
+
     # ----------------------------
     # Exportar
     # ----------------------------
