@@ -107,38 +107,52 @@ def optimizar_deck(df, fijados):
     ratchets = sorted(df["Ratchet"].unique())
     bits     = sorted(df["Bit"].unique())
 
+    # Pre-calcular Wilson Score de todos los combos posibles en una sola pasada
+    ws_cache = {}
+    for _, row in df.iterrows():
+        ws_cache[(row["Blade"], row["Ratchet"], row["Bit"])] = float(row["Wilson Score"])
+
+    # Score por pieza individual para estimaciones rápidas
+    blade_ws   = df.groupby("Blade")["Wilson Score"].mean().to_dict()
+    ratchet_ws = df.groupby("Ratchet")["Wilson Score"].mean().to_dict()
+    bit_ws     = df.groupby("Bit")["Wilson Score"].mean().to_dict()
+
+    def _ws_fast(b, r, bt):
+        if (b, r, bt) in ws_cache:
+            return ws_cache[(b, r, bt)]
+        scores = [blade_ws.get(b, ws_mean), ratchet_ws.get(r, ws_mean), bit_ws.get(bt, ws_mean)]
+        return round(np.mean(scores), 4)
+
     # Candidatos por bey respetando lo fijado
     candidatos = []
     for bey in fijados:
-        b_opts = [bey["Blade"]]   if "Blade"   in bey else blades
-        r_opts = [bey["Ratchet"]] if "Ratchet" in bey else ratchets
-        bt_opts = [bey["Bit"]]    if "Bit"     in bey else bits
+        b_opts  = [bey["Blade"]]   if "Blade"   in bey else blades
+        r_opts  = [bey["Ratchet"]] if "Ratchet" in bey else ratchets
+        bt_opts = [bey["Bit"]]     if "Bit"     in bey else bits
         candidatos.append(list(iproduct(b_opts, r_opts, bt_opts)))
 
     mejor_score = -1
     mejor_deck  = None
 
     for combo0 in candidatos[0]:
+        b0, r0, bt0 = combo0
         for combo1 in candidatos[1]:
+            b1, r1, bt1 = combo1
+            # Podar temprano: Blade o Ratchet o Bit repetido con combo0
+            if b1 == b0 or r1 == r0 or bt1 == bt0:
+                continue
             for combo2 in candidatos[2]:
-                combos = [combo0, combo1, combo2]
-
-                # Restricción: no repetir Blade ni Ratchet ni Bit
-                blades_usadas   = [c[0] for c in combos]
-                ratchets_usados = [c[1] for c in combos]
-                bits_usados     = [c[2] for c in combos]
-
-                if (len(set(blades_usadas))   < 3 or
-                    len(set(ratchets_usados)) < 3 or
-                    len(set(bits_usados))     < 3):
+                b2, r2, bt2 = combo2
+                # Podar temprano
+                if b2 in (b0, b1) or r2 in (r0, r1) or bt2 in (bt0, bt1):
                     continue
 
-                ws_list = [_wilson_combo(df, b, r, bt, ws_mean)[0] for b, r, bt in combos]
+                ws_list = [_ws_fast(b0,r0,bt0), _ws_fast(b1,r1,bt1), _ws_fast(b2,r2,bt2)]
                 score   = _score_deck(ws_list)
 
                 if score > mejor_score:
                     mejor_score = score
-                    mejor_deck  = combos
+                    mejor_deck  = [combo0, combo1, combo2]
 
     if mejor_deck is None:
         return None
@@ -146,7 +160,8 @@ def optimizar_deck(df, fijados):
     # Construir resultado
     resultado = []
     for i, (b, r, bt) in enumerate(mejor_deck):
-        ws, es_real = _wilson_combo(df, b, r, bt, ws_mean)
+        es_real = (b, r, bt) in ws_cache
+        ws = _ws_fast(b, r, bt)
         arq_v, arq_d = _arquetipo(df, b, r, bt)
         fijado = fijados[i]
         resultado.append({

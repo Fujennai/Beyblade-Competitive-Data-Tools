@@ -50,6 +50,12 @@ for i in range(3):
     if bit     != "—": bey["Bit"]     = bit
     fijados.append(bey)
 
+    # Detectar cambio y forzar rerun para actualizar el contador
+    prev_key = f"prev_fijado_{i}"
+    if st.session_state.get(prev_key) != bey:
+        st.session_state[prev_key] = bey
+        st.rerun()
+
 st.divider()
 
 # ── Optimización ──────────────────────────────────────────────────────────────
@@ -94,7 +100,6 @@ for bey in deck:
         "Wilson Score":       bey["Wilson Score"],
         "Arquetipo victoria": bey["Arquetipo victoria"],
         "Arquetipo derrota":  bey["Arquetipo derrota"],
-        "Datos":              "✅ Real" if bey["Combo real"] else "🔮 Estimado",
     })
 
 df_deck = pd.DataFrame(rows)
@@ -112,11 +117,9 @@ st.dataframe(
         ),
         "Arquetipo victoria": st.column_config.TextColumn("Arquetipo victoria"),
         "Arquetipo derrota":  st.column_config.TextColumn("Arquetipo derrota"),
-        "Datos":              st.column_config.TextColumn("Datos"),
     },
 )
 
 st.caption(
-    "🔒 Pieza elegida por ti. ✨ Sugerida por el sistema. "
-    "✅ Real: combo con partidas registradas. 🔮 Estimado: sin datos reales."
+    "🔒 Pieza elegida por ti · ✨ Sugerida por el sistema"
 )
