@@ -130,23 +130,7 @@ df_filtered["Combo"] = (
     df_filtered["Bit"]
 )
 
-# ----------------------------
-# Mostrar insuficientes
-# ----------------------------
 
-mostrar_insuficientes = st.checkbox(
-    "Mostrar casos con datos insuficientes",
-    value=False
-)
-
-df_plot = df_filtered.copy()
-
-if not mostrar_insuficientes:
-
-    df_plot = df_plot[
-        (df_plot["tipo_victoria"] != -1) &
-        (df_plot["tipo_derrota"] != -1)
-    ]
 
 # ----------------------------
 # Config color
@@ -250,6 +234,24 @@ st.plotly_chart(
     fig,
     use_container_width=True
 )
+
+# ----------------------------
+# Mostrar insuficientes
+# ----------------------------
+
+mostrar_insuficientes = st.checkbox(
+    "Mostrar casos con datos insuficientes",
+    value=False
+)
+
+df_plot = df_filtered.copy()
+
+if not mostrar_insuficientes:
+
+    df_plot = df_plot[
+        (df_plot["tipo_victoria"] != -1) &
+        (df_plot["tipo_derrota"] != -1)
+    ]
 
 # ----------------------------
 # Selector color
