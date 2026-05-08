@@ -277,7 +277,7 @@ else:
 
 presentes = [trace.name for trace in fig.data]
 
-for key, label in categorias.items():
+for key, label in categorias:
 
     if label not in presentes:
 
