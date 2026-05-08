@@ -1,11 +1,12 @@
 """
 core/recommender.py
 -------------------
-Recomendador basado en arquetipos:
-1. Detecta el arquetipo de la Blade seleccionada
-2. Encuentra Ratchets y Bits que funcionan en Blades del mismo arquetipo
-3. Devuelve combos reales ordenados por Wilson Score con su arquetipo
-4. Rellena con predicciones del modelo cuando hay pocos combos reales
+Recomendador basado en sinergia par a par:
+1. Para la Blade dada, calcula el Wilson Score de cada Ratchet/Bit
+   usando SOLO los combos que incluyen esa Blade (datos directos)
+2. Si hay pocos datos directos, busca Blades del mismo arquetipo
+   y usa sus stats como proxy, ponderadas por similitud de arquetipo
+3. Devuelve combos reales primero, predichos de relleno marcados
 """
 
 import numpy as np
@@ -33,22 +34,21 @@ MAP_DERROTA = {
      3: "🟢 Pierde por xtreme"
 }
 
+MIN_PARTIDAS_DIRECTAS = 5   # mínimo para considerar dato directo fiable
+MIN_COMBOS_DIRECTOS   = 3   # si la Blade tiene menos combos, buscar proxies
 
-# ── Arquetipos (misma lógica que 2_Arquetipos.py) ────────────────────────────
+
+# ── Arquetipos ────────────────────────────────────────────────────────────────
 
 def _categorizar(valor, partidas, winrate):
     if partidas < 10:
         return -1
     if winrate >= 95 and partidas < 25:
         return -1
-    if valor < 0.5:
-        return 0
-    elif valor < 1.5:
-        return 1
-    elif valor < 2.5:
-        return 2
-    else:
-        return 3
+    if valor < 0.5:   return 0
+    elif valor < 1.5: return 1
+    elif valor < 2.5: return 2
+    else:             return 3
 
 
 def _asignar_arquetipos(df):
@@ -65,24 +65,88 @@ def _asignar_arquetipos(df):
 
 
 def _arquetipo_blade(df, blade):
-    combos_blade = df[
+    combos = df[
         (df["Blade"] == blade) &
-        (df["tipo_victoria"] != -1) &
-        (df["tipo_derrota"] != -1)
+        (df["tipo_victoria"] != -1)
     ]
-    if combos_blade.empty:
+    if combos.empty:
         return None, None
-
-    tv = combos_blade["tipo_victoria"].mode()
-    td = combos_blade["tipo_derrota"].mode()
-
+    tv = combos["tipo_victoria"].mode()
+    td = combos["tipo_derrota"].mode()
     return (
         int(tv.iloc[0]) if not tv.empty else None,
         int(td.iloc[0]) if not td.empty else None,
     )
 
 
+# ── Sinergia par a par ────────────────────────────────────────────────────────
+
+def _score_pieza_con_blade(df, blade, col_pieza, peso_proxy=0.5):
+    """
+    Calcula el Wilson Score medio de cada valor de col_pieza (Ratchet o Bit)
+    cuando se combina con la Blade dada.
+
+    Si hay pocos datos directos, complementa con datos de Blades del mismo
+    arquetipo, ponderados por peso_proxy (0-1, menor = menos influencia).
+
+    Devuelve dict {pieza: score_ponderado}
+    """
+    # Datos directos: solo combos con esta Blade
+    directos = df[df["Blade"] == blade].groupby(col_pieza).agg(
+        ws_directo=("Wilson Score", "mean"),
+        n_directos=("Partidas", "sum")
+    ).reset_index()
+
+    # Arquetipo de la Blade para buscar proxies
+    tv, td = _arquetipo_blade(df, blade)
+
+    if tv is not None and td is not None:
+        proxies_df = df[
+            (df["Blade"] != blade) &
+            (df["tipo_victoria"] == tv) &
+            (df["tipo_derrota"] == td) &
+            (df["tipo_victoria"] != -1)
+        ]
+    else:
+        proxies_df = df[df["Blade"] != blade]
+
+    proxies = proxies_df.groupby(col_pieza).agg(
+        ws_proxy=("Wilson Score", "mean"),
+        n_proxies=("Partidas", "sum")
+    ).reset_index()
+
+    # Combinar
+    merged = directos.merge(proxies, on=col_pieza, how="outer")
+
+    scores = {}
+    for _, row in merged.iterrows():
+        pieza = row[col_pieza]
+        tiene_directo = (
+            pd.notna(row.get("ws_directo")) and
+            row.get("n_directos", 0) >= MIN_PARTIDAS_DIRECTAS
+        )
+        tiene_proxy = pd.notna(row.get("ws_proxy"))
+
+        if tiene_directo and tiene_proxy:
+            # Blend: más peso a datos directos
+            scores[pieza] = row["ws_directo"] * (1 - peso_proxy) + row["ws_proxy"] * peso_proxy
+        elif tiene_directo:
+            scores[pieza] = row["ws_directo"]
+        elif tiene_proxy:
+            scores[pieza] = row["ws_proxy"] * peso_proxy  # penalizado por ser solo proxy
+        # si no hay nada, no se incluye
+
+    return scores
+
+
 # ── Función principal ─────────────────────────────────────────────────────────
+
+COLS_SALIDA = [
+    "Blade", "Ratchet", "Bit",
+    "Wilson Score Predicho", "Partidas",
+    "Arquetipo victoria", "Arquetipo derrota", "Tipo"
+]
+
 
 def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20):
     if df.empty or "Wilson Score" not in df.columns:
@@ -90,20 +154,13 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20):
 
     df = _asignar_arquetipos(df)
 
-    COLS_SALIDA = ["Blade", "Ratchet", "Bit", "Wilson Score Predicho",
-                   "Partidas", "Arquetipo victoria", "Arquetipo derrota", "Tipo"]
-
-    # ── 1. Sin Blade fija: top Wilson Score global ────────────────────────────
+    # ── Sin Blade fija: top Wilson Score global ───────────────────────────────
     if blade is None:
         df_fil = df.copy()
-        if ratchet:
-            df_fil = df_fil[df_fil["Ratchet"] == ratchet]
-        if bit:
-            df_fil = df_fil[df_fil["Bit"] == bit]
-
+        if ratchet: df_fil = df_fil[df_fil["Ratchet"] == ratchet]
+        if bit:     df_fil = df_fil[df_fil["Bit"] == bit]
         df_fil = df_fil.rename(columns={"Wilson Score": "Wilson Score Predicho"})
         df_fil["Tipo"] = "✅ Real"
-
         return (
             df_fil[COLS_SALIDA]
             .sort_values("Wilson Score Predicho", ascending=False)
@@ -111,48 +168,32 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20):
             .reset_index(drop=True)
         )
 
-    # ── 2. Con Blade fija ─────────────────────────────────────────────────────
+    # ── Con Blade fija ────────────────────────────────────────────────────────
 
     tv_blade, td_blade = _arquetipo_blade(df, blade)
 
+    # Combos reales de esa Blade
     df_blade = df[df["Blade"] == blade].copy()
-    if ratchet:
-        df_blade = df_blade[df_blade["Ratchet"] == ratchet]
-    if bit:
-        df_blade = df_blade[df_blade["Bit"] == bit]
+    if ratchet: df_blade = df_blade[df_blade["Ratchet"] == ratchet]
+    if bit:     df_blade = df_blade[df_blade["Bit"] == bit]
 
-    df_blade = df_blade.sort_values("Wilson Score", ascending=False)
     reales = df_blade.rename(columns={"Wilson Score": "Wilson Score Predicho"}).copy()
     reales["Tipo"] = "✅ Real"
-    reales = reales[COLS_SALIDA]
+    reales = reales[COLS_SALIDA].sort_values("Wilson Score Predicho", ascending=False)
 
-    # ── 3. Piezas del mismo arquetipo (otras Blades) ──────────────────────────
-    if tv_blade is not None and td_blade is not None:
-        mismo_arq = df[
-            (df["Blade"] != blade) &
-            (df["tipo_victoria"] == tv_blade) &
-            (df["tipo_derrota"] == td_blade) &
-            (df["tipo_victoria"] != -1)
-        ]
-    else:
-        mismo_arq = df[df["Blade"] != blade]
+    # ── Scores de sinergia par a par ──────────────────────────────────────────
+    ratchet_scores = _score_pieza_con_blade(df, blade, "Ratchet")
+    bit_scores     = _score_pieza_con_blade(df, blade, "Bit")
 
-    top_ratchets = (
-        mismo_arq.groupby("Ratchet")["Wilson Score"].mean()
-        .sort_values(ascending=False)
-        .head(10).index.tolist()
-    )
-    top_bits = (
-        mismo_arq.groupby("Bit")["Wilson Score"].mean()
-        .sort_values(ascending=False)
-        .head(10).index.tolist()
-    )
+    # Filtrar por selección opcional
+    if ratchet: ratchet_scores = {ratchet: ratchet_scores.get(ratchet, 0)}
+    if bit:     bit_scores     = {bit: bit_scores.get(bit, 0)}
 
-    if ratchet:
-        top_ratchets = [ratchet]
-    if bit:
-        top_bits = [bit]
+    # Top 10 Ratchets y Bits por sinergia con esta Blade
+    top_ratchets = sorted(ratchet_scores, key=ratchet_scores.get, reverse=True)[:10]
+    top_bits     = sorted(bit_scores,     key=bit_scores.get,     reverse=True)[:10]
 
+    # Combos candidatos no vistos
     existentes = set(zip(df_blade["Ratchet"], df_blade["Bit"]))
     candidatos = [
         (blade, r, b)
@@ -163,50 +204,56 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20):
     if not candidatos:
         return reales.head(top_n).reset_index(drop=True)
 
-    # ── 4. Predecir con el modelo ─────────────────────────────────────────────
+    # ── Score estimado para candidatos (media sinergia Ratchet + Bit) ─────────
+    df_cand = pd.DataFrame(candidatos, columns=["Blade", "Ratchet", "Bit"])
+    df_cand["Wilson Score Predicho"] = df_cand.apply(
+        lambda r: round(
+            (ratchet_scores.get(r["Ratchet"], 0) + bit_scores.get(r["Bit"], 0)) / 2, 4
+        ),
+        axis=1
+    )
+    df_cand["Partidas"] = 0
+    df_cand["Tipo"] = "🔮 Predicho"
+    df_cand["Arquetipo victoria"] = MAP_VICTORIA.get(tv_blade, "⚪ Datos insuficientes")
+    df_cand["Arquetipo derrota"]  = MAP_DERROTA.get(td_blade,  "⚪ Datos insuficientes")
+
+    # ── Intentar refinar predichos con el modelo si existe ───────────────────
     try:
         p        = cargar_modelo()
         model    = p["model"]
         encoders = p["encoders"]
-        blade_dict   = p["blade_dict"]
-        ratchet_dict = p["ratchet_dict"]
-        bit_dict     = p["bit_dict"]
-        ws_mean      = p["ws_mean"]
-
-        df_cand = pd.DataFrame(candidatos, columns=["Blade", "Ratchet", "Bit"])
+        ws_mean  = p["ws_mean"]
 
         valid = pd.Series([True] * len(df_cand), index=df_cand.index)
         for col in ["Blade", "Ratchet", "Bit"]:
             valid &= df_cand[col].isin(set(encoders[col].classes_))
-        df_cand = df_cand[valid].copy()
+        df_enc = df_cand[valid].copy()
 
-        if not df_cand.empty:
+        if not df_enc.empty:
             for col in ["Blade", "Ratchet", "Bit"]:
-                df_cand[col + "_enc"] = encoders[col].transform(df_cand[col].astype(str))
+                df_enc[col + "_enc"] = encoders[col].transform(df_enc[col].astype(str))
 
-            df_cand["Partidas_log"]  = np.log1p(10)
-            df_cand["Blade_score"]   = df_cand["Blade"].map(blade_dict).fillna(ws_mean)
-            df_cand["Ratchet_score"] = df_cand["Ratchet"].map(ratchet_dict).fillna(ws_mean)
-            df_cand["Bit_score"]     = df_cand["Bit"].map(bit_dict).fillna(ws_mean)
+            df_enc["Partidas_log"]  = np.log1p(10)
+            df_enc["Blade_score"]   = df_enc["Blade"].map(p["blade_dict"]).fillna(ws_mean)
+            df_enc["Ratchet_score"] = df_enc["Ratchet"].map(p["ratchet_dict"]).fillna(ws_mean)
+            df_enc["Bit_score"]     = df_enc["Bit"].map(p["bit_dict"]).fillna(ws_mean)
 
-            X = df_cand[p["feature_cols"]].values.astype(float)
-            df_cand["Wilson Score Predicho"] = np.round(model.predict(X), 4)
-            df_cand["Partidas"] = 0
-            df_cand["Tipo"] = "🔮 Predicho"
+            X = df_enc[p["feature_cols"]].values.astype(float)
+            ml_preds = np.round(model.predict(X), 4)
 
-            # Arquetipo esperado para los predichos (el de la Blade)
-            df_cand["Arquetipo victoria"] = MAP_VICTORIA.get(tv_blade, "⚪ Datos insuficientes")
-            df_cand["Arquetipo derrota"]  = MAP_DERROTA.get(td_blade, "⚪ Datos insuficientes")
-
-            predichos = df_cand[COLS_SALIDA]
-        else:
-            predichos = pd.DataFrame()
-
+            # Blend: 60% sinergia par a par + 40% modelo ML
+            df_cand.loc[df_enc.index, "Wilson Score Predicho"] = np.round(
+                df_cand.loc[df_enc.index, "Wilson Score Predicho"] * 0.6 + ml_preds * 0.4, 4
+            )
     except FileNotFoundError:
-        predichos = pd.DataFrame()
+        pass
 
-    # ── 5. Combinar: reales primero, predichos de relleno ────────────────────
+    # ── Combinar: reales primero, predichos de relleno ────────────────────────
     necesarios = max(0, top_n - len(reales))
-    relleno = predichos.sort_values("Wilson Score Predicho", ascending=False).head(necesarios)
+    relleno = (
+        df_cand[COLS_SALIDA]
+        .sort_values("Wilson Score Predicho", ascending=False)
+        .head(necesarios)
+    )
 
     return pd.concat([reales, relleno], ignore_index=True).head(top_n)

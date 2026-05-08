@@ -21,7 +21,7 @@ with col3:
     bit = st.selectbox("Bit", ["Todos"] + sorted(df["Bit"].unique()))
 
 with col4:
-    top_n = st.number_input("Top N", min_value=5, max_value=100, value=20, step=5)
+    top_n = st.number_input("Resultados", min_value=5, max_value=100, value=20, step=5)
 
 blade   = None if blade   == "Todos" else blade
 ratchet = None if ratchet == "Todos" else ratchet
