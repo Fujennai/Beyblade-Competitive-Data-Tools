@@ -15,6 +15,44 @@ df_main = load_data()
 df_history = load_history()
 
 # ----------------------------
+# Explicación Wilson Score
+# ----------------------------
+
+st.info(
+    "📊 La Wilson Score ajusta el winrate según el número de partidas.\n\n"
+    "Un combo con 100% de victorias en 2 partidas no es tan fiable "
+    "como uno con 70% en 500 partidas.\n\n"
+    "Esto permite detectar combinaciones realmente consistentes "
+    "y evitar resultados inflados por muestras pequeñas."
+)
+
+with st.expander("ℹ️ Explicación detallada de la Wilson Score"):
+
+    st.markdown("""
+La Wilson Score es una métrica estadística utilizada para estimar
+la fiabilidad real de un winrate.
+
+En lugar de usar únicamente el porcentaje bruto de victorias,
+también tiene en cuenta cuántas partidas se han jugado.
+
+Esto evita que combinaciones con muy pocas partidas aparezcan
+artificialmente como las mejores del META.
+
+### Ejemplo
+
+| Combo | Winrate | Partidas | Wilson Score |
+|---|---|---|---|
+| Combo A | 100% | 2 | ~34% |
+| Combo B | 72% | 500 | ~68% |
+
+Aunque el Combo A tiene un winrate perfecto,
+la muestra es demasiado pequeña para considerarlo fiable.
+
+La Wilson Score penaliza automáticamente este tipo de casos,
+priorizando resultados más consistentes y representativos.
+""")
+
+# ----------------------------
 # Filtros
 # ----------------------------
 

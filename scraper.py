@@ -65,7 +65,7 @@ def es_combo_valido(blade, ratchet, bit):
 
     return True
 
-
+# 1.96 es el valor estándar de la distribución normal
 def wilson_score(wins, total, z=1.96):
     if total == 0:
         return None
@@ -199,7 +199,7 @@ def scrape():
         raise Exception("El dataframe está vacío")
 
     # ----------------------------
-    # 🔥 ELIMINAR DUPLICADOS (FIX)
+    # ELIMINAR DUPLICADOS
     # ----------------------------
 
     before = len(df)
