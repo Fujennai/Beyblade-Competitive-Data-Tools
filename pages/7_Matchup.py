@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 
 from data.loader import load_data
-from core.matchup import prob_victoria, pts_esperados
+from core.matchup import prob_victoria, pts_esperados, ws_ponderado, _cargar_pesos
 
 st.set_page_config(layout="wide")
 
@@ -10,7 +10,13 @@ st.title("⚔️ Calculadora de Matchup")
 
 df = load_data()
 
-st.caption("Selecciona dos combos para predecir quién tiene ventaja y con qué probabilidad.")
+pesos = _cargar_pesos()
+st.caption(
+    f"Selecciona dos combos para predecir quién tiene ventaja. "
+    f"Pesos estimados: Blade {pesos['Blade']*100:.0f}% · "
+    f"Ratchet {pesos['Ratchet']*100:.0f}% · "
+    f"Bit {pesos['Bit']*100:.0f}%"
+)
 
 # ── Selección de combos ───────────────────────────────────────────────────────
 col_a, col_sep, col_b = st.columns([5, 1, 5])
@@ -39,30 +45,34 @@ if not combos_completos:
 
 # ── Buscar datos en el dataset ────────────────────────────────────────────────
 def get_combo_data(df, blade, ratchet, bit):
+    # Wilson Score ponderado por pieza
+    ws_blade   = df[df["Blade"]   == blade  ]["Wilson Score"].mean() if blade   else 0.5
+    ws_ratchet = df[df["Ratchet"] == ratchet]["Wilson Score"].mean() if ratchet else 0.5
+    ws_bit     = df[df["Bit"]     == bit    ]["Wilson Score"].mean() if bit     else 0.5
+
     row = df[(df["Blade"] == blade) & (df["Ratchet"] == ratchet) & (df["Bit"] == bit)]
     if not row.empty:
         r = row.iloc[0]
         return {
-            "ws":          float(r["Wilson Score"]),
+            "ws":          ws_ponderado(ws_blade, ws_ratchet, ws_bit),
+            "ws_raw":      float(r["Wilson Score"]),
             "pts_ganados": float(r["Pts Ganados/Combate"]),
             "pts_cedidos": float(r["Pts Cedidos/Combate"]),
             "winrate":     float(r["Win %"]),
             "partidas":    int(r["Partidas"]),
             "real":        True,
         }
-    # Estimado por piezas
-    ws_vals = []
     pts_g, pts_c = [], []
     for col, val in [("Blade", blade), ("Ratchet", ratchet), ("Bit", bit)]:
         s = df[df[col] == val]
         if not s.empty:
-            ws_vals.append(s["Wilson Score"].mean())
             pts_g.append(s["Pts Ganados/Combate"].mean())
             pts_c.append(s["Pts Cedidos/Combate"].mean())
     return {
-        "ws":          round(float(sum(ws_vals) / len(ws_vals)), 4) if ws_vals else 0.5,
-        "pts_ganados": round(float(sum(pts_g) / len(pts_g)), 3) if pts_g else 1.0,
-        "pts_cedidos": round(float(sum(pts_c) / len(pts_c)), 3) if pts_c else 1.0,
+        "ws":          ws_ponderado(ws_blade, ws_ratchet, ws_bit),
+        "ws_raw":      None,
+        "pts_ganados": round(float(sum(pts_g)/len(pts_g)), 3) if pts_g else 1.0,
+        "pts_cedidos": round(float(sum(pts_c)/len(pts_c)), 3) if pts_c else 1.0,
         "winrate":     None,
         "partidas":    0,
         "real":        False,

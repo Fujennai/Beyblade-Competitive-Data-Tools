@@ -91,6 +91,34 @@ def entrenar_y_guardar():
         "ws_mean":      float(df["Wilson Score"].mean()),
     }
 
+    # ----------------------------
+    # Pesos de cada pieza
+    # ----------------------------
+    # Correlación de Spearman entre Wilson Score medio de cada pieza
+    # y Wilson Score del combo → proxy del peso real de cada pieza
+
+    from scipy.stats import spearmanr
+
+    df["blade_ws_mean"]   = df["Blade"].map(blade_dict)
+    df["ratchet_ws_mean"] = df["Ratchet"].map(ratchet_dict)
+    df["bit_ws_mean"]     = df["Bit"].map(bit_dict)
+
+    corr_blade,   _ = spearmanr(df["blade_ws_mean"],   df["Wilson Score"])
+    corr_ratchet, _ = spearmanr(df["ratchet_ws_mean"], df["Wilson Score"])
+    corr_bit,     _ = spearmanr(df["bit_ws_mean"],     df["Wilson Score"])
+
+    # Normalizar para que sumen 1 (usar abs por si alguna correlación es negativa)
+    total = abs(corr_blade) + abs(corr_ratchet) + abs(corr_bit)
+    piece_weights = {
+        "Blade":   round(abs(corr_blade)   / total, 4),
+        "Ratchet": round(abs(corr_ratchet) / total, 4),
+        "Bit":     round(abs(corr_bit)     / total, 4),
+    }
+
+    print(f"Pesos estimados por pieza: {piece_weights}")
+
+    payload["piece_weights"] = piece_weights
+
     with open(MODEL_PATH, "wb") as f:
         pickle.dump(payload, f)
 

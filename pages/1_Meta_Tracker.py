@@ -119,16 +119,59 @@ else:
 
 st.divider()
 
-# Piezas individuales (siempre en tabla)
+# Piezas individuales — usan el mismo toggle que los combos
 df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
+
+
+def _render_top_piezas(df_piezas, nombre, col_pieza):
+    """Render del top 10 de una pieza, en cards o tabla según `modo_combos`."""
+    st.subheader(f"Top 10 {nombre} (Wilson Score)")
+
+    if df_piezas.empty:
+        st.warning("No hay datos")
+        return
+
+    df_sorted = df_piezas.sort_values("Wilson Score", ascending=False).head(10)
+
+    if modo_combos == "cards":
+        for _, row in df_sorted.iterrows():
+            ws       = row["Wilson Score"] or 0
+            bar_pct  = int(ws * 100)
+            partidas = int(row["Partidas"])
+            wins     = int(row.get("Wins", 0))
+            losses   = int(row.get("Losses", 0))
+            winpct   = (wins / partidas * 100) if partidas else 0
+            nombre_pieza = row[col_pieza]
+
+            card = (
+                '<div style="background:#1a1a2e;border-radius:10px;padding:10px 14px;'
+                'border:1px solid #2a2a4a;margin-bottom:6px">'
+                f'<div style="font-weight:700;font-size:0.92em;color:#fff;'
+                f'margin-bottom:2px">{nombre_pieza}</div>'
+                f'<div style="font-size:0.75em;color:#666;margin-bottom:6px">'
+                f'{partidas} partidas · {winpct:.1f}% WR</div>'
+                '<div style="margin:4px 0">'
+                '<div style="background:#2a2a4a;border-radius:4px;height:5px">'
+                f'<div style="background:#6EC1E4;width:{bar_pct}%;height:5px;'
+                'border-radius:4px"></div></div></div>'
+                '<div style="display:flex;justify-content:space-between;'
+                'font-size:0.75em;color:#888;margin-top:4px">'
+                '<span>Wilson Score</span>'
+                f'<span style="color:#fff;font-weight:700">{ws:.4f}</span>'
+                '</div></div>'
+            )
+            st.markdown(card, unsafe_allow_html=True)
+    else:
+        st.dataframe(df_sorted, use_container_width=True, hide_index=True)
+
 
 col1, col2, col3 = st.columns(3)
 with col1:
-    mostrar_top10(df_blade, "Blades")
+    _render_top_piezas(df_blade, "Blades", "Blade")
 with col2:
-    mostrar_top10(df_ratchet, "Ratchets")
+    _render_top_piezas(df_ratchet, "Ratchets", "Ratchet")
 with col3:
-    mostrar_top10(df_bit, "Bits")
+    _render_top_piezas(df_bit, "Bits", "Bit")
 
 st.divider()
 

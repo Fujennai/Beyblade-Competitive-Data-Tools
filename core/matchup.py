@@ -2,13 +2,34 @@
 core/matchup.py
 ---------------
 Lógica de matchup 1v1 y deck match.
+La probabilidad de victoria usa Wilson Score ponderado por el peso
+real de cada pieza (calculado en train_model.py y guardado en model.pkl).
 """
 
 import numpy as np
 from itertools import permutations
 
+# Pesos por defecto si no hay model.pkl (estimación conservadora)
+DEFAULT_WEIGHTS = {"Blade": 0.60, "Ratchet": 0.20, "Bit": 0.20}
 
-# ── Matchup 1v1 ───────────────────────────────────────────────────────────────
+
+def _cargar_pesos():
+    try:
+        from core.model_loader import cargar_modelo
+        return cargar_modelo().get("piece_weights", DEFAULT_WEIGHTS)
+    except Exception:
+        return DEFAULT_WEIGHTS
+
+
+def ws_ponderado(ws_blade, ws_ratchet, ws_bit):
+    """Wilson Score ponderado por importancia real de cada pieza."""
+    w = _cargar_pesos()
+    return (
+        w["Blade"]   * ws_blade +
+        w["Ratchet"] * ws_ratchet +
+        w["Bit"]     * ws_bit
+    )
+
 
 def prob_victoria(ws_a, ws_b):
     """P(A gana un combate) basado en Wilson Score relativo."""
@@ -19,12 +40,6 @@ def prob_victoria(ws_a, ws_b):
 
 
 def pts_esperados(ws_a, ws_b, pts_ganados_a, pts_ganados_b):
-    """
-    Puntos esperados por combate para A y B.
-    p_a = prob de que gane A, entonces:
-      E[pts_a] = p_a * pts_ganados_a
-      E[pts_b] = (1-p_a) * pts_ganados_b
-    """
     p_a = prob_victoria(ws_a, ws_b)
     return round(p_a * pts_ganados_a, 3), round((1 - p_a) * pts_ganados_b, 3)
 
@@ -32,22 +47,13 @@ def pts_esperados(ws_a, ws_b, pts_ganados_a, pts_ganados_b):
 # ── Simulación Montecarlo deck match ─────────────────────────────────────────
 
 def simular_deck_match(deck_a, deck_b, n_sims=10_000, seed=42):
-    """
-    Simula un deck match entre dos decks de 3 beys.
-    deck_a / deck_b: lista de 3 dicts con keys ws, pts_ganados, pts_cedidos, nombre
-    
-    Devuelve P(A gana el deck match).
-    """
     rng = np.random.default_rng(seed)
     victorias_a = 0
 
-    # Probabilidades de victoria por cada par (i,j)
     probs = np.array([
         [prob_victoria(a["ws"], b["ws"]) for b in deck_b]
         for a in deck_a
     ])
-    pts_a = np.array([[a["pts_ganados"] for _ in deck_b] for a in deck_a])
-    pts_b = np.array([[b["pts_ganados"] for b in deck_b] for _ in deck_a])
 
     for _ in range(n_sims):
         score_a = 0
@@ -72,19 +78,10 @@ def simular_deck_match(deck_a, deck_b, n_sims=10_000, seed=42):
     return round(victorias_a / n_sims, 4)
 
 
-# ── Orden óptimo ──────────────────────────────────────────────────────────────
-
 def orden_optimo(mi_deck, rival_deck, n_sims=5_000):
-    """
-    Prueba todas las permutaciones de mi_deck y calcula la probabilidad
-    de ganar promediando sobre todas las permutaciones del rival.
-    
-    Devuelve lista ordenada de (permutación, prob_victoria_media).
-    """
-    mis_perms    = list(permutations(range(3)))
-    rival_perms  = list(permutations(range(3)))
-
-    resultados = []
+    mis_perms   = list(permutations(range(3)))
+    rival_perms = list(permutations(range(3)))
+    resultados  = []
 
     for mi_perm in mis_perms:
         mi_orden = [mi_deck[i] for i in mi_perm]
