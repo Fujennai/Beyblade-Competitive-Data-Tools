@@ -126,7 +126,6 @@ def scrape():
             combo_text = cols[0].get_text(" ", strip=True)
             winrate_text = cols[1].get_text(strip=True)
             partidas_text = cols[2].get_text(strip=True)
-            eficiencia_text = cols[3].get_text(strip=True)
 
             # Separar bit si viene con "•"
             if "•" in combo_text:
@@ -166,7 +165,6 @@ def scrape():
             win_percent = float(win_match.group(1)) if win_match else None
 
             partidas = int(partidas_text)
-            eficiencia = int(re.search(r"\d+", eficiencia_text).group())
 
             # Detalle
             detalle_text = rows[i + 1].get_text(" ", strip=True) if i + 1 < len(rows) else ""
@@ -183,7 +181,6 @@ def scrape():
                 "Wins": wins,
                 "Losses": losses,
                 "Partidas": partidas,
-                "Eficiencia": eficiencia,
                 "Pts Ganados/Combate": pts_ganados,
                 "Pts Cedidos/Combate": pts_cedidos
             })
@@ -209,7 +206,6 @@ def scrape():
         "Wins": "sum",
         "Losses": "sum",
         "Partidas": "sum",
-        "Eficiencia": "mean",
         "Pts Ganados/Combate": "mean",
         "Pts Cedidos/Combate": "mean"
     })
