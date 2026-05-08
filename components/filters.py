@@ -4,7 +4,20 @@ import streamlit as st
 def filtros_dependientes(df, key_prefix="filter"):
 
     st.subheader("🔎 Filtros por piezas")
+    st.subheader("🔎 Filtros por piezas")
 
+    if st.button("🔄 Resetear filtros"):
+
+        st.session_state[f"{key_prefix}_blade"] = "Todos"
+        st.session_state[f"{key_prefix}_ratchet"] = "Todos"
+        st.session_state[f"{key_prefix}_bit"] = "Todos"
+
+        st.session_state[f"{key_prefix}_prev_blade"] = "Todos"
+        st.session_state[f"{key_prefix}_prev_ratchet"] = "Todos"
+        st.session_state[f"{key_prefix}_prev_bit"] = "Todos"
+
+        st.rerun()
+        
     col1, col2, col3 = st.columns(3)
 
     # ==================================================
