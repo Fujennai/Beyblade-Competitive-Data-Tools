@@ -96,6 +96,87 @@ df_filtered, blade_sel, ratchet_sel, bit_sel = filtros_dependientes(
 )
 
 # ----------------------------
+# Nombre completo combo
+# ----------------------------
+
+df_filtered["Combo"] = (
+    df_filtered["Blade"] + " " +
+    df_filtered["Ratchet"] + " " +
+    df_filtered["Bit"]
+)
+
+
+# ----------------------------
+# Gráfico
+# ----------------------------
+
+st.subheader("🗺️ Mapa de arquetipos")
+
+fig = px.scatter(
+    df_filtered,
+
+    x="Pts Ganados/Combate",
+    y="Pts Cedidos/Combate",
+
+    color=color_col,
+    color_discrete_map=color_map,
+
+    hover_name="Combo",
+
+    hover_data={
+
+        # ocultar columnas redundantes
+        "Combo": False,
+        "Blade": False,
+        "Ratchet": False,
+        "Bit": False,
+
+        # métricas útiles
+        "Win %": ":.1f",
+        "Partidas": True,
+
+        "Pts Ganados/Combate": ":.2f",
+        "Pts Cedidos/Combate": ":.2f",
+
+        # arquetipos
+        "Arquetipo de victoria": True,
+        "Arquetipo de derrota": True,
+
+        # ocultar columnas técnicas
+        "tipo_victoria": False,
+        "tipo_derrota": False,
+        "tipo_victoria_str": False,
+        "tipo_derrota_str": False,
+    },
+
+    opacity=0.7
+)
+
+fig.update_traces(
+    marker=dict(size=6)
+)
+
+fig.update_layout(
+    xaxis_title="Puntos ganados por combate",
+    yaxis_title="Puntos cedidos por combate",
+    legend_title="Tipo"
+)
+
+fig.update_yaxes(
+    autorange="reversed"
+)
+
+# leyenda con emojis
+for trace in fig.data:
+
+    trace.name = legend_map[int(trace.name)]
+
+st.plotly_chart(
+    fig,
+    use_container_width=True
+)
+
+# ----------------------------
 # Selector color
 # ----------------------------
 
@@ -131,54 +212,6 @@ else:
     }
 
     legend_map = map_derrota
-
-# ----------------------------
-# Gráfico
-# ----------------------------
-
-st.subheader("🗺️ Mapa de arquetipos")
-
-fig = px.scatter(
-    df_filtered,
-    x="Pts Ganados/Combate",
-    y="Pts Cedidos/Combate",
-    color=color_col,
-    color_discrete_map=color_map,
-    hover_data=[
-        "Blade",
-        "Ratchet",
-        "Bit",
-        "Win %",
-        "Partidas",
-        "Arquetipo de victoria",
-        "Arquetipo de derrota"
-    ],
-    opacity=0.7
-)
-
-fig.update_traces(
-    marker=dict(size=6)
-)
-
-fig.update_layout(
-    xaxis_title="Puntos ganados por combate",
-    yaxis_title="Puntos cedidos por combate",
-    legend_title="Tipo"
-)
-
-fig.update_yaxes(
-    autorange="reversed"
-)
-
-# leyenda con emojis
-for trace in fig.data:
-
-    trace.name = legend_map[int(trace.name)]
-
-st.plotly_chart(
-    fig,
-    use_container_width=True
-)
 
 # ----------------------------
 # Filtro tabla

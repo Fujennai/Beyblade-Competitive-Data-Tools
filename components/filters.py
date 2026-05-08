@@ -3,8 +3,7 @@ import streamlit as st
 
 def filtros_dependientes(df, key_prefix="filter"):
 
-    st.subheader("🔎 Filtros por piezas")
-    st.subheader("🔎 Filtros por piezas")
+    st.subheader("🔎 Filtros por piezas")    
 
     if st.button("🔄 Resetear filtros"):
 
