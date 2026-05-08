@@ -89,44 +89,45 @@ m3.metric("Bey más débil",        f"{min(ws_scores):.4f}")
 
 st.divider()
 
-# ── Tabla del deck ────────────────────────────────────────────────────────────
+# ── Cards del deck ───────────────────────────────────────────────────────────
 st.subheader("🏆 Deck recomendado")
 
-rows = []
-for bey in deck:
-    def label(val, fijado):
-        return f"🔒 {val}" if fijado else f"✨ {val}"
+deck_cols = st.columns(3)
+for col_idx, bey in enumerate(deck):
+    ws = bey["Wilson Score"]
+    bar_pct = int(ws * 100)
 
-    rows.append({
-        "Blade":              label(bey["Blade"],   bey["Blade fijada"]),
-        "Ratchet":            label(bey["Ratchet"], bey["Ratchet fijado"]),
-        "Bit":                label(bey["Bit"],     bey["Bit fijado"]),
-        "Wilson Score":       bey["Wilson Score"],
-        "Arquetipo victoria": bey["Arquetipo victoria"],
-        "Arquetipo derrota":  bey["Arquetipo derrota"],
-    })
+    def piece_row(label, val, fijado):
+        icon  = "🔒" if fijado else "✨"
+        color = "#cccccc" if fijado else "#F39C12"
+        return (
+            f'<div style="display:flex;justify-content:space-between;align-items:center;margin:3px 0">' +
+            f'<span style="color:#888;font-size:0.8em">{label}</span>' +
+            f'<span style="color:{color};font-weight:600">{icon} {val}</span>' +
+            '</div>'
+        )
 
-df_deck = pd.DataFrame(rows)
+    card = (
+        '<div style="background:#1a1a2e;border-radius:12px;padding:18px;border:1px solid #2a2a4a">' +
+        f'<div style="font-size:0.8em;color:#888;margin-bottom:10px">BEY {bey["Bey"]}</div>' +
+        piece_row("Blade",   bey["Blade"],   bey["Blade fijada"])   +
+        piece_row("Ratchet", bey["Ratchet"], bey["Ratchet fijado"]) +
+        piece_row("Bit",     bey["Bit"],     bey["Bit fijado"])     +
+        '<div style="margin:12px 0 4px">' +
+        f'<div style="background:#2a2a4a;border-radius:4px;height:6px">' +
+        f'<div style="background:#6EC1E4;width:{bar_pct}%;height:6px;border-radius:4px"></div>' +
+        '</div></div>' +
+        f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888">' +
+        f'<span>Wilson Score</span><span style="color:#fff;font-weight:700">{ws:.4f}</span></div>' +
+        '<div style="margin-top:10px;font-size:0.75em;color:#666">' +
+        f'{bey["Arquetipo victoria"]} &nbsp;·&nbsp; {bey["Arquetipo derrota"]}' +
+        '</div></div>'
+    )
 
-st.dataframe(
-    df_deck,
-    use_container_width=True,
-    hide_index=True,
-    column_config={
-        "Wilson Score": st.column_config.ProgressColumn(
-            "Wilson Score",
-            format="%.4f",
-            min_value=0,
-            max_value=1,
-        ),
-        "Arquetipo victoria": st.column_config.TextColumn("Arquetipo victoria"),
-        "Arquetipo derrota":  st.column_config.TextColumn("Arquetipo derrota"),
-    },
-)
+    with deck_cols[col_idx]:
+        st.markdown(card, unsafe_allow_html=True)
 
-st.caption(
-    "🔒 Pieza elegida por ti · ✨ Sugerida por el sistema"
-)
+st.caption("🔒 Pieza elegida por ti · ✨ Sugerida por el sistema")
 
 st.divider()
 
