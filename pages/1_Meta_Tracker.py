@@ -206,13 +206,31 @@ if combo_sel:
     ]
 
     if not df_combo.empty:
-        df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
-        delta = df_plot["Win %"].iloc[-1] - df_plot["Win %"].iloc[0]
+        df_plot = df_combo.groupby("fecha").agg(
+            Partidas=("Partidas", "max"),
+            Winrate=("Win %", "mean")
+        ).reset_index()
 
-        st.metric(
-            "Cambio total de winrate",
-            f"{df_plot['Win %'].iloc[-1]:.2f}%",
-            delta=f"{delta:.2f}%"
+        delta_partidas = int(df_plot["Partidas"].iloc[-1] - df_plot["Partidas"].iloc[0])
+        delta_winrate  = df_plot["Winrate"].iloc[-1] - df_plot["Winrate"].iloc[0]
+
+        m1, m2 = st.columns(2)
+        m1.metric(
+            "Crecimiento en partidas",
+            f"{int(df_plot['Partidas'].iloc[-1])}",
+            delta=f"+{delta_partidas} partidas"
+        )
+        m2.metric(
+            "Cambio en winrate",
+            f"{df_plot['Winrate'].iloc[-1]:.2f}%",
+            delta=f"{delta_winrate:+.2f}%"
         )
 
-        plot_winrate(df_plot, key="chart_trending")
+        import plotly.express as px
+
+        fig = px.line(df_plot, x="fecha", y="Partidas", markers=True)
+        fig.update_layout(
+            xaxis_title="Fecha",
+            yaxis_title="Partidas acumuladas",
+        )
+        st.plotly_chart(fig, use_container_width=True, key="chart_trending")
