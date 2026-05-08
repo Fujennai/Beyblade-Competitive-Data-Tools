@@ -8,17 +8,6 @@ st.set_page_config(layout="wide")
 st.title("🧠 Arquetipos del META (scoring real)")
 
 # ----------------------------
-# Explicación
-# ----------------------------
-
-st.info(
-    "Análisis basado en el sistema de puntuación.\n\n"
-    "➡️ X = puntos que ganas cuando ganas\n"
-    "⬇️ Y = puntos que cedes cuando pierdes (invertido → abajo es mejor)\n\n"
-    "Colores según tipo de victoria o derrota."
-)
-
-# ----------------------------
 # Datos
 # ----------------------------
 
@@ -35,7 +24,7 @@ with col1:
         "Mínimo de partidas",
         min_value=0,
         max_value=int(df["Partidas"].max()),
-        value=10
+        value=0
     )
 
 with col2:

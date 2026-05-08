@@ -2,7 +2,7 @@ import streamlit as st
 
 def mostrar_top10(df, nombre):
 
-    st.subheader(f"Top 10 {nombre}")
+    st.subheader(f"Top 10 {nombre} (Wilson Score)")
 
     if df.empty:
         st.warning("No hay datos")

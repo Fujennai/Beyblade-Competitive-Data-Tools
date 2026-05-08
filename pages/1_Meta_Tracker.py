@@ -113,7 +113,7 @@ st.info(
     "- 🎯 Winrate actual\n"
     "- ⚖️ Volumen total de partidas\n\n"
     "👉 Un valor alto indica que el combo está creciendo rápido, se usa bastante y además tiene buen rendimiento.\n\n"
-    "⚠️ No significa necesariamente que sea el mejor combo, sino el que está más 'de moda' ahora mismo."
+    "⚠️ No significa necesariamente que sea el mejor combo, sino que su uso está aumentando."
 )
 
 df_trending = calcular_trending(df_history).head(10)
