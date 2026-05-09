@@ -12,8 +12,30 @@ from components.view_toggle import view_toggle
 
 st.title("📊 META Tracker")
 
-df_main = load_data()
-df_history = load_history()
+
+def _solo_scrapeados(df):
+    """
+    Garantiza que solo aparezcan combos realmente scrapeados:
+    - Partidas > 0 (descarta filas vacías o predichas)
+    - Sin NaN en métricas críticas
+    - Si por algún motivo apareciera una columna Tipo (recomendador / META oculto),
+      filtra solo los marcados como reales.
+    """
+    if df is None or df.empty:
+        return df
+    df = df.copy()
+    if "Partidas" in df.columns:
+        df = df[df["Partidas"].fillna(0) > 0]
+    for c in ["Wilson Score", "Wins", "Losses"]:
+        if c in df.columns:
+            df = df[df[c].notna()]
+    if "Tipo" in df.columns:
+        df = df[df["Tipo"].fillna("").str.contains("Real", na=False)]
+    return df
+
+
+df_main    = _solo_scrapeados(load_data())
+df_history = _solo_scrapeados(load_history())
 
 # ----------------------------
 # Explicación Wilson Score

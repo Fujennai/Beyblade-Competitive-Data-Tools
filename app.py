@@ -203,3 +203,49 @@ for prefix, title, icon in _PAGE_REGISTRY:
 
 pg = st.navigation(pages)
 pg.run()
+
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Hack móvil: evita que los st.selectbox abran el teclado del móvil
+#
+# El selectbox de Streamlit usa un <input> interno con autocompletado. Al
+# pulsarlo en móvil, el sistema lanza el teclado aunque solo queramos abrir
+# el desplegable. Marcamos esos inputs como readonly + inputmode="none" en
+# pantallas pequeñas — el dropdown sigue funcionando, pero no salta teclado.
+# ─────────────────────────────────────────────────────────────────────────────
+import streamlit.components.v1 as _components
+
+_components.html(
+    """
+    <script>
+    (function() {
+        const doc = window.parent.document;
+        const MOBILE_QUERY = "(max-width: 820px)";
+
+        function isMobile() {
+            return window.parent.matchMedia(MOBILE_QUERY).matches;
+        }
+
+        function fixSelects() {
+            if (!isMobile()) return;
+            doc.querySelectorAll('div[data-baseweb="select"] input').forEach(function (input) {
+                if (input.dataset.mobileFixed) return;
+                input.setAttribute('readonly', 'readonly');
+                input.setAttribute('inputmode', 'none');
+                input.dataset.mobileFixed = '1';
+            });
+        }
+
+        fixSelects();
+
+        // Re-aplica cuando Streamlit re-renderiza (cambio de página, filtros, etc.)
+        const observer = new MutationObserver(fixSelects);
+        observer.observe(doc.body, { childList: true, subtree: true });
+
+        // Re-comprobar al rotar / redimensionar
+        window.parent.addEventListener('resize', fixSelects);
+    })();
+    </script>
+    """,
+    height=0,
+)
