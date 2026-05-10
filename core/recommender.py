@@ -178,16 +178,19 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
         model, encoders, feature_cols, blade_dict, ratchet_dict, bit_dict = \
             _entrenar_modelo_local(df, ws_mean, par_br, par_bb, par_rb)
 
-    # Generar combos candidatos (no vistos)
+    # Generar combos candidatos (incluye reales y predichos)
     blades   = [blade]   if blade   else sorted(df["Blade"].unique())
     ratchets = [ratchet] if ratchet else sorted(df["Ratchet"].unique())
     bits     = [bit]     if bit     else sorted(df["Bit"].unique())
 
-    existing = set(zip(df["Blade"].astype(str), df["Ratchet"].astype(str), df["Bit"].astype(str)))
-    rows = [
-        (b, r, bt) for b, r, bt in product(blades, ratchets, bits)
-        if (str(b), str(r), str(bt)) not in existing
-    ]
+    # Lookup de combos reales presentes en el dataset
+    real_lookup = {
+        (str(r["Blade"]), str(r["Ratchet"]), str(r["Bit"])):
+            (float(r["Wilson Score"]), int(r["Partidas"]))
+        for _, r in df.iterrows()
+    }
+
+    rows = list(product(blades, ratchets, bits))
     df_cand = pd.DataFrame(rows, columns=["Blade", "Ratchet", "Bit"])
 
     if df_cand.empty:
@@ -249,6 +252,35 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
     df_enc["Win % Predicho"]        = np.round(pred_final * 100, 2)
     df_enc["Confianza"]             = niveles
     df_enc["Evidencia"]             = evidencias
+
+    # ── Sobrescribir combos reales con sus valores observados ─────────────────
+    # Asegura que el ranking incluya builds reales y use su Wilson Score real.
+    if real_lookup:
+        keys = list(zip(
+            df_enc["Blade"].astype(str),
+            df_enc["Ratchet"].astype(str),
+            df_enc["Bit"].astype(str),
+        ))
+        mask_real = np.array([k in real_lookup for k in keys])
+        if mask_real.any():
+            ws_real_arr = np.array(
+                [real_lookup[k][0] if k in real_lookup else 0.0 for k in keys]
+            )
+            n_real_arr = np.array(
+                [real_lookup[k][1] if k in real_lookup else 0 for k in keys]
+            )
+            df_enc.loc[mask_real, "Wilson Score Predicho"] = np.round(
+                ws_real_arr[mask_real], 4
+            )
+            df_enc.loc[mask_real, "Win % Predicho"] = np.round(
+                ws_real_arr[mask_real] * 100, 2
+            )
+            df_enc.loc[mask_real, "Confianza"] = [
+                "🟢 Alta" if n >= 10 else "🟡 Media" for n in n_real_arr[mask_real]
+            ]
+            df_enc.loc[mask_real, "Evidencia"] = [
+                f"combo real ({int(n)}p)" for n in n_real_arr[mask_real]
+            ]
 
     if solo_confiables:
         df_enc = df_enc[df_enc["Confianza"] != "🔴 Baja"]

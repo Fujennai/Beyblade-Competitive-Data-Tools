@@ -8,12 +8,6 @@ st.title("🔧 Recomendador Predictivo de Builds")
 
 df = load_data()
 
-st.info(
-    "💡 Este recomendador usa **Gradient Boosting** para predecir el rendimiento de "
-    "combinaciones que **no existen en el dataset**. Fija una o más piezas para explorar "
-    "qué compañeros optimizarían su Wilson Score."
-)
-
 # ── Filtros ────────────────────────────────────────────────────────────────────
 col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 1, 1])
 
@@ -27,7 +21,7 @@ with col3:
     bit = st.selectbox("Bit", ["Todos"] + sorted(df["Bit"].unique()))
 
 with col4:
-    top_n = st.number_input("Top N", min_value=5, max_value=100, value=20, step=5)
+    top_n = st.number_input("Número de resultados", min_value=5, max_value=100, value=20, step=5)
 
 with col5:
     solo_confiables = st.checkbox("Solo confiables", value=False,
@@ -56,12 +50,12 @@ with st.spinner("Generando predicciones..."):
 if df_rec.empty:
     st.warning("No se encontraron combinaciones para los filtros seleccionados.")
 else:
-    st.success(f"✅ Se encontraron **{len(df_rec)}** builds predichas no presentes en el dataset.")
+    st.success(f"✅ Se encontraron **{len(df_rec)}** builds.")
 
     # Métricas rápidas
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Mejor Wilson Score Predicho", f"{df_rec['Wilson Score Predicho'].max():.4f}")
-    m2.metric("Promedio Top N",              f"{df_rec['Wilson Score Predicho'].mean():.4f}")
+    m2.metric("Promedio resultados",         f"{df_rec['Wilson Score Predicho'].mean():.4f}")
     m3.metric("Confianza Alta 🟢",  len(df_rec[df_rec["Confianza"] == "🟢 Alta"]))
     m4.metric("Confianza Media 🟡", len(df_rec[df_rec["Confianza"] == "🟡 Media"]))
 
@@ -79,14 +73,14 @@ else:
             "Win % Predicho", format="%.2f%%"
         ),
         "Confianza":  st.column_config.TextColumn("Confianza"),
-        "Evidencia":  st.column_config.TextColumn("Evidencia", width="large"),
     }
 
     # Mostrar solo columnas que existan (compatibilidad con pkl antiguo)
+    # Nota: "Evidencia" se calcula internamente pero NO se muestra al usuario.
     cols_mostrar = [c for c in [
         "Blade", "Ratchet", "Bit",
         "Wilson Score Predicho", "Win % Predicho",
-        "Confianza", "Evidencia",
+        "Confianza",
     ] if c in df_rec.columns]
 
     st.dataframe(
@@ -99,6 +93,5 @@ else:
     st.caption(
         "🔍 **Confianza**: basada en la evidencia real disponible para el combo. "
         "🟢 Alta = combo real con 10+ partidas · 🟡 Media = pares observados · "
-        "🟠 Baja-Media = un par observado · 🔴 Baja = solo piezas individuales. "
-        "**Evidencia**: fuentes de datos reales usadas en la predicción."
+        "🟠 Baja-Media = un par observado · 🔴 Baja = solo piezas individuales."
     )
