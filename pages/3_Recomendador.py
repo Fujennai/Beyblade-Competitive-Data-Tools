@@ -1,6 +1,7 @@
 import streamlit as st
 from data.loader import load_data
 from core.recommender import recomendar_builds
+from components.view_toggle import view_toggle
 
 st.set_page_config(layout="wide")
 
@@ -72,15 +73,38 @@ else:
 
     st.divider()
 
-    # ── Selector de vista ────────────────────────────────────────────────────
-    vista = st.radio(
-        "Vista",
-        ["📋 Tabla", "🃏 Cards"],
-        horizontal=True,
-        label_visibility="collapsed",
-    )
+    # ── Selector de vista (cards por defecto) ────────────────────────────────
+    modo = view_toggle(key="recomendador_view")
 
-    if vista == "📋 Tabla":
+    if modo == "cards":
+        cols = st.columns(4)
+        for idx, (_, row) in enumerate(df_rec.iterrows()):
+            ws        = float(row["Wilson Score Predicho"])
+            winpct    = float(row["Win % Predicho"])
+            bar_pct   = int(max(0, min(ws, 1)) * 100)
+            blade_v   = row["Blade"]
+            ratchet_v = row["Ratchet"]
+            bit_v     = row["Bit"]
+            tipo_v    = row.get("Tipo", "")
+            conf_v    = row["Confianza"]
+            card = (
+                '<div style="background:#1a1a2e;border-radius:12px;padding:14px 16px;border:1px solid #2a2a4a;margin-bottom:8px">' +
+                f'<div style="font-weight:700;font-size:0.95em;color:#fff;margin-bottom:6px">{blade_v}</div>' +
+                f'<div style="font-size:0.82em;color:#aaa;margin-bottom:2px">{ratchet_v} &nbsp;·&nbsp; {bit_v}</div>' +
+                '<div style="margin:10px 0 4px">' +
+                f'<div style="background:#2a2a4a;border-radius:4px;height:5px">' +
+                f'<div style="background:#6EC1E4;width:{bar_pct}%;height:5px;border-radius:4px"></div>' +
+                '</div></div>' +
+                f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888">' +
+                f'<span>Wilson</span><span style="color:#fff;font-weight:700">{ws:.4f}</span></div>' +
+                f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888;margin-top:2px">' +
+                f'<span>Win %</span><span style="color:#fff;font-weight:700">{winpct:.2f}%</span></div>' +
+                f'<div style="margin-top:8px;font-size:0.72em;color:#666">{tipo_v}<br>{conf_v}</div>' +
+                '</div>'
+            )
+            with cols[idx % 4]:
+                st.markdown(card, unsafe_allow_html=True)
+    else:
         col_config = {
             "Tipo":         st.column_config.TextColumn("Tipo"),
             "Wilson Score Predicho": st.column_config.ProgressColumn(
@@ -108,26 +132,6 @@ else:
             hide_index=True,
             column_config=col_config,
         )
-    else:
-        # ── Vista de Cards ──────────────────────────────────────────────────
-        N_COLS = 3
-        rows = list(df_rec.iterrows())
-        for i in range(0, len(rows), N_COLS):
-            cards = st.columns(N_COLS)
-            for col, (_, item) in zip(cards, rows[i:i + N_COLS]):
-                with col:
-                    with st.container(border=True):
-                        st.markdown(
-                            f"**{item['Blade']}** · **{item['Ratchet']}** · **{item['Bit']}**"
-                        )
-                        st.markdown(
-                            f"{item.get('Tipo', '')}  ·  {item['Confianza']}"
-                        )
-                        ws = float(item["Wilson Score Predicho"])
-                        wp = float(item["Win % Predicho"])
-                        st.metric("Wilson Score", f"{ws:.4f}")
-                        st.progress(min(max(ws, 0.0), 1.0))
-                        st.caption(f"Win %: **{wp:.2f}%**")
 
     st.caption(
         "🎯 **Real** = combo presente en el dataset (Wilson Score observado). "
