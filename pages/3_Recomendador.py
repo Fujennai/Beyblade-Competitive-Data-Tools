@@ -9,7 +9,7 @@ st.title("🔧 Recomendador Predictivo de Builds")
 df = load_data()
 
 # ── Filtros ────────────────────────────────────────────────────────────────────
-col1, col2, col3, col4, col5 = st.columns([2, 2, 2, 1, 1])
+col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 1, 1.3, 1])
 
 with col1:
     blade = st.selectbox("Blade", ["Todos"] + sorted(df["Blade"].unique()))
@@ -24,8 +24,17 @@ with col4:
     top_n = st.number_input("Número de resultados", min_value=5, max_value=100, value=20, step=5)
 
 with col5:
+    tipo_label = st.selectbox(
+        "Tipo",
+        ["Todos", "🎯 Solo reales", "🔮 Solo predichos"],
+        help="Real = combo presente en el dataset · Predicho = combo estimado por el modelo",
+    )
+
+with col6:
     solo_confiables = st.checkbox("Solo confiables", value=False,
                                    help="Oculta predicciones con confianza 🔴 Baja")
+
+tipo = {"🎯 Solo reales": "real", "🔮 Solo predichos": "predicho"}.get(tipo_label)
 
 blade   = None if blade   == "Todos" else blade
 ratchet = None if ratchet == "Todos" else ratchet
@@ -44,6 +53,7 @@ with st.spinner("Generando predicciones..."):
         df, blade, ratchet, bit,
         top_n=int(top_n),
         solo_confiables=solo_confiables,
+        tipo=tipo,
     )
 
 # ── Resultados ────────────────────────────────────────────────────────────────
@@ -56,13 +66,14 @@ else:
     m1, m2, m3, m4 = st.columns(4)
     m1.metric("Mejor Wilson Score Predicho", f"{df_rec['Wilson Score Predicho'].max():.4f}")
     m2.metric("Promedio resultados",         f"{df_rec['Wilson Score Predicho'].mean():.4f}")
-    m3.metric("Confianza Alta 🟢",  len(df_rec[df_rec["Confianza"] == "🟢 Alta"]))
-    m4.metric("Confianza Media 🟡", len(df_rec[df_rec["Confianza"] == "🟡 Media"]))
+    m3.metric("🎯 Reales",    int((df_rec["Tipo"] == "🎯 Real").sum())     if "Tipo" in df_rec.columns else 0)
+    m4.metric("🔮 Predichos", int((df_rec["Tipo"] == "🔮 Predicho").sum()) if "Tipo" in df_rec.columns else 0)
 
     st.divider()
 
     # Tabla principal
     col_config = {
+        "Tipo":         st.column_config.TextColumn("Tipo"),
         "Wilson Score Predicho": st.column_config.ProgressColumn(
             "Wilson Score Predicho",
             format="%.4f",
@@ -79,6 +90,7 @@ else:
     # Nota: "Evidencia" se calcula internamente pero NO se muestra al usuario.
     cols_mostrar = [c for c in [
         "Blade", "Ratchet", "Bit",
+        "Tipo",
         "Wilson Score Predicho", "Win % Predicho",
         "Confianza",
     ] if c in df_rec.columns]
@@ -91,7 +103,8 @@ else:
     )
 
     st.caption(
-        "🔍 **Confianza**: basada en la evidencia real disponible para el combo. "
-        "🟢 Alta = combo real con 10+ partidas · 🟡 Media = pares observados · "
+        "🎯 **Real** = combo presente en el dataset (Wilson Score observado). "
+        "🔮 **Predicho** = combo estimado por el modelo. "
+        "**Confianza**: 🟢 Alta = combo real con 10+ partidas · 🟡 Media = pares observados · "
         "🟠 Baja-Media = un par observado · 🔴 Baja = solo piezas individuales."
     )

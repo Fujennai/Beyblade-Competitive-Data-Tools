@@ -20,9 +20,13 @@ from core.model_loader import cargar_modelo
 
 COLS_SALIDA = [
     "Blade", "Ratchet", "Bit",
+    "Tipo",
     "Wilson Score Predicho", "Win % Predicho",
     "Confianza", "Evidencia",
 ]
+
+TIPO_REAL     = "🎯 Real"
+TIPO_PREDICHO = "🔮 Predicho"
 
 _model_cache: dict = {}
 
@@ -143,11 +147,12 @@ def _entrenar_modelo_local(df: pd.DataFrame, ws_mean: float,
 # ── Función principal ─────────────────────────────────────────────────────────
 
 def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
-                      solo_confiables=False):
+                      solo_confiables=False, tipo=None):
     """
     Recomienda combos con Wilson Score predicho.
 
     solo_confiables=True → filtra resultados con confianza 🔴 Baja
+    tipo: None | "real" | "predicho" → filtra por tipo de combo.
     """
     if df.empty or "Wilson Score" not in df.columns:
         return pd.DataFrame()
@@ -252,6 +257,7 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
     df_enc["Win % Predicho"]        = np.round(pred_final * 100, 2)
     df_enc["Confianza"]             = niveles
     df_enc["Evidencia"]             = evidencias
+    df_enc["Tipo"]                  = TIPO_PREDICHO
 
     # ── Sobrescribir combos reales con sus valores observados ─────────────────
     # Asegura que el ranking incluya builds reales y use su Wilson Score real.
@@ -281,9 +287,16 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
             df_enc.loc[mask_real, "Evidencia"] = [
                 f"combo real ({int(n)}p)" for n in n_real_arr[mask_real]
             ]
+            df_enc.loc[mask_real, "Tipo"] = TIPO_REAL
 
+    # Filtros finales
     if solo_confiables:
         df_enc = df_enc[df_enc["Confianza"] != "🔴 Baja"]
+
+    if tipo == "real":
+        df_enc = df_enc[df_enc["Tipo"] == TIPO_REAL]
+    elif tipo == "predicho":
+        df_enc = df_enc[df_enc["Tipo"] == TIPO_PREDICHO]
 
     return (
         df_enc[COLS_SALIDA]
