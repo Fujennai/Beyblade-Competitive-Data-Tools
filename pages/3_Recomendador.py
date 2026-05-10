@@ -40,12 +40,13 @@ blade   = None if blade   == "Todos" else blade
 ratchet = None if ratchet == "Todos" else ratchet
 bit     = None if bit     == "Todos" else bit
 
-# ── Advertencia si no se fija ninguna pieza ────────────────────────────────────
+# ── Bloqueo: requiere al menos una pieza fijada ───────────────────────────────
 if not any([blade, ratchet, bit]):
-    st.warning(
-        "⚠️ Sin filtros el modelo evalúa **todas** las combinaciones posibles. "
-        "Considera fijar al menos una pieza para resultados más relevantes."
+    st.info(
+        "👆 Selecciona al menos una pieza (**Blade**, **Ratchet** o **Bit**) "
+        "para generar recomendaciones."
     )
+    st.stop()
 
 # ── Generación ────────────────────────────────────────────────────────────────
 with st.spinner("Generando predicciones..."):
@@ -71,36 +72,62 @@ else:
 
     st.divider()
 
-    # Tabla principal
-    col_config = {
-        "Tipo":         st.column_config.TextColumn("Tipo"),
-        "Wilson Score Predicho": st.column_config.ProgressColumn(
-            "Wilson Score Predicho",
-            format="%.4f",
-            min_value=0,
-            max_value=1,
-        ),
-        "Win % Predicho": st.column_config.NumberColumn(
-            "Win % Predicho", format="%.2f%%"
-        ),
-        "Confianza":  st.column_config.TextColumn("Confianza"),
-    }
-
-    # Mostrar solo columnas que existan (compatibilidad con pkl antiguo)
-    # Nota: "Evidencia" se calcula internamente pero NO se muestra al usuario.
-    cols_mostrar = [c for c in [
-        "Blade", "Ratchet", "Bit",
-        "Tipo",
-        "Wilson Score Predicho", "Win % Predicho",
-        "Confianza",
-    ] if c in df_rec.columns]
-
-    st.dataframe(
-        df_rec[cols_mostrar],
-        use_container_width=True,
-        hide_index=True,
-        column_config=col_config,
+    # ── Selector de vista ────────────────────────────────────────────────────
+    vista = st.radio(
+        "Vista",
+        ["📋 Tabla", "🃏 Cards"],
+        horizontal=True,
+        label_visibility="collapsed",
     )
+
+    if vista == "📋 Tabla":
+        col_config = {
+            "Tipo":         st.column_config.TextColumn("Tipo"),
+            "Wilson Score Predicho": st.column_config.ProgressColumn(
+                "Wilson Score Predicho",
+                format="%.4f",
+                min_value=0,
+                max_value=1,
+            ),
+            "Win % Predicho": st.column_config.NumberColumn(
+                "Win % Predicho", format="%.2f%%"
+            ),
+            "Confianza":  st.column_config.TextColumn("Confianza"),
+        }
+        # Nota: "Evidencia" se calcula internamente pero NO se muestra al usuario.
+        cols_mostrar = [c for c in [
+            "Blade", "Ratchet", "Bit",
+            "Tipo",
+            "Wilson Score Predicho", "Win % Predicho",
+            "Confianza",
+        ] if c in df_rec.columns]
+
+        st.dataframe(
+            df_rec[cols_mostrar],
+            use_container_width=True,
+            hide_index=True,
+            column_config=col_config,
+        )
+    else:
+        # ── Vista de Cards ──────────────────────────────────────────────────
+        N_COLS = 3
+        rows = list(df_rec.iterrows())
+        for i in range(0, len(rows), N_COLS):
+            cards = st.columns(N_COLS)
+            for col, (_, item) in zip(cards, rows[i:i + N_COLS]):
+                with col:
+                    with st.container(border=True):
+                        st.markdown(
+                            f"**{item['Blade']}** · **{item['Ratchet']}** · **{item['Bit']}**"
+                        )
+                        st.markdown(
+                            f"{item.get('Tipo', '')}  ·  {item['Confianza']}"
+                        )
+                        ws = float(item["Wilson Score Predicho"])
+                        wp = float(item["Win % Predicho"])
+                        st.metric("Wilson Score", f"{ws:.4f}")
+                        st.progress(min(max(ws, 0.0), 1.0))
+                        st.caption(f"Win %: **{wp:.2f}%**")
 
     st.caption(
         "🎯 **Real** = combo presente en el dataset (Wilson Score observado). "
