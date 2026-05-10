@@ -83,13 +83,13 @@ df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    mostrar_top10(df_blade, "Blades", inside_column=True)
+    mostrar_top10(df_blade, "Blades")
 
 with col2:
-    mostrar_top10(df_ratchet, "Ratchets", inside_column=True)
+    mostrar_top10(df_ratchet, "Ratchets")
 
 with col3:
-    mostrar_top10(df_bit, "Bits", inside_column=True)
+    mostrar_top10(df_bit, "Bits")
 
 st.divider()
 
