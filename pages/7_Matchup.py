@@ -3,6 +3,7 @@ import pandas as pd
 
 from data.loader import load_data
 from core.matchup import prob_victoria, pts_esperados, ws_ponderado, _cargar_pesos
+from components.demo_button import boton_demo, combos_aleatorios
 
 st.set_page_config(layout="wide")
 
@@ -17,6 +18,28 @@ st.caption(
     f"Ratchet {pesos['Ratchet']*100:.0f}% · "
     f"Bit {pesos['Bit']*100:.0f}%"
 )
+
+# ── Botón de demostración ─────────────────────────────────────────────────────
+if boton_demo(
+    key="demo_match",
+    help_text="Elige dos combos reales aleatorios del dataset "
+              "(ponderados por partidas) para mostrar el matchup.",
+):
+    combos = combos_aleatorios(df, n=2)
+    if len(combos) >= 2:
+        a, b = combos[0], combos[1]
+        st.session_state["blade_a"]   = a["Blade"]
+        st.session_state["ratchet_a"] = a["Ratchet"]
+        st.session_state["bit_a"]     = a["Bit"]
+        st.session_state["blade_b"]   = b["Blade"]
+        st.session_state["ratchet_b"] = b["Ratchet"]
+        st.session_state["bit_b"]     = b["Bit"]
+        st.toast(
+            f"🎬 A: {a['Blade']} / {a['Ratchet']} / {a['Bit']}  ·  "
+            f"B: {b['Blade']} / {b['Ratchet']} / {b['Bit']}",
+            icon="✨",
+        )
+    st.rerun()
 
 # ── Selección de combos ───────────────────────────────────────────────────────
 col_a, col_sep, col_b = st.columns([5, 1, 5])

@@ -4,6 +4,7 @@ import pandas as pd
 from data.loader import load_data
 from core.meta_hidden import predecir_combos_nuevos
 from components.view_toggle import view_toggle
+from components.demo_button import boton_demo, piezas_aleatorias
 
 st.set_page_config(layout="wide")
 
@@ -21,19 +22,35 @@ if df_nuevos.empty:
     st.warning("No se encontraron combos nuevos.")
     st.stop()
 
+# ── Botón de demostración ─────────────────────────────────────────────────────
+if boton_demo(
+    key="demo_mo",
+    help_text="Selecciona un Blade aleatorio del dataset (ponderado por partidas) "
+              "para ver predicciones de combos no explorados con ese Blade.",
+):
+    blades = piezas_aleatorias(df, "Blade", n=1)
+    if blades:
+        st.session_state["mo_blade"]   = blades[0]
+        st.session_state["mo_ratchet"] = "Todos"
+        st.session_state["mo_bit"]     = "Todos"
+        st.session_state["mo_arq_v"]   = "Todos"
+        st.session_state["mo_arq_d"]   = "Todos"
+        st.toast(f"🎬 Demo: Blade = {blades[0]}", icon="✨")
+    st.rerun()
+
 # ── Filtros ───────────────────────────────────────────────────────────────────
 st.subheader("🔎 Filtros")
 
 col1, col2, col3 = st.columns(3)
 
 with col1:
-    blade = st.selectbox("Blade", ["Todos"] + sorted(df_nuevos["Blade"].unique()))
+    blade = st.selectbox("Blade", ["Todos"] + sorted(df_nuevos["Blade"].unique()), key="mo_blade")
 
 with col2:
-    ratchet = st.selectbox("Ratchet", ["Todos"] + sorted(df_nuevos["Ratchet"].unique()))
+    ratchet = st.selectbox("Ratchet", ["Todos"] + sorted(df_nuevos["Ratchet"].unique()), key="mo_ratchet")
 
 with col3:
-    bit = st.selectbox("Bit", ["Todos"] + sorted(df_nuevos["Bit"].unique()))
+    bit = st.selectbox("Bit", ["Todos"] + sorted(df_nuevos["Bit"].unique()), key="mo_bit")
 
 INSUFICIENTE = "⚪ Datos insuficientes"
 
@@ -62,13 +79,15 @@ col4, col5 = st.columns(2)
 with col4:
     arq_victoria = st.selectbox(
         "Arquetipo victoria",
-        ["Todos"] + TODOS_VICTORIA
+        ["Todos"] + TODOS_VICTORIA,
+        key="mo_arq_v",
     )
 
 with col5:
     arq_derrota = st.selectbox(
         "Arquetipo derrota",
-        ["Todos"] + TODOS_DERROTA
+        ["Todos"] + TODOS_DERROTA,
+        key="mo_arq_d",
     )
 
 # ── Aplicar filtros ───────────────────────────────────────────────────────────

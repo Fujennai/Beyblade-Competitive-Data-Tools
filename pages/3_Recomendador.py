@@ -2,6 +2,7 @@ import streamlit as st
 from data.loader import load_data
 from core.recommender import recomendar_builds
 from components.view_toggle import view_toggle
+from components.demo_button import boton_demo, piezas_aleatorias
 
 st.set_page_config(layout="wide")
 
@@ -9,17 +10,31 @@ st.title("🔧 Recomendador Predictivo de Builds")
 
 df = load_data()
 
+# ── Botón de demostración ─────────────────────────────────────────────────────
+if boton_demo(
+    key="demo_rec",
+    help_text="Selecciona un Blade aleatorio del dataset (ponderado por partidas) "
+              "para mostrar el recomendador en acción.",
+):
+    blades = piezas_aleatorias(df, "Blade", n=1)
+    if blades:
+        st.session_state["rec_blade"]   = blades[0]
+        st.session_state["rec_ratchet"] = "Todos"
+        st.session_state["rec_bit"]     = "Todos"
+        st.toast(f"🎬 Demo: Blade = {blades[0]}", icon="✨")
+    st.rerun()
+
 # ── Filtros ────────────────────────────────────────────────────────────────────
 col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 1, 1.3, 1])
 
 with col1:
-    blade = st.selectbox("Blade", ["Todos"] + sorted(df["Blade"].unique()))
+    blade = st.selectbox("Blade", ["Todos"] + sorted(df["Blade"].unique()), key="rec_blade")
 
 with col2:
-    ratchet = st.selectbox("Ratchet", ["Todos"] + sorted(df["Ratchet"].unique()))
+    ratchet = st.selectbox("Ratchet", ["Todos"] + sorted(df["Ratchet"].unique()), key="rec_ratchet")
 
 with col3:
-    bit = st.selectbox("Bit", ["Todos"] + sorted(df["Bit"].unique()))
+    bit = st.selectbox("Bit", ["Todos"] + sorted(df["Bit"].unique()), key="rec_bit")
 
 with col4:
     top_n = st.number_input("Número de resultados", min_value=5, max_value=100, value=20, step=5)
@@ -159,6 +174,43 @@ else:
             use_container_width=True,
             hide_index=True,
             column_config=col_config,
+        )
+
+    # ── Explicación de la columna Evidencia (solo si está activo el detalle) ──
+    if detalle:
+        st.markdown(
+            """
+            <div style="background:linear-gradient(135deg, rgba(110,193,228,0.10), rgba(106,48,147,0.10));
+                        border-left:4px solid #6EC1E4;
+                        border-radius:8px;
+                        padding:14px 18px;
+                        margin-top:12px;
+                        font-size:0.9em;
+                        line-height:1.6">
+                <div style="font-weight:700;color:#6EC1E4;margin-bottom:6px;font-size:0.95em">
+                    ℹ️ ¿Qué significa la columna <i>Evidencia</i>?
+                </div>
+                <div style="color:#ccc">
+                    La columna <b>Evidencia</b> indica en qué se basa cada predicción del modelo,
+                    ordenado de mayor a menor fiabilidad:
+                </div>
+                <ul style="margin:8px 0 0 0;padding-left:22px;color:#bbb">
+                    <li><b>combo real (Np)</b> — el combo exacto aparece en los datos scrapeados
+                        con <i>N</i> partidas jugadas. Es la evidencia más fuerte.</li>
+                    <li><b>par Blade+Ratchet</b> / <b>par Blade+Bit</b> / <b>par Ratchet+Bit</b> —
+                        no existe el combo completo, pero sí esa combinación de dos piezas
+                        en otros combos del dataset. Cuantos más pares aparezcan, mayor confianza.</li>
+                    <li><b>solo piezas individuales</b> — no hay ni combo real ni pares observados.
+                        La predicción se apoya únicamente en el Wilson Score medio de cada pieza
+                        por separado. Es la evidencia más débil (confianza 🔴 Baja).</li>
+                </ul>
+                <div style="color:#888;font-size:0.85em;margin-top:8px">
+                    El nivel de <b>Confianza</b> que ves en la otra columna se deriva directamente
+                    del número y tipo de fuentes de evidencia disponibles.
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True,
         )
 
     st.caption(

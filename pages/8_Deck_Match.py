@@ -4,6 +4,7 @@ from itertools import permutations
 
 from data.loader import load_data
 from core.matchup import simular_deck_match, orden_optimo
+from components.demo_button import boton_demo, combos_aleatorios
 
 st.set_page_config(layout="wide")
 
@@ -12,6 +13,25 @@ st.title("🏟️ Simulador de Deck Match")
 df = load_data()
 
 st.caption("Introduce los dos decks y simula quién tiene más probabilidades de ganar. Indica cuál es el tuyo para ver el orden óptimo.")
+
+# ── Botón de demostración ─────────────────────────────────────────────────────
+if boton_demo(
+    key="demo_dm",
+    help_text="Rellena los dos decks con 6 combos reales aleatorios "
+              "(ponderados por partidas) para mostrar la simulación.",
+):
+    combos = combos_aleatorios(df, n=6)
+    if len(combos) >= 6:
+        for i, c in enumerate(combos[:3]):
+            st.session_state[f"mio_blade_{i}"]   = c["Blade"]
+            st.session_state[f"mio_ratchet_{i}"] = c["Ratchet"]
+            st.session_state[f"mio_bit_{i}"]     = c["Bit"]
+        for i, c in enumerate(combos[3:6]):
+            st.session_state[f"rival_blade_{i}"]   = c["Blade"]
+            st.session_state[f"rival_ratchet_{i}"] = c["Ratchet"]
+            st.session_state[f"rival_bit_{i}"]     = c["Bit"]
+        st.toast("🎬 Demo: 6 combos reales asignados a ambos decks.", icon="✨")
+    st.rerun()
 
 # ── Helper ────────────────────────────────────────────────────────────────────
 def get_combo_data(df, blade, ratchet, bit, nombre):

@@ -5,6 +5,7 @@ from data.loader import load_data
 from core.deckbuilder import optimizar_deck
 from core.compatibility import ratchets_validos
 from components.view_toggle import view_toggle
+from components.demo_button import boton_demo, combos_aleatorios
 
 st.set_page_config(layout="wide")
 
@@ -17,6 +18,27 @@ st.caption(
     "El sistema completa el resto optimizando el deck en conjunto. "
     "🔒 = elegido por ti · ✨ = sugerido por el sistema"
 )
+
+# ── Botón de demostración ─────────────────────────────────────────────────────
+if boton_demo(
+    key="demo_db",
+    help_text="Fija 3 Blades aleatorios de combos reales del dataset "
+              "(ponderados por partidas) para que el optimizador construya el deck.",
+):
+    combos = combos_aleatorios(df, n=10)  # margen de sobra para evitar duplicados
+    blades_usados = []
+    for c in combos:
+        if c["Blade"] not in blades_usados:
+            blades_usados.append(c["Blade"])
+        if len(blades_usados) == 3:
+            break
+    if len(blades_usados) == 3:
+        for i, blade in enumerate(blades_usados):
+            st.session_state[f"blade_{i}"]   = blade
+            st.session_state[f"ratchet_{i}"] = "—"
+            st.session_state[f"bit_{i}"]     = "—"
+        st.toast(f"🎬 Demo: {', '.join(blades_usados)}", icon="✨")
+    st.rerun()
 
 # ── Selección del usuario ─────────────────────────────────────────────────────
 st.subheader("🎯 Piezas fijadas")
