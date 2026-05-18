@@ -73,8 +73,18 @@ else:
 
     st.divider()
 
-    # ── Selector de vista (cards por defecto) ────────────────────────────────
+    # ── Selector de vista + toggle de detalle ────────────────────────────────
     modo = view_toggle(key="recomendador_view")
+    detalle = st.toggle(
+        "ℹ️ Información detallada",
+        value=False,
+        key="recomendador_detalle",
+        help=(
+            "Muestra la columna **Evidencia**, que explica en qué se basa cada "
+            "predicción: combo real, pares de piezas observados o solo piezas "
+            "individuales."
+        ),
+    )
 
     if modo == "cards":
         cols = st.columns(4)
@@ -87,6 +97,15 @@ else:
             bit_v     = row["Bit"]
             tipo_v    = row.get("Tipo", "")
             conf_v    = row["Confianza"]
+            evid_v    = row.get("Evidencia", "")
+
+            evidencia_html = (
+                f'<div style="margin-top:8px;padding-top:8px;border-top:1px dashed #2a2a4a;'
+                f'font-size:0.72em;color:#888;line-height:1.4">'
+                f'<span style="color:#6EC1E4;font-weight:600">Evidencia:</span> {evid_v}'
+                f'</div>'
+            ) if detalle and evid_v else ""
+
             card = (
                 '<div style="background:#1a1a2e;border-radius:12px;padding:14px 16px;border:1px solid #2a2a4a;margin-bottom:8px">' +
                 f'<div style="font-weight:700;font-size:0.95em;color:#fff;margin-bottom:6px">{blade_v}</div>' +
@@ -100,6 +119,7 @@ else:
                 f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888;margin-top:2px">' +
                 f'<span>Win %</span><span style="color:#fff;font-weight:700">{winpct:.2f}%</span></div>' +
                 f'<div style="margin-top:8px;font-size:0.72em;color:#666">{tipo_v}<br>{conf_v}</div>' +
+                evidencia_html +
                 '</div>'
             )
             with cols[idx % 4]:
@@ -117,14 +137,22 @@ else:
                 "Win % Predicho", format="%.2f%%"
             ),
             "Confianza":  st.column_config.TextColumn("Confianza"),
+            "Evidencia":  st.column_config.TextColumn(
+                "Evidencia",
+                help="Combo real, pares observados o piezas individuales.",
+                width="large",
+            ),
         }
-        # Nota: "Evidencia" se calcula internamente pero NO se muestra al usuario.
-        cols_mostrar = [c for c in [
+        # "Evidencia" solo se muestra si el usuario activa el toggle de detalle.
+        base_cols = [
             "Blade", "Ratchet", "Bit",
             "Tipo",
             "Wilson Score Predicho", "Win % Predicho",
             "Confianza",
-        ] if c in df_rec.columns]
+        ]
+        if detalle:
+            base_cols.append("Evidencia")
+        cols_mostrar = [c for c in base_cols if c in df_rec.columns]
 
         st.dataframe(
             df_rec[cols_mostrar],
