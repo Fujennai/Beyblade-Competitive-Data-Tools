@@ -118,7 +118,7 @@ def inicio():
         df_hist = load_history()
 
         n_combos = len(df)
-        n_partidas = int(df["partidas"].sum()) if "partidas" in df.columns else None
+        n_partidas = int(df["Partidas"].sum()) if "Partidas" in df.columns else None
         n_snapshots = df_hist["fecha"].nunique() if not df_hist.empty and "fecha" in df_hist.columns else 0
 
         c1, c2, c3, c4 = st.columns(4)
