@@ -16,14 +16,6 @@ import itertools
 from core.model_loader import cargar_modelo
 
 
-# ── Wilson Score ──────────────────────────────────────────────────────────────
-def _wilson(w, n, z=1.96):
-    if n == 0:
-        return 0.0
-    p = w / n
-    return (p + z**2/(2*n) - z*((p*(1-p)+z**2/(4*n))/n)**0.5) / (1 + z**2/n)
-
-
 # ── Arquetipos esperados ──────────────────────────────────────────────────────
 def _arquetipos_esperados(df, blade, ratchet, bit):
     """Deduce el arquetipo de victoria/derrota más probable basándose en datos reales."""

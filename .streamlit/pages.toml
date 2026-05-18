@@ -1,7 +1,2 @@
-[[pages]]
-path = "app.py"
-name = "🏠 Inicio"
-
-[[pages]]
-path = "pages/1_Meta_Tracker.py"
-name = "📊 META Tracker"
+# Archivo obsoleto: la navegación se gestiona en app.py con st.navigation.
+# Puedes borrarlo con `git rm .streamlit/pages.toml`.
