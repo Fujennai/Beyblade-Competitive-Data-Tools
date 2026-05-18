@@ -67,6 +67,18 @@ if not combos_completos:
     st.stop()
 
 # ── Buscar datos en el dataset ────────────────────────────────────────────────
+INSUFICIENTE = "⚪ Datos insuficientes"
+
+
+def _arquetipo_mas_comun(df, col, val, columna_arq):
+    """Devuelve el arquetipo más frecuente entre los combos que comparten la pieza."""
+    s = df[(df[col] == val) & (df[columna_arq] != INSUFICIENTE)]
+    if s.empty or columna_arq not in s.columns:
+        return INSUFICIENTE
+    mode = s[columna_arq].mode()
+    return mode.iloc[0] if not mode.empty else INSUFICIENTE
+
+
 def get_combo_data(df, blade, ratchet, bit):
     # Wilson Score ponderado por pieza
     ws_blade   = df[df["Blade"]   == blade  ]["Wilson Score"].mean() if blade   else 0.5
@@ -83,8 +95,14 @@ def get_combo_data(df, blade, ratchet, bit):
             "pts_cedidos": float(r["Pts Cedidos/Combate"]),
             "winrate":     float(r["Win %"]),
             "partidas":    int(r["Partidas"]),
+            "arq_v":       r.get("Arquetipo victoria", INSUFICIENTE),
+            "arq_d":       r.get("Arquetipo derrota",  INSUFICIENTE),
             "real":        True,
         }
+    # Combo no visto: estimar arquetipos a partir de la moda por Blade
+    arq_v = _arquetipo_mas_comun(df, "Blade", blade, "Arquetipo victoria") if "Arquetipo victoria" in df.columns else INSUFICIENTE
+    arq_d = _arquetipo_mas_comun(df, "Blade", blade, "Arquetipo derrota")  if "Arquetipo derrota"  in df.columns else INSUFICIENTE
+
     pts_g, pts_c = [], []
     for col, val in [("Blade", blade), ("Ratchet", ratchet), ("Bit", bit)]:
         s = df[df[col] == val]
@@ -98,6 +116,8 @@ def get_combo_data(df, blade, ratchet, bit):
         "pts_cedidos": round(float(sum(pts_c)/len(pts_c)), 3) if pts_c else 1.0,
         "winrate":     None,
         "partidas":    0,
+        "arq_v":       arq_v,
+        "arq_d":       arq_d,
         "real":        False,
     }
 
@@ -150,6 +170,101 @@ m1.metric("Ventaja",           ganador)
 m2.metric("Wilson Score A",    f"{data_a['ws']:.4f}", delta=f"{'✅ Real' if data_a['real'] else '🔮 Estimado'}")
 m3.metric("Wilson Score B",    f"{data_b['ws']:.4f}", delta=f"{'✅ Real' if data_b['real'] else '🔮 Estimado'}")
 m4.metric("Pts/combate esperados", f"A: {pts_e_a} · B: {pts_e_b}")
+
+# ── Resultados probables basados en arquetipos ────────────────────────────────
+st.divider()
+st.subheader("🎲 Resultados probables del enfrentamiento")
+st.caption(
+    "Combinación de la probabilidad de victoria con el arquetipo de cada combo: "
+    "cómo tiende a ganar el vencedor (Spin / Burst / Xtreme) y cómo tiende a perder "
+    "el rival. Los pesos suman 100% entre los 6 resultados posibles."
+)
+
+# Distribución base por arquetipo de VICTORIA (orden: spin, burst, xtreme)
+_PESOS_VICTORIA = {
+    "🔵 Spin finish":            [0.70, 0.20, 0.10],
+    "🟠 Burst / Over":           [0.20, 0.70, 0.10],
+    "🟢 Xtreme finish":          [0.10, 0.20, 0.70],
+    "⚫ Alta tendencia a perder": [0.34, 0.33, 0.33],
+    INSUFICIENTE:                [0.34, 0.33, 0.33],
+}
+# Distribución base por arquetipo de DERROTA (qué finish te castiga más)
+_PESOS_DERROTA = {
+    "🔵 Pierde por spin":         [0.70, 0.20, 0.10],
+    "🟠 Pierde por burst/over":   [0.20, 0.70, 0.10],
+    "🟢 Pierde por xtreme":       [0.10, 0.20, 0.70],
+    "🟡 Alta tendencia a ganar":  [0.34, 0.33, 0.33],
+    INSUFICIENTE:                 [0.34, 0.33, 0.33],
+}
+
+_FINISH_LABELS = [
+    ("Spin Finish",  "1 pt", "🔵"),
+    ("Burst / Over", "2 pt", "🟠"),
+    ("Xtreme Finish", "3 pt", "🟢"),
+]
+
+
+def _proba_finishes(arq_victoria, arq_derrota):
+    """Promedia las preferencias del ganador y las debilidades del perdedor."""
+    v = _PESOS_VICTORIA.get(arq_victoria, [0.34, 0.33, 0.33])
+    d = _PESOS_DERROTA.get(arq_derrota,   [0.34, 0.33, 0.33])
+    combinada = [(v[i] + d[i]) / 2 for i in range(3)]
+    total = sum(combinada) or 1
+    return [c / total for c in combinada]
+
+
+fin_a = _proba_finishes(data_a["arq_v"], data_b["arq_d"])
+fin_b = _proba_finishes(data_b["arq_v"], data_a["arq_d"])
+
+resultados = []
+for i, (finish, pts, emoji) in enumerate(_FINISH_LABELS):
+    resultados.append({
+        "actor": "🔵 Combo A", "color": color_a, "label": f"{emoji} {finish}",
+        "pts": pts, "prob": p_a * fin_a[i],
+    })
+for i, (finish, pts, emoji) in enumerate(_FINISH_LABELS):
+    resultados.append({
+        "actor": "🔴 Combo B", "color": color_b, "label": f"{emoji} {finish}",
+        "pts": pts, "prob": p_b * fin_b[i],
+    })
+
+resultados.sort(key=lambda r: r["prob"], reverse=True)
+
+for idx, r in enumerate(resultados):
+    pct      = r["prob"] * 100
+    bar_pct  = max(1, int(pct))
+    medalla  = "🥇" if idx == 0 else ("🥈" if idx == 1 else ("🥉" if idx == 2 else f"#{idx+1}"))
+    card = (
+        f'<div style="background:#1a1a2e;border-radius:10px;padding:10px 14px;'
+        f'border:1px solid #2a2a4a;margin-bottom:6px">'
+        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+        f'<span style="color:#888;font-weight:700;font-size:0.85em">{medalla}</span>'
+        f'<span style="color:{r["color"]};font-weight:700">{r["actor"]} gana por {r["label"]}</span>'
+        f'<span style="color:#666;font-size:0.78em">{r["pts"]}</span>'
+        f'<span style="color:#fff;font-family:monospace;font-weight:700;min-width:60px;text-align:right">{pct:.1f}%</span>'
+        f'</div>'
+        f'<div style="background:#2a2a4a;border-radius:4px;height:5px">'
+        f'<div style="background:{r["color"]};width:{bar_pct}%;height:5px;border-radius:4px"></div>'
+        f'</div></div>'
+    )
+    st.markdown(card, unsafe_allow_html=True)
+
+with st.expander("ℹ️ ¿Cómo se calculan estas probabilidades?"):
+    st.markdown(
+        """
+- Se parte de **P(A gana)** y **P(B gana)** (Wilson Score relativo).
+- A cada combo se le asigna una distribución sobre tipos de finish según
+  su **arquetipo de victoria** (cómo suele ganar):
+  - 🔵 Spin finish → 70% spin · 20% burst · 10% xtreme
+  - 🟠 Burst / Over → 20% spin · 70% burst · 10% xtreme
+  - 🟢 Xtreme finish → 10% spin · 20% burst · 70% xtreme
+  - ⚪ Sin datos → distribución uniforme
+- Se modula con el **arquetipo de derrota** del rival (por qué finish suele perder),
+  usando la misma escala. Las dos distribuciones se promedian.
+- Para cada uno de los 6 desenlaces posibles:
+  `P(actor gana por finish) = P(actor gana) × P(finish | arquetipos)`.
+        """
+    )
 
 # ── Detalle por combo ─────────────────────────────────────────────────────────
 st.divider()
