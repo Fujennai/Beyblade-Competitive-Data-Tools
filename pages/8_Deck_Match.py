@@ -31,33 +31,49 @@ if boton_demo(
     help_text="Rellena los dos decks con 6 combos reales aleatorios "
               "(ponderados por partidas) para mostrar la simulación.",
 ):
-    combos = combos_aleatorios(df, n=10)  # margen extra para evitar duplicados
-
-    # Extraer 3 combos únicos para mio
     blades_mio = []
     ratchets_mio = []
     bits_mio = []
-
-    for c in combos:
-        if c["Blade"] not in blades_mio:
-            blades_mio.append(c["Blade"])
-            ratchets_mio.append(c["Ratchet"])
-            bits_mio.append(c["Bit"])
-        if len(blades_mio) == 3:
-            break
-
-    # Extraer 3 combos únicos para rival (diferentes a mio)
     blades_rival = []
     ratchets_rival = []
     bits_rival = []
+    intentos = 0
+    max_intentos = 5
 
-    for c in combos:
-        if c["Blade"] not in blades_rival and c["Blade"] not in blades_mio:
-            blades_rival.append(c["Blade"])
-            ratchets_rival.append(c["Ratchet"])
-            bits_rival.append(c["Bit"])
-        if len(blades_rival) == 3:
-            break
+    # Intentar varias veces para encontrar 6 combos únicos (3 por deck, sin repeticiones dentro de cada deck)
+    while (len(blades_mio) < 3 or len(blades_rival) < 3) and intentos < max_intentos:
+        intentos += 1
+        combos = combos_aleatorios(df, n=50)  # Margen amplio para garantizar diversidad
+
+        # Extraer 3 combos únicos para mio
+        if len(blades_mio) < 3:
+            for c in combos:
+                blade = c["Blade"]
+                ratchet = c["Ratchet"]
+                bit = c["Bit"]
+
+                if blade not in blades_mio and ratchet not in ratchets_mio and bit not in bits_mio:
+                    blades_mio.append(blade)
+                    ratchets_mio.append(ratchet)
+                    bits_mio.append(bit)
+
+                if len(blades_mio) == 3:
+                    break
+
+        # Extraer 3 combos únicos para rival (sin repetir dentro de rival)
+        if len(blades_rival) < 3:
+            for c in combos:
+                blade = c["Blade"]
+                ratchet = c["Ratchet"]
+                bit = c["Bit"]
+
+                if blade not in blades_rival and ratchet not in ratchets_rival and bit not in bits_rival:
+                    blades_rival.append(blade)
+                    ratchets_rival.append(ratchet)
+                    bits_rival.append(bit)
+
+                if len(blades_rival) == 3:
+                    break
 
     if len(blades_mio) == 3 and len(blades_rival) == 3:
         # Asignar a mi deck
@@ -73,7 +89,11 @@ if boton_demo(
             st.session_state[f"rival_bit_{i}"]     = bits_rival[i]
 
         st.toast("🎬 Demo: 6 combos reales asignados a ambos decks.", icon="✨")
-    st.rerun()
+        st.rerun()
+    else:
+        # Si falla, mostrar error
+        st.error(f"❌ No se encontraron suficientes combos únicos. Intenta de nuevo o selecciona manualmente.")
+        st.stop()
 
 # ── Helper ────────────────────────────────────────────────────────────────────
 def get_combo_data(df, blade, ratchet, bit, nombre):

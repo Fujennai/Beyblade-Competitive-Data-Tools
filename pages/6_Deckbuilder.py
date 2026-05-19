@@ -36,31 +36,43 @@ if boton_demo(
     help_text="Fija 3 Blades aleatorios de combos reales del dataset "
               "(ponderados por partidas) para que el optimizador construya el deck.",
 ):
-    combos = combos_aleatorios(df, n=10)  # margen de sobra para evitar duplicados
     blades_usados = []
     ratchets_usados = []
     bits_usados = []
+    intentos = 0
+    max_intentos = 5
 
-    for c in combos:
-        blade = c["Blade"]
-        ratchet = c["Ratchet"]
-        bit = c["Bit"]
+    # Intentar varias veces para encontrar 3 combos únicos
+    while len(blades_usados) < 3 and intentos < max_intentos:
+        intentos += 1
+        combos = combos_aleatorios(df, n=30)  # Margen amplio para garantizar diversidad
 
-        if blade not in blades_usados:
-            blades_usados.append(blade)
-            ratchets_usados.append(ratchet)
-            bits_usados.append(bit)
+        for c in combos:
+            blade = c["Blade"]
+            ratchet = c["Ratchet"]
+            bit = c["Bit"]
 
-        if len(blades_usados) == 3:
-            break
+            # Verificar que no está ya seleccionado
+            if blade not in blades_usados and ratchet not in ratchets_usados and bit not in bits_usados:
+                blades_usados.append(blade)
+                ratchets_usados.append(ratchet)
+                bits_usados.append(bit)
+
+            if len(blades_usados) == 3:
+                break
 
     if len(blades_usados) == 3:
+        # Asignar valores
         for i in range(3):
             st.session_state[f"blade_{i}"]   = blades_usados[i]
             st.session_state[f"ratchet_{i}"] = ratchets_usados[i]
             st.session_state[f"bit_{i}"]     = bits_usados[i]
         st.toast(f"🎬 Demo: {', '.join(blades_usados)}", icon="✨")
-    st.rerun()
+        st.rerun()
+    else:
+        # Si falla, mostrar error
+        st.error(f"❌ No se encontraron suficientes combos únicos. Intenta de nuevo o selecciona manualmente.")
+        st.stop()
 
 # ── Selección del usuario ─────────────────────────────────────────────────────
 st.subheader("🎯 Piezas fijadas")
