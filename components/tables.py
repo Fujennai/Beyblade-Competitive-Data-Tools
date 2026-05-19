@@ -92,18 +92,20 @@ def mostrar_top10(df, nombre, key_suffix=None):
             card = (
                 f'<div style="background:#1a1a2e;border-radius:12px;padding:14px 16px;'
                 f'border:1px solid {border};margin-bottom:8px">'
-                f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">'
+                f'<div style="display:flex;align-items:center;margin-bottom:6px">'
                 f'<span style="font-size:1.1em">{rank_label}</span>'
-                f'<span style="font-size:0.75em;color:{rank_color};font-weight:700">{ws:.4f}</span>'
                 f'</div>'
                 f'<div style="font-weight:700;font-size:0.95em;color:#fff;margin-bottom:4px">{titulo}</div>'
                 + subtitulo_html
                 + meta_html +
-                '<div style="margin:6px 0 4px">'
+                '<div style="margin:6px 0 8px">'
                 '<div style="background:#2a2a4a;border-radius:4px;height:5px">'
                 f'<div style="background:#6EC1E4;width:{bar_pct}%;height:5px;border-radius:4px"></div>'
                 '</div></div>'
-                f'<div style="font-size:0.75em;color:#888;margin-top:4px">Wilson Score</div>'
+                f'<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8em">'
+                f'<span style="color:#888">Wilson Score</span>'
+                f'<span style="color:{rank_color};font-weight:700">{ws:.4f}</span>'
+                f'</div>'
                 '</div>'
             )
             with cols[idx % 4]:
