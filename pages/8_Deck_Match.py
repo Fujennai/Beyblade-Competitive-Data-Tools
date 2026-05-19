@@ -14,22 +14,64 @@ df = load_data()
 
 st.caption("Introduce los dos decks y simula quién tiene más probabilidades de ganar. Indica cuál es el tuyo para ver el orden óptimo.")
 
+# ── Función auxiliar: obtener piezas ya seleccionadas en un deck ──
+def get_piezas_seleccionadas_deck(tipo_pieza, excluir_pos, prefix):
+    """Retorna lista de piezas del tipo especificado ya seleccionadas en otros Beys del mismo deck"""
+    piezas = []
+    for j in range(3):
+        if j != excluir_pos:
+            pieza = st.session_state.get(f"{prefix}_{tipo_pieza}_{j}", "—")
+            if pieza != "—":
+                piezas.append(pieza)
+    return piezas
+
 # ── Botón de demostración ─────────────────────────────────────────────────────
 if boton_demo(
     key="demo_dm",
     help_text="Rellena los dos decks con 6 combos reales aleatorios "
               "(ponderados por partidas) para mostrar la simulación.",
 ):
-    combos = combos_aleatorios(df, n=6)
-    if len(combos) >= 6:
-        for i, c in enumerate(combos[:3]):
-            st.session_state[f"mio_blade_{i}"]   = c["Blade"]
-            st.session_state[f"mio_ratchet_{i}"] = c["Ratchet"]
-            st.session_state[f"mio_bit_{i}"]     = c["Bit"]
-        for i, c in enumerate(combos[3:6]):
-            st.session_state[f"rival_blade_{i}"]   = c["Blade"]
-            st.session_state[f"rival_ratchet_{i}"] = c["Ratchet"]
-            st.session_state[f"rival_bit_{i}"]     = c["Bit"]
+    combos = combos_aleatorios(df, n=10)  # margen extra para evitar duplicados
+
+    # Extraer 3 combos únicos para mio
+    blades_mio = []
+    ratchets_mio = []
+    bits_mio = []
+
+    for c in combos:
+        if c["Blade"] not in blades_mio:
+            blades_mio.append(c["Blade"])
+            ratchets_mio.append(c["Ratchet"])
+            bits_mio.append(c["Bit"])
+        if len(blades_mio) == 3:
+            break
+
+    # Extraer 3 combos únicos para rival (diferentes a mio)
+    blades_rival = []
+    ratchets_rival = []
+    bits_rival = []
+
+    for c in combos:
+        if c["Blade"] not in blades_rival and c["Blade"] not in blades_mio:
+            blades_rival.append(c["Blade"])
+            ratchets_rival.append(c["Ratchet"])
+            bits_rival.append(c["Bit"])
+        if len(blades_rival) == 3:
+            break
+
+    if len(blades_mio) == 3 and len(blades_rival) == 3:
+        # Asignar a mi deck
+        for i in range(3):
+            st.session_state[f"mio_blade_{i}"]   = blades_mio[i]
+            st.session_state[f"mio_ratchet_{i}"] = ratchets_mio[i]
+            st.session_state[f"mio_bit_{i}"]     = bits_mio[i]
+
+        # Asignar a rival
+        for i in range(3):
+            st.session_state[f"rival_blade_{i}"]   = blades_rival[i]
+            st.session_state[f"rival_ratchet_{i}"] = ratchets_rival[i]
+            st.session_state[f"rival_bit_{i}"]     = bits_rival[i]
+
         st.toast("🎬 Demo: 6 combos reales asignados a ambos decks.", icon="✨")
     st.rerun()
 
@@ -76,9 +118,22 @@ for col, deck_list, prefix, label in [
         for i in range(3):
             st.markdown(f"**Bey {i+1}**")
             c1, c2, c3 = st.columns(3)
-            blade   = c1.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key=f"{prefix}_blade_{i}")
-            ratchet = c2.selectbox("Ratchet", ["—"] + sorted(df["Ratchet"].unique()), key=f"{prefix}_ratchet_{i}")
-            bit     = c3.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key=f"{prefix}_bit_{i}")
+
+            # Excluir Blades ya seleccionadas EN EL MISMO DECK (pero NO en el otro)
+            blades_usadas = get_piezas_seleccionadas_deck("blade", i, prefix)
+            blade_opts = sorted([b for b in df["Blade"].unique() if b not in blades_usadas])
+            blade = c1.selectbox("Blade", ["—"] + blade_opts, key=f"{prefix}_blade_{i}")
+
+            # Excluir Ratchets ya seleccionados EN EL MISMO DECK
+            ratchets_usados = get_piezas_seleccionadas_deck("ratchet", i, prefix)
+            ratchet_opts = sorted([r for r in df["Ratchet"].unique() if r not in ratchets_usados])
+            ratchet = c2.selectbox("Ratchet", ["—"] + ratchet_opts, key=f"{prefix}_ratchet_{i}")
+
+            # Excluir Bits ya seleccionados EN EL MISMO DECK
+            bits_usados = get_piezas_seleccionadas_deck("bit", i, prefix)
+            bit_opts = sorted([b for b in df["Bit"].unique() if b not in bits_usados])
+            bit = c3.selectbox("Bit", ["—"] + bit_opts, key=f"{prefix}_bit_{i}")
+
             if any(v == "—" for v in [blade, ratchet, bit]):
                 completo = False
             else:

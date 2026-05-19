@@ -19,6 +19,17 @@ st.caption(
     "🔒 = elegido por ti · ✨ = sugerido por el sistema"
 )
 
+# ── Función auxiliar: obtener piezas ya seleccionadas (excluyendo posición actual) ──
+def get_piezas_seleccionadas(tipo_pieza, excluir_pos):
+    """Retorna lista de piezas del tipo especificado ya seleccionadas en otros Beys"""
+    piezas = []
+    for j in range(3):
+        if j != excluir_pos:
+            pieza = st.session_state.get(f"{tipo_pieza}_{j}", "—")
+            if pieza != "—":
+                piezas.append(pieza)
+    return piezas
+
 # ── Botón de demostración ─────────────────────────────────────────────────────
 if boton_demo(
     key="demo_db",
@@ -27,16 +38,27 @@ if boton_demo(
 ):
     combos = combos_aleatorios(df, n=10)  # margen de sobra para evitar duplicados
     blades_usados = []
+    ratchets_usados = []
+    bits_usados = []
+
     for c in combos:
-        if c["Blade"] not in blades_usados:
-            blades_usados.append(c["Blade"])
+        blade = c["Blade"]
+        ratchet = c["Ratchet"]
+        bit = c["Bit"]
+
+        if blade not in blades_usados:
+            blades_usados.append(blade)
+            ratchets_usados.append(ratchet)
+            bits_usados.append(bit)
+
         if len(blades_usados) == 3:
             break
+
     if len(blades_usados) == 3:
-        for i, blade in enumerate(blades_usados):
-            st.session_state[f"blade_{i}"]   = blade
-            st.session_state[f"ratchet_{i}"] = "—"
-            st.session_state[f"bit_{i}"]     = "—"
+        for i in range(3):
+            st.session_state[f"blade_{i}"]   = blades_usados[i]
+            st.session_state[f"ratchet_{i}"] = ratchets_usados[i]
+            st.session_state[f"bit_{i}"]     = bits_usados[i]
         st.toast(f"🎬 Demo: {', '.join(blades_usados)}", icon="✨")
     st.rerun()
 
@@ -50,26 +72,41 @@ for i in range(3):
     col1, col2, col3 = st.columns(3)
 
     with col1:
+        # Excluir Blades ya seleccionadas en otros Beys
+        blades_usadas = get_piezas_seleccionadas("blade", i)
+        blade_opts = sorted([b for b in df["Blade"].unique() if b not in blades_usadas])
+
         blade = st.selectbox(
             f"Blade {i+1}",
-            ["—"] + sorted(df["Blade"].unique()),
+            ["—"] + blade_opts,
             key=f"blade_{i}"
         )
+
     with col2:
         blade_sel = st.session_state.get(f"blade_{i}", "—")
         r_opts = ratchets_validos(
             blade_sel,
             sorted(df["Ratchet"].unique())
         ) if blade_sel != "—" else sorted(df["Ratchet"].unique())
+
+        # Excluir Ratchets ya seleccionados en otros Beys
+        ratchets_usados = get_piezas_seleccionadas("ratchet", i)
+        r_opts = [r for r in r_opts if r not in ratchets_usados]
+
         ratchet = st.selectbox(
             f"Ratchet {i+1}",
             ["—"] + r_opts,
             key=f"ratchet_{i}"
         )
+
     with col3:
+        # Excluir Bits ya seleccionados en otros Beys
+        bits_usados = get_piezas_seleccionadas("bit", i)
+        bit_opts = sorted([b for b in df["Bit"].unique() if b not in bits_usados])
+
         bit = st.selectbox(
             f"Bit {i+1}",
-            ["—"] + sorted(df["Bit"].unique()),
+            ["—"] + bit_opts,
             key=f"bit_{i}"
         )
 
