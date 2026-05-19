@@ -245,7 +245,9 @@ def scrape():
         "Losses": "sum",
         "Partidas": "sum",
         "Pts Ganados/Combate": "mean",
-        "Pts Cedidos/Combate": "mean"
+        "Pts Cedidos/Combate": "mean",
+        "Pts Ganados/Partida Ganada": "mean",
+        "Pts Cedidos/Partida Perdida": "mean"
     })
 
     after = len(df)
@@ -261,12 +263,30 @@ def scrape():
         axis=1
     )
 
+    # ----------------------------
+    # Calcular métricas por victoria/derrota
+    # ----------------------------
+
+    df["Pts Ganados/Partida Ganada"] = df.apply(
+        lambda row: (row["Pts Ganados/Combate"] * row["Partidas"] / row["Wins"])
+        if pd.notna(row["Wins"]) and row["Wins"] > 0 else None,
+        axis=1
+    )
+
+    df["Pts Cedidos/Partida Perdida"] = df.apply(
+        lambda row: (row["Pts Cedidos/Combate"] * row["Partidas"] / row["Losses"])
+        if pd.notna(row["Losses"]) and row["Losses"] > 0 else None,
+        axis=1
+    )
+
     # Limpieza
     df.dropna(inplace=True)
     df = df[df['Partidas'] > 0]
     df = df[df['Win %'] <= 100]
-    df = df[(df['Pts Ganados/Combate'] >= 0) & (df['Pts Ganados/Combate'] <= 3)]
-    df = df[(df['Pts Cedidos/Combate'] >= 0) & (df['Pts Cedidos/Combate'] <= 3)]
+
+    # Validación: métricas por partida ganada/perdida deben estar entre 1.0 y 3.0
+    df = df[(df['Pts Ganados/Partida Ganada'] >= 1.0) & (df['Pts Ganados/Partida Ganada'] <= 3.0)]
+    df = df[(df['Pts Cedidos/Partida Perdida'] >= 1.0) & (df['Pts Cedidos/Partida Perdida'] <= 3.0)]
 
     # ----------------------------
     # Compatibilidad de piezas
@@ -298,31 +318,29 @@ def scrape():
             return -1
         if winrate >= 95 and partidas < 25:
             return -1
-        if valor < 0.5:   return 0
-        elif valor < 1.5: return 1
-        elif valor < 2.5: return 2
-        else:             return 3
+        # Ahora valor está entre 1.0 y 3.0 (puntos por partida ganada/perdida)
+        if valor < 1.5:   return 1  # Spin finish (1.0-1.5)
+        elif valor < 2.5: return 2  # Burst / Over (1.5-2.5)
+        else:             return 3  # Xtreme finish (2.5-3.0)
 
     map_victoria = {
         -1: "⚪ Datos insuficientes",
-         0: "⚫ Alta tendencia a perder",
          1: "🔵 Spin finish",
          2: "🟠 Burst / Over",
          3: "🟢 Xtreme finish"
     }
     map_derrota = {
         -1: "⚪ Datos insuficientes",
-         0: "🟡 Alta tendencia a ganar",
          1: "🔵 Pierde por spin",
          2: "🟠 Pierde por burst/over",
          3: "🟢 Pierde por xtreme"
     }
 
     df["tipo_victoria"] = df.apply(
-        lambda r: categorizar(r["Pts Ganados/Combate"], r["Partidas"], r["Win %"]), axis=1
+        lambda r: categorizar(r["Pts Ganados/Partida Ganada"], r["Partidas"], r["Win %"]), axis=1
     )
     df["tipo_derrota"] = df.apply(
-        lambda r: categorizar(r["Pts Cedidos/Combate"], r["Partidas"], r["Win %"]), axis=1
+        lambda r: categorizar(r["Pts Cedidos/Partida Perdida"], r["Partidas"], r["Win %"]), axis=1
     )
     df["Arquetipo victoria"] = df["tipo_victoria"].map(map_victoria)
     df["Arquetipo derrota"]  = df["tipo_derrota"].map(map_derrota)
