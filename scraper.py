@@ -245,7 +245,9 @@ def scrape():
         "Losses": "sum",
         "Partidas": "sum",
         "Pts Ganados/Combate": "mean",
-        "Pts Cedidos/Combate": "mean"
+        "Pts Cedidos/Combate": "mean",
+        "Pts Ganados/Partida Ganada": "mean",
+        "Pts Cedidos/Partida Perdida": "mean"
     })
 
     after = len(df)
