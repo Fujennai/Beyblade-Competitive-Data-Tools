@@ -32,21 +32,10 @@ jobs:
       - name: Train recommender model
         run: python train_model.py
 
-      - name: Configure git
+      - name: Commit results
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "actions@github.com"
-
-      - name: Pull latest changes
-        run: git pull origin main --rebase --allow-unrelated-histories
-        continue-on-error: true
-
-      - name: Commit results
-        run: |
           git add *.csv history/*.csv model.pkl
           git commit -m "Update scraped data and model" || echo "No changes"
-        continue-on-error: true
-
-      - name: Push changes
-        run: git push origin main
-        continue-on-error: true
+          git push
