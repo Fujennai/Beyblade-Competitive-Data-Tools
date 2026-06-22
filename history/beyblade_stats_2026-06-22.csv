@@ -1,0 +1,849 @@
+Blade,Ratchet,Bit,Win %,Wins,Losses,Partidas,Pts Ganados/Combate,Pts Cedidos/Combate,Wilson Score,Arquetipo victoria,Arquetipo derrota
+Aero Pegasus,1-50,Rush,60.0,3.0,2.0,5,2.0,1.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,1-60,Kick,58.3,14.0,10.0,24,1.07,1.3,0.3883433764938864,🔵 Spin finish,🔵 Pierde por spin
+Aero Pegasus,1-60,Low Rush,28.55,4.0,3.0,7,0.875,0.5,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,1-60,Point,90.9,10.0,1.0,11,1.7,1.0,0.6226353745137962,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,1-60,Rush,60.0,18.0,12.0,30,1.56,1.42,0.42320052498273836,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,1-70,Kick,68.4,13.0,6.0,19,1.85,2.0,0.4601001017506463,🟠 Burst / Over,🟠 Pierde por burst/over
+Aero Pegasus,1-70,Level,60.0,3.0,2.0,5,2.33,1.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,1-70,Rush,40.0,2.0,3.0,5,1.5,2.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,3-60,Jolt,66.7,2.0,1.0,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,3-60,Kick,56.5,13.0,10.0,23,1.69,1.3,0.36811049305016963,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,3-60,Level,66.7,2.0,1.0,3,2.0,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,3-60,Low Rush,65.0,13.0,7.0,20,1.46,1.43,0.43285051021946475,🔵 Spin finish,🔵 Pierde por spin
+Aero Pegasus,3-60,Point,67.4,29.0,14.0,43,1.72,1.43,0.5251593250655096,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,3-60,Rush,69.2,9.0,4.0,13,2.0,1.75,0.4236888781333764,🟠 Burst / Over,🟠 Pierde por burst/over
+Aero Pegasus,5-60,Kick,57.1,4.0,3.0,7,1.25,1.67,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,5-60,Rush,25.0,1.0,3.0,4,3.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,6-60,Kick,50.0,2.0,2.0,4,1.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,6-60,Rush,33.3,4.0,8.0,12,1.75,1.25,0.13811783989736134,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,7-60,Kick,70.0,7.0,3.0,10,1.71,1.67,0.3967732199795652,🟠 Burst / Over,🟠 Pierde por burst/over
+Aero Pegasus,7-60,Level,54.2,13.0,11.0,24,1.85,1.82,0.3507455355310663,🟠 Burst / Over,🟠 Pierde por burst/over
+Aero Pegasus,7-60,Low Rush,67.7,21.0,10.0,31,1.71,1.1,0.501406855599508,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,7-60,Point,56.3,9.0,7.0,16,1.67,1.14,0.3317819560677652,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,7-60,Rush,70.0,7.0,3.0,10,2.0,1.33,0.3967732199795652,🟠 Burst / Over,🔵 Pierde por spin
+Aero Pegasus,9-60,Rush,57.1,4.0,3.0,7,2.0,2.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Antler Stag,0-60,Ball,87.5,7.0,1.0,8,1.29,1.0,0.5291051942301385,⚪ Datos insuficientes,⚪ Datos insuficientes
+Bear Scratch,1-60,Bumper,71.4,5.0,2.0,7,1.6,1.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Bite Croc,3-60,Low Flat,40.0,2.0,3.0,5,1.0,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Bite Croc,3-60,Rush,33.3,2.0,4.0,6,1.5,1.25,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Bite Croc,4-55,Under Needle,50.0,2.0,2.0,4,2.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Black Shell,1-60,Rush,47.4,9.0,10.0,19,1.89,1.1,0.2732950548744854,🟠 Burst / Over,🔵 Pierde por spin
+Black Shell,4-60,Ball,25.0,1.0,3.0,4,3.0,2.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Black Shell,5-80,Taper,40.0,2.0,3.0,5,2.5,2.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Black Shell,6-60,Rush,75.0,3.0,1.0,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cerberus Flame,4-55,Kick,71.4,5.0,2.0,7,1.6,2.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cerberus Flame Heavy,9-60,Hexa,57.1,8.0,6.0,14,1.0,1.33,0.3259026690286936,🔵 Spin finish,🔵 Pierde por spin
+Cerberus Flame Massive,3-60,Kick,66.7,8.0,4.0,12,1.88,1.0,0.3906175873976139,🟠 Burst / Over,🔵 Pierde por spin
+Cerberus Flame Massive,4-55,Kick,33.3,1.0,2.0,3,3.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Clock Mirage,4-55,Low Orb,50.0,6.0,6.0,12,0.83,1.0,0.2537781703934222,🔵 Spin finish,🔵 Pierde por spin
+Clock Mirage,4-55,Under Needle,80.0,4.0,1.0,5,1.0,2.0,0.37552826411853885,⚪ Datos insuficientes,⚪ Datos insuficientes
+Clock Mirage,7-55,Low Orb,66.7,4.0,2.0,6,1.25,2.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Clock Mirage,7-55,Under Needle,53.8,7.0,6.0,13,1.57,1.67,0.29143432431832045,🟠 Burst / Over,🟠 Pierde por burst/over
+Cobalt Dragoon,0-70,Elevate,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,1-60,Cyclone,66.7,2.0,1.0,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,1-60,Elevate,66.2,45.0,23.0,68,1.49,1.87,0.5433701723652863,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,1-60,Level,75.0,3.0,1.0,4,1.0,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,1-60,Low Flat,42.9,3.0,4.0,7,1.33,1.25,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,1-60,Point,66.7,4.0,2.0,6,1.25,1.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,1-70,Elevate,45.5,5.0,6.0,11,1.0,2.33,0.21270957543988048,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,2-60,Cyclone,40.9,9.0,13.0,22,2.0,1.08,0.23255559668820378,🟠 Burst / Over,🔵 Pierde por spin
+Cobalt Dragoon,3-60,Cyclone,50.0,3.0,3.0,6,0.0,0.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,3-60,Point,33.3,1.0,2.0,3,0.0,0.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,4-55,Elevate,73.35,12.0,4.0,16,1.19,1.25,0.5050123107060135,🔵 Spin finish,🔵 Pierde por spin
+Cobalt Dragoon,4-55,Level,50.0,1.0,1.0,2,1.0,3.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,4-60,Cyclone,62.9,22.0,13.0,35,1.64,1.92,0.4633664048802107,🟠 Burst / Over,🟠 Pierde por burst/over
+Cobalt Dragoon,4-60,Elevate,65.7,23.0,12.0,35,0.87,1.25,0.4915164687273671,🔵 Spin finish,🔵 Pierde por spin
+Cobalt Dragoon,4-60,Glide,61.5,8.0,5.0,13,1.5,1.4,0.3552248097226855,🟠 Burst / Over,🔵 Pierde por spin
+Cobalt Dragoon,4-60,Level,66.7,2.0,1.0,3,1.0,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,4-60,Low Flat,44.4,4.0,5.0,9,2.5,1.0,0.188775429471914,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,4-60,Point,28.6,2.0,5.0,7,2.0,1.0,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,4-80,Elevate,100.0,4.0,0.0,4,1.25,0.0,0.5100999795960008,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,5-60,Cyclone,66.7,4.0,2.0,6,2.25,1.5,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,5-60,Elevate,63.6,343.0,172.0,515,1.4649999999999999,1.7650000000000001,0.6241886988651185,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,5-60,Gear Rush,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,5-60,Level,100.0,4.0,0.0,4,1.0,0.0,0.5100999795960008,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,5-60,Point,55.6,5.0,4.0,9,1.6,1.0,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,5-70,Elevate,77.1,37.0,11.0,48,1.16,1.91,0.6346046409154885,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,5-70,Low Flat,60.0,3.0,2.0,5,1.67,1.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,5-70,Point,40.0,6.0,9.0,15,1.5,1.56,0.19824228082594664,🟠 Burst / Over,🟠 Pierde por burst/over
+Cobalt Dragoon,5-80,Elevate,36.4,4.0,7.0,11,1.0,1.86,0.15166223614131386,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,6-60,Elevate,61.5,8.0,5.0,13,1.63,1.6,0.3552248097226855,🟠 Burst / Over,🟠 Pierde por burst/over
+Cobalt Dragoon,6-60,Point,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,6-60,Rush,50.0,6.0,6.0,12,1.83,1.0,0.2537781703934222,🟠 Burst / Over,🔵 Pierde por spin
+Cobalt Dragoon,7-60,Cyclone,57.7,15.0,11.0,26,2.0,1.45,0.3894829692111983,🟠 Burst / Over,🔵 Pierde por spin
+Cobalt Dragoon,7-60,Elevate,56.9,29.0,22.0,51,1.28,1.68,0.4326506123505808,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,7-60,Glide,71.4,5.0,2.0,7,1.6,1.5,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,7-60,Level,66.7,8.0,4.0,12,1.5,1.5,0.3906175873976139,🟠 Burst / Over,🟠 Pierde por burst/over
+Cobalt Dragoon,7-60,Point,63.2,24.0,14.0,38,1.63,2.07,0.4728367282426011,🟠 Burst / Over,🟠 Pierde por burst/over
+Cobalt Dragoon,7-70,Elevate,70.8,17.0,7.0,24,1.35,2.0,0.5083193634129031,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,9-60,Cyclone,20.0,1.0,4.0,5,1.0,1.0,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,9-60,Elevate,61.5,24.0,15.0,39,1.21,1.67,0.45898781310078474,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,9-60,Point,20.0,1.0,4.0,5,1.0,1.5,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Dragoon,9-70,Elevate,86.1,31.0,5.0,36,1.42,2.2,0.7134014871960681,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Drake,1-60,Rush,30.0,3.0,7.0,10,2.0,1.14,0.10778928748621182,🟠 Burst / Over,🔵 Pierde por spin
+Cobalt Drake,1-70,Kick,37.5,3.0,5.0,8,2.0,1.2,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Drake,5-60,Rush,33.3,2.0,4.0,6,1.5,2.25,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Drake,7-60,Level,50.0,1.0,1.0,2,1.0,1.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Drake,9-60,Elevate,66.7,6.0,3.0,9,1.33,2.0,0.35419734749908977,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Drake,9-60,Jolt,33.3,2.0,4.0,6,1.0,1.75,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Cobalt Drake,9-60,Rush,33.3,1.0,2.0,3,2.0,3.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Crimson Garuda,4-60,Trans Point,0.0,0.0,3.0,3,0.0,1.67,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Crimson Garuda,6-80,Rush,16.7,1.0,5.0,6,2.0,2.0,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Crimson Garuda,7-60,Cyclone,50.0,3.0,3.0,6,2.0,1.33,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Crimson Garuda,7-60,Flat,40.0,2.0,3.0,5,1.0,1.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dragoon Storm,9-60,Elevate,76.9,10.0,3.0,13,1.5,2.0,0.49743126004873084,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Brave Assault,3-60,Low Rush,40.0,2.0,3.0,5,1.5,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Brave Heavy,5-60,Flat,33.3,1.0,2.0,3,3.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Brave Slash,1-60,Low Rush,42.9,3.0,4.0,7,2.67,2.0,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Brave Slash,1-60,Rush,66.7,2.0,1.0,3,2.0,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Brave Slash,6-60,Vortex,50.0,2.0,2.0,4,1.5,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Brave Slash,9-60,Low Rush,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,1-60,Accel,100.0,3.0,0.0,3,0.67,0.0,0.4384939195509822,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,1-60,Flat,40.0,4.0,6.0,10,1.5,1.0,0.16817758120350967,🟠 Burst / Over,🔵 Pierde por spin
+Dran Buster,1-60,Gear Point,28.6,2.0,5.0,7,2.0,1.6,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,1-60,Kick,50.0,3.0,3.0,6,1.67,2.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,1-60,Level,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,1-60,Low Flat,35.0,21.0,39.0,60,1.95,1.33,0.24167601723815485,🟠 Burst / Over,🔵 Pierde por spin
+Dran Buster,1-60,Low Rush,33.3,5.0,10.0,15,2.0,1.3,0.15176100694691236,🟠 Burst / Over,🔵 Pierde por spin
+Dran Buster,1-60,Point,47.6,10.0,11.0,21,1.8,1.73,0.28343712296762946,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Buster,1-60,Rush,40.0,4.0,6.0,10,2.0,1.5,0.16817758120350967,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Buster,1-60,Under Flat,50.0,5.0,5.0,10,1.8,1.4,0.2365895936154873,🟠 Burst / Over,🔵 Pierde por spin
+Dran Buster,1-60,Unite,58.3,7.0,5.0,12,1.43,1.2,0.3195073356553728,🔵 Spin finish,🔵 Pierde por spin
+Dran Buster,3-60,Flat,0.0,0.0,3.0,3,0.0,1.67,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,3-60,Low Flat,50.0,1.0,1.0,2,2.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,3-60,Low Rush,50.0,3.0,3.0,6,1.67,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,3-60,Rush,50.0,3.0,3.0,6,2.33,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,3-60,Taper,25.0,1.0,3.0,4,1.0,1.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,3-70,Unite,75.0,3.0,1.0,4,2.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,4-55,Low Flat,40.0,2.0,3.0,5,2.5,1.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,4-60,Flat,44.4,8.0,10.0,18,1.88,1.3,0.24559231101389123,🟠 Burst / Over,🔵 Pierde por spin
+Dran Buster,5-60,Low Flat,42.1,8.0,11.0,19,2.38,1.55,0.2314162039203038,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Buster,7-60,Flat,40.0,2.0,3.0,5,2.0,2.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,7-60,Low Flat,50.0,5.0,5.0,10,1.6,1.8,0.2365895936154873,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Buster,7-60,Low Rush,45.25,15.0,13.0,28,1.925,1.45,0.35812395142101666,🟠 Burst / Over,🔵 Pierde por spin
+Dran Buster,7-60,Rush,100.0,3.0,0.0,3,2.33,0.0,0.4384939195509822,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Buster,7-70,Low Rush,57.1,8.0,6.0,14,1.88,1.5,0.3259026690286936,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Buster,9-60,Unite,50.0,3.0,3.0,6,2.0,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Dagger,3-60,Cyclone,0.0,0.0,2.0,2,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Dagger,3-60,Gear Flat,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Dagger,3-60,Low Flat,33.3,1.0,2.0,3,3.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Dagger,3-60,Taper,50.0,2.0,2.0,4,2.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Dagger,4-60,Rush,31.6,6.0,13.0,19,1.67,1.38,0.15364171004428598,🟠 Burst / Over,🔵 Pierde por spin
+Dran Strike,3-60,Kick,44.4,4.0,5.0,9,2.25,1.6,0.188775429471914,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,3-60,Flat,33.3,6.0,12.0,18,1.5,1.42,0.16278554363662856,🟠 Burst / Over,🔵 Pierde por spin
+Dran Sword,3-60,High Needle,50.0,3.0,3.0,6,1.33,2.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,3-60,Low Flat,28.6,2.0,5.0,7,2.5,1.4,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,3-60,Orb,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,3-60,Point,58.3,7.0,5.0,12,1.71,1.6,0.3195073356553728,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Sword,3-60,Rush,37.5,6.0,10.0,16,1.67,1.3,0.18480982554752803,🟠 Burst / Over,🔵 Pierde por spin
+Dran Sword,3-60,Taper,48.7,19.0,20.0,39,1.42,1.45,0.3386492878313309,🔵 Spin finish,🔵 Pierde por spin
+Dran Sword,3-60,Vortex,50.0,9.0,9.0,18,2.11,1.56,0.2903070395897999,🟠 Burst / Over,🟠 Pierde por burst/over
+Dran Sword,3-80,Flat,40.0,2.0,3.0,5,2.5,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,4-60,Taper,60.0,3.0,2.0,5,1.33,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,4-80,Needle,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,5-60,Flat,25.0,1.0,3.0,4,1.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,5-60,Taper,37.5,3.0,5.0,8,2.0,1.0,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,5-80,Flat,40.0,2.0,3.0,5,1.0,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,5-80,Orb,60.0,3.0,2.0,5,1.0,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,7-60,Taper,0.0,0.0,3.0,3,0.0,2.67,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,9-60,Flat,20.0,1.0,4.0,5,1.0,1.75,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,9-60,Needle,25.0,1.0,3.0,4,2.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,9-60,Rush,50.0,2.0,2.0,4,1.5,2.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword,9-60,Taper,50.0,4.0,4.0,8,1.25,1.5,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Dran Sword Free,3-60,Flat,0.0,0.0,3.0,3,0.0,0.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Driger S,1-60,Unite,33.3,1.0,2.0,3,2.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Emperor Might Bumper,5-60,High Needle,50.0,4.0,4.0,8,1.0,2.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Emperor Might Heavy,9-60,Free Ball,33.3,2.0,4.0,6,1.0,1.25,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Emperor Might Round,9-60,Under Needle,75.0,3.0,1.0,4,1.0,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Fort Hornet Heavy,4-50,Ball,71.4,5.0,2.0,7,1.0,1.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Fox Brush Jaggy,1-60,Rush,28.6,2.0,5.0,7,1.5,1.4,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Fox Brush Slash,1-60,Low Flat,0.0,0.0,5.0,5,0.0,1.2,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Ghost Circle,0-80,Low Orb,60.0,3.0,2.0,5,1.0,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Ghost Circle,3-60,Low Orb,63.3,19.0,11.0,30,1.32,1.45,0.4551324643360493,🔵 Spin finish,🔵 Pierde por spin
+Ghost Circle,9-60,Free Ball,50.0,2.0,2.0,4,1.5,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Ghost Circle,9-80,Low Orb,12.5,1.0,7.0,8,1.0,1.43,0.02241690886329618,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,0-80,High Needle,61.5,8.0,5.0,13,1.13,2.0,0.3552248097226855,🔵 Spin finish,🟠 Pierde por burst/over
+Golem Rock,1-60,Low Orb,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,1-60,Under Needle,42.1,8.0,11.0,19,1.88,2.0,0.2314162039203038,🟠 Burst / Over,🟠 Pierde por burst/over
+Golem Rock,1-60,Unite,25.0,1.0,3.0,4,3.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,1-60,Wedge,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,3-60,Free Ball,100.0,8.0,0.0,8,1.38,0.0,0.6755843804891231,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,5-60,Hexa,50.0,2.0,2.0,4,1.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,6-60,Low Rush,50.0,3.0,3.0,6,1.33,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,6-60,Rush,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,6-60,Under Flat,0.0,0.0,2.0,2,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,6-80,Hexa,83.3,5.0,1.0,6,1.4,2.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,6-80,Low Orb,71.4,5.0,2.0,7,2.0,2.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,7-60,Low Rush,25.0,1.0,3.0,4,2.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,7-60,Orb,33.3,1.0,2.0,3,1.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,9-60,Low Flat,0.0,0.0,2.0,2,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Golem Rock,9-60,Low Orb,70.4,19.0,8.0,27,1.37,1.88,0.515189666191624,🔵 Spin finish,🟠 Pierde por burst/over
+Golem Rock,9-60,Under Needle,70.0,7.0,3.0,10,1.57,2.0,0.3967732199795652,🟠 Burst / Over,🟠 Pierde por burst/over
+Golem Rock,9-60,Unite,40.0,2.0,3.0,5,1.5,2.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,3-80,Point,33.3,2.0,4.0,6,3.0,1.5,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,5-60,Ball,28.6,2.0,5.0,7,1.5,1.8,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,5-60,Dot,45.8,11.0,13.0,24,1.73,1.62,0.27891058351681425,🟠 Burst / Over,🟠 Pierde por burst/over
+Hells Chain,5-60,Free Ball,12.5,1.0,7.0,8,1.0,1.43,0.02241690886329618,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,5-60,Hexa,33.3,3.0,6.0,9,1.67,1.33,0.12058159868274292,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,5-60,High Needle,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,5-60,High Taper,65.7,8.0,4.0,12,1.7349999999999999,2.75,0.3906175873976139,🟠 Burst / Over,🟢 Pierde por xtreme
+Hells Chain,5-60,Needle,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,5-60,Point,36.4,4.0,7.0,11,2.5,1.29,0.15166223614131386,🟢 Xtreme finish,🔵 Pierde por spin
+Hells Chain,5-60,Taper,60.0,3.0,2.0,5,1.33,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,9-60,Needle,66.7,2.0,1.0,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,9-60,Taper,50.0,1.0,1.0,2,1.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,9-80,Dot,60.0,6.0,4.0,10,1.83,1.25,0.3126695474501863,🟠 Burst / Over,🔵 Pierde por spin
+Hells Chain,9-80,Kick,50.0,4.0,4.0,8,1.0,1.25,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Chain,9-80,Needle,56.3,9.0,7.0,16,1.33,1.86,0.3317819560677652,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Hammer,1-60,Rush,50.0,4.0,4.0,8,1.0,1.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-60,Cyclone,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-60,Flat,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-60,Hexa,25.0,1.0,3.0,4,2.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-60,High Taper,50.0,5.0,5.0,10,1.4,2.4,0.2365895936154873,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Hammer,3-70,Flat,20.0,1.0,4.0,5,2.0,1.25,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-70,Hexa,50.0,2.0,2.0,4,2.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-70,Jolt,26.7,4.0,11.0,15,1.75,1.36,0.10897276103182815,🟠 Burst / Over,🔵 Pierde por spin
+Hells Hammer,3-70,Kick,50.0,2.0,2.0,4,2.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-70,Rush,55.0,33.0,27.0,60,1.73,1.33,0.424917145489815,🟠 Burst / Over,🔵 Pierde por spin
+Hells Hammer,3-80,Low Flat,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,3-85,Low Rush,75.0,3.0,1.0,4,1.67,3.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,5-80,Rush,14.3,1.0,6.0,7,3.0,1.17,0.02567895594897479,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,7-60,Ball,57.1,4.0,3.0,7,1.5,1.67,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,9-60,Low Flat,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,9-60,Rush,38.2,13.0,21.0,34,2.0,1.62,0.23899964851608782,🟠 Burst / Over,🟠 Pierde por burst/over
+Hells Reaper Charge,9-60,Ball,16.7,1.0,5.0,6,2.0,1.6,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Reaper Jaggy,7-60,Kick,50.0,1.0,1.0,2,1.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Reaper Round,9-60,Kick,50.0,3.0,3.0,6,2.33,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Reaper Turn,1-60,Hexa,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Reaper Turn,4-70,Kick,40.0,2.0,3.0,5,1.5,1.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,1-60,Ball,75.0,3.0,1.0,4,1.67,2.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,1-60,Kick,50.0,3.0,3.0,6,2.0,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,1-60,Taper,25.0,1.0,3.0,4,2.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,1-80,Rubber Accel,50.0,4.0,4.0,8,1.0,1.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,3-60,Ball,64.8,35.0,19.0,54,1.43,1.79,0.5148458381779774,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Scythe,3-60,Free Ball,78.0,46.0,13.0,59,1.37,2.23,0.6586705755334911,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Scythe,3-60,Taper,44.0,11.0,14.0,25,1.64,1.71,0.26665374947002574,🟠 Burst / Over,🟠 Pierde por burst/over
+Hells Scythe,3-70,Kick,66.7,4.0,2.0,6,0.75,1.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,3-70,Point,87.5,7.0,1.0,8,1.71,2.0,0.5291051942301385,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,3-80,Ball,50.0,5.0,5.0,10,1.0,1.8,0.2365895936154873,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Scythe,3-80,Taper,50.0,1.0,1.0,2,1.0,1.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,4-60,Ball,60.0,6.0,4.0,10,1.5,2.0,0.3126695474501863,🟠 Burst / Over,🟠 Pierde por burst/over
+Hells Scythe,4-60,Gear Ball,0.0,0.0,3.0,3,0.0,2.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,4-60,Needle,36.4,4.0,7.0,11,1.75,1.14,0.15166223614131386,🟠 Burst / Over,🔵 Pierde por spin
+Hells Scythe,4-60,Taper,7.7,2.0,13.0,15,0.25,1.5,0.037360469891359285,⚫ Alta tendencia a perder,🟠 Pierde por burst/over
+Hells Scythe,5-60,Ball,33.3,2.0,4.0,6,2.0,1.5,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,5-60,Disc Ball,100.0,4.0,0.0,4,1.5,0.0,0.5100999795960008,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,5-60,Free Ball,50.0,2.0,2.0,4,1.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,5-60,Orb,58.3,7.0,5.0,12,2.0,1.4,0.3195073356553728,🟠 Burst / Over,🔵 Pierde por spin
+Hells Scythe,5-60,Point,33.3,1.0,2.0,3,1.0,2.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,5-60,Taper,25.0,1.0,3.0,4,1.0,1.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,5-70,Ball,50.0,2.0,2.0,4,1.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,5-80,Orb,50.0,2.0,2.0,4,1.5,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,9-60,Ball,64.7,132.0,72.0,204,1.42,1.67,0.5793138542867039,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Scythe,9-60,Disc Ball,75.0,3.0,1.0,4,1.33,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,9-60,Free Ball,65.7,23.0,12.0,35,1.26,1.83,0.4915164687273671,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Scythe,9-60,Low Orb,33.3,1.0,2.0,3,3.0,2.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,9-60,Low Rush,42.9,3.0,4.0,7,1.67,1.5,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,9-60,Needle,37.5,6.0,10.0,16,1.33,1.2,0.18480982554752803,🔵 Spin finish,🔵 Pierde por spin
+Hells Scythe,9-60,Orb,54.5,18.0,15.0,33,1.39,1.53,0.3798565794374957,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Scythe,9-70,Ball,60.0,9.0,6.0,15,1.44,2.67,0.357464427565077,🔵 Spin finish,🟢 Pierde por xtreme
+Hover Wyvern,1-60,Free Ball,0.0,0.0,2.0,2,0.0,2.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hover Wyvern,1-60,Kick,75.0,3.0,1.0,4,1.67,2.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hover Wyvern,1-60,Low Rush,48.8,21.0,22.0,43,1.67,1.32,0.34617209277756006,🟠 Burst / Over,🔵 Pierde por spin
+Hover Wyvern,7-60,Kick,68.55,8.0,4.0,12,1.375,1.0,0.3906175873976139,🔵 Spin finish,🔵 Pierde por spin
+Hover Wyvern,7-60,Level,33.3,1.0,2.0,3,2.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hover Wyvern,7-60,Low Rush,54.5,6.0,5.0,11,1.83,2.2,0.2800877556899882,🟠 Burst / Over,🟠 Pierde por burst/over
+Hover Wyvern,9-60,Kick,100.0,3.0,0.0,3,1.33,0.0,0.4384939195509822,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hover Wyvern,9-60,Taper,25.0,1.0,3.0,4,2.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hover Wyvern,9-60,Under Needle,0.0,0.0,2.0,2,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,1-60,Low Flat,57.1,4.0,3.0,7,1.75,1.67,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,1-60,Taper,100.0,2.0,0.0,2,2.5,0.0,0.3423719528896193,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,1-60,Under Needle,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,3-60,Rush,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,3-60,Unite,16.7,1.0,5.0,6,2.0,1.6,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,3-80,Taper,20.0,1.0,4.0,5,2.0,1.25,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,4-60,Low Flat,50.0,2.0,2.0,4,2.5,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,4-60,Under Needle,50.0,1.0,1.0,2,1.0,1.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,4-70,Level,64.3,9.0,5.0,14,1.44,1.2,0.3876400468214041,🔵 Spin finish,🔵 Pierde por spin
+Impact Drake,5-60,Gear Point,40.0,2.0,3.0,5,1.5,1.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,5-60,Level,20.0,1.0,4.0,5,2.0,1.5,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,5-60,Low Rush,30.8,4.0,9.0,13,2.0,1.56,0.1268049716161809,🟠 Burst / Over,🟠 Pierde por burst/over
+Impact Drake,5-60,Rush,50.0,1.0,1.0,2,2.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,6-60,Vortex,33.3,2.0,4.0,6,1.5,1.0,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,7-60,Rush,100.0,3.0,0.0,3,1.67,0.0,0.4384939195509822,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,7-60,Zap,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,9-60,Level,57.9,11.0,8.0,19,1.82,1.5,0.3627555146516011,🟠 Burst / Over,🟠 Pierde por burst/over
+Impact Drake,9-60,Low Rush,44.0,11.0,14.0,25,1.45,1.36,0.26665374947002574,🔵 Spin finish,🔵 Pierde por spin
+Impact Drake,9-60,Point,20.0,1.0,4.0,5,2.0,2.0,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Impact Drake,9-60,Rush,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knife Shinobi,9-60,Gear Flat,40.0,2.0,3.0,5,2.0,2.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Lance,1-60,Hexa,40.0,2.0,3.0,5,1.5,1.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Lance,3-60,Hexa,50.0,2.0,2.0,4,2.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Lance,3-60,Low Flat,33.3,2.0,4.0,6,2.5,2.25,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Lance,3-80,High Needle,28.6,2.0,5.0,7,1.0,1.0,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Lance,4-60,Gear Ball,50.0,2.0,2.0,4,1.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Lance,4-80,High Needle,50.0,2.0,2.0,4,0.0,0.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,0-70,Wedge,66.7,6.0,3.0,9,1.33,2.0,0.35419734749908977,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,1-60,Low Flat,25.0,3.0,9.0,12,2.0,1.22,0.08894003962896137,🟠 Burst / Over,🔵 Pierde por spin
+Knight Mail,1-60,Low Rush,70.0,7.0,3.0,10,1.86,1.33,0.3967732199795652,🟠 Burst / Over,🔵 Pierde por spin
+Knight Mail,1-60,Rush,53.4,23.0,18.0,41,1.975,1.69,0.41040265151757305,🟠 Burst / Over,🟠 Pierde por burst/over
+Knight Mail,1-60,Taper,16.7,1.0,5.0,6,2.0,1.2,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,3-60,Level,33.3,1.0,2.0,3,3.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,3-60,Low Rush,66.7,4.0,2.0,6,1.25,1.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,3-60,Point,75.0,3.0,1.0,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,3-60,Unite,100.0,2.0,0.0,2,1.0,0.0,0.3423719528896193,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,5-60,Low Rush,16.7,2.0,10.0,12,1.5,1.8,0.046964147614822246,🟠 Burst / Over,🟠 Pierde por burst/over
+Knight Mail,5-60,Rush,40.0,2.0,3.0,5,1.5,1.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,7-60,Low Rush,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-60,Bound Spike,77.8,7.0,2.0,9,1.43,1.5,0.4525833436728054,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-60,Free Ball,77.35,26.0,10.0,36,1.565,1.8900000000000001,0.5600719978365485,🟠 Burst / Over,🟠 Pierde por burst/over
+Knight Mail,9-60,High Needle,50.0,7.0,7.0,14,1.43,2.14,0.2679886791947528,🔵 Spin finish,🟠 Pierde por burst/over
+Knight Mail,9-60,Jolt,25.0,2.0,6.0,8,1.0,1.33,0.07147768885802765,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-60,Low Orb,54.5,6.0,5.0,11,2.0,2.0,0.2800877556899882,🟠 Burst / Over,🟠 Pierde por burst/over
+Knight Mail,9-60,Low Rush,85.7,6.0,1.0,7,1.33,1.0,0.4868654966809702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-60,Rush,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-60,Taper,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-60,Under Needle,40.0,2.0,3.0,5,1.5,1.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-60,Unite,50.0,3.0,3.0,6,1.0,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Mail,9-80,Hexa,0.0,0.0,2.0,2,0.0,2.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,1-60,Hexa,38.9,7.0,11.0,18,1.43,1.36,0.2030499192693116,🔵 Spin finish,🔵 Pierde por spin
+Knight Shield,1-60,Low Orb,28.6,2.0,5.0,7,1.5,1.4,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,1-70,Taper,50.0,4.0,4.0,8,1.5,1.25,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,3-60,High Needle,25.0,1.0,3.0,4,2.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,3-60,Under Needle,85.7,6.0,1.0,7,1.33,2.0,0.4868654966809702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,3-60,Wedge,50.0,2.0,2.0,4,1.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,3-70,Low Rush,40.0,2.0,3.0,5,2.0,1.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,3-80,Dot,60.0,3.0,2.0,5,1.33,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,3-80,Needle,75.0,6.0,2.0,8,2.0,1.5,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,4-60,Ball,60.0,6.0,4.0,10,1.67,1.25,0.3126695474501863,🟠 Burst / Over,🔵 Pierde por spin
+Knight Shield,4-60,Orb,25.0,1.0,3.0,4,1.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,4-60,Taper,50.0,5.0,5.0,10,1.8,1.0,0.2365895936154873,🟠 Burst / Over,🔵 Pierde por spin
+Knight Shield,5-60,Gear Ball,33.3,1.0,2.0,3,1.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,5-60,Hexa,45.5,5.0,6.0,11,2.6,1.17,0.21270957543988048,🟢 Xtreme finish,🔵 Pierde por spin
+Knight Shield,5-60,High Taper,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,5-80,Ball,50.0,4.0,4.0,8,1.0,1.5,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,5-80,Needle,50.0,1.0,1.0,2,1.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,7-70,Hexa,25.0,1.0,3.0,4,1.0,2.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,9-60,Ball,50.0,2.0,2.0,4,1.5,2.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Shield,9-60,Taper,75.0,9.0,3.0,12,1.89,1.33,0.4676896608793401,🟠 Burst / Over,🔵 Pierde por spin
+Knight Shield,9-70,Needle,50.0,4.0,4.0,8,1.25,2.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Claw,4-80,Point,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Claw,5-60,Point,42.9,3.0,4.0,7,1.0,1.5,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Claw,5-70,Taper,0.0,0.0,3.0,3,0.0,1.67,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Claw,7-70,Taper,62.5,5.0,3.0,8,2.0,1.0,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Claw,9-60,Taper,66.7,4.0,2.0,6,2.25,1.5,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,1-80,Ball,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,3-60,Orb,75.0,6.0,2.0,8,0.83,1.0,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,4-60,Dot,28.6,2.0,5.0,7,2.0,2.0,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,4-60,Needle,33.3,1.0,2.0,3,2.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,5-60,Ball,45.5,5.0,6.0,11,1.4,2.0,0.21270957543988048,🔵 Spin finish,🟠 Pierde por burst/over
+Leon Crest,7-60,Free Ball,75.0,3.0,1.0,4,2.0,2.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,7-60,Hexa,36.4,8.0,14.0,22,1.75,1.29,0.19732972772607899,🟠 Burst / Over,🔵 Pierde por spin
+Leon Crest,7-60,Orb,37.5,3.0,5.0,8,1.0,1.0,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,7-60,Point,28.6,2.0,5.0,7,1.0,1.0,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,9-60,Ball,57.1,4.0,3.0,7,1.25,1.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,9-60,Orb,71.4,5.0,2.0,7,1.8,2.5,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,9-60,Wedge,60.0,3.0,2.0,5,1.0,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,9-70,High Taper,0.0,0.0,2.0,2,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Leon Crest,9-70,Orb,0.0,0.0,5.0,5,0.0,1.4,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Lightning L-Drago,7-60,Low Rush,50.0,2.0,2.0,4,2.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Lightning L-Drago Assault,1-60,Low Rush,50.0,2.0,2.0,4,1.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Lightning L-Drago Assault,5-60,Low Flat,16.7,1.0,5.0,6,2.0,1.2,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Lightning L-Drago Assault,7-60,Level,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Lightning L-Drago Barrage,7-60,Flat,20.0,1.0,4.0,5,3.0,1.0,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Lightning L-Drago Barrage,7-60,Low Flat,42.9,3.0,4.0,7,1.33,1.75,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Lightning L-Drago Barrage,9-60,Elevate,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Mammoth Tusk,3-60,Taper,40.0,2.0,3.0,5,1.0,2.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Mammoth Tusk,7-60,Level,20.0,1.0,4.0,5,1.0,2.25,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Mammoth Tusk,9-60,Ball,25.0,1.0,3.0,4,1.0,1.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Mammoth Tusk,9-60,Orb,50.0,6.0,6.0,12,1.17,1.17,0.2537781703934222,🔵 Spin finish,🔵 Pierde por spin
+Meteor Dragoon,0-60,Level,55.6,10.0,8.0,18,1.5,1.5,0.33716069428251627,🟠 Burst / Over,🟠 Pierde por burst/over
+Meteor Dragoon,1-60,Taper,50.0,4.0,4.0,8,1.5,1.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Meteor Dragoon,7-55,Level,63.6,7.0,4.0,11,1.71,1.75,0.35379677689163724,🟠 Burst / Over,🟠 Pierde por burst/over
+Meteor Dragoon,7-60,Level,83.3,15.0,3.0,18,1.6,2.33,0.6077750036164077,🟠 Burst / Over,🟠 Pierde por burst/over
+Meteor Dragoon,7-70,Level,37.9,11.0,18.0,29,1.55,1.44,0.2268779573086734,🟠 Burst / Over,🔵 Pierde por spin
+Meteor Dragoon,9-60,Level,28.6,2.0,5.0,7,2.0,1.2,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Meteor Dragoon,9-70,Level,37.5,6.0,10.0,16,2.17,1.4,0.18480982554752803,🟠 Burst / Over,🔵 Pierde por spin
+Meteor Dragoon,9-70,Low Rush,63.6,7.0,4.0,11,1.86,1.5,0.35379677689163724,🟠 Burst / Over,🟠 Pierde por burst/over
+Mummy Curse,1-60,Free Ball,36.4,4.0,7.0,11,1.25,1.43,0.15166223614131386,🔵 Spin finish,🔵 Pierde por spin
+Mummy Curse,1-60,Hexa,60.0,6.0,4.0,10,1.33,1.0,0.3126695474501863,🔵 Spin finish,🔵 Pierde por spin
+Mummy Curse,1-60,Low Orb,77.8,7.0,2.0,9,1.57,2.0,0.4525833436728054,⚪ Datos insuficientes,⚪ Datos insuficientes
+Mummy Curse,1-60,Wedge,14.3,1.0,6.0,7,1.0,1.33,0.02567895594897479,⚪ Datos insuficientes,⚪ Datos insuficientes
+Mummy Curse,9-60,Orb,40.0,2.0,3.0,5,1.0,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Optimus Primal,2-60,Low Flat,33.3,1.0,2.0,3,2.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Optimus Primal,5-60,Low Flat,66.7,2.0,1.0,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Optimus Prime,5-60,Hexa,50.0,2.0,2.0,4,1.5,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Orochi Cluster,3-60,Hexa,0.0,0.0,3.0,3,0.0,1.67,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Orochi Cluster,9-70,Jolt,75.0,3.0,1.0,4,2.0,2.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Assault,1-60,Low Rush,16.7,1.0,5.0,6,2.0,1.0,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Assault,3-60,Low Rush,66.7,4.0,2.0,6,1.25,1.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Free,9-60,Free Ball,57.1,4.0,3.0,7,1.25,1.33,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Free,9-60,Hexa,54.1,20.0,17.0,37,1.35,1.71,0.3838377952476737,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Free,9-60,Level,100.0,7.0,0.0,7,1.14,0.0,0.6456611570247934,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Free,9-70,Unite,60.0,6.0,4.0,10,1.0,2.0,0.3126695474501863,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Heavy,3-60,Flat,66.7,2.0,1.0,3,2.0,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Heavy,3-60,Jolt,70.0,21.0,9.0,30,1.57,1.56,0.5212387898833981,🟠 Burst / Over,🟠 Pierde por burst/over
+Pegasus Blast Heavy,3-60,Rush,50.0,2.0,2.0,4,2.0,2.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Heavy,5-60,Kick,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Heavy,7-60,Level,54.5,6.0,5.0,11,1.33,1.6,0.2800877556899882,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Heavy,9-60,Jolt,50.0,4.0,4.0,8,1.25,1.25,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Heavy,9-60,Kick,55.6,5.0,4.0,9,2.0,1.25,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Heavy,9-60,Low Rush,58.8,10.0,7.0,17,1.6,1.57,0.3600507438551554,🟠 Burst / Over,🟠 Pierde por burst/over
+Pegasus Blast Heavy,9-60,Rush,58.3,7.0,5.0,12,2.14,1.2,0.3195073356553728,🟠 Burst / Over,🔵 Pierde por spin
+Pegasus Blast Heavy,9-60,Taper,20.0,1.0,4.0,5,1.0,1.0,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Jaggy,3-60,Kick,44.4,4.0,5.0,9,1.0,1.8,0.188775429471914,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Jaggy,3-60,Low Rush,20.0,1.0,4.0,5,1.0,1.5,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Jaggy,9-60,Level,40.0,2.0,3.0,5,2.0,2.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Jaggy,9-60,Low Rush,50.0,3.0,3.0,6,2.0,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Slash,3-60,Low Rush,25.0,1.0,3.0,4,3.0,2.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Slash,3-60,Rush,50.0,2.0,2.0,4,2.5,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Slash,7-60,Level,54.5,6.0,5.0,11,1.33,2.0,0.2800877556899882,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Wheel,3-60,Kick,50.0,5.0,5.0,10,1.6,1.4,0.2365895936154873,🟠 Burst / Over,🔵 Pierde por spin
+Pegasus Blast Wheel,3-60,Level,58.3,7.0,5.0,12,1.71,1.8,0.3195073356553728,🟠 Burst / Over,🟠 Pierde por burst/over
+Pegasus Blast Wheel,3-60,Low Rush,55.6,15.0,12.0,27,1.47,1.5,0.3731271947957688,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Wheel,5-60,Hexa,50.0,2.0,2.0,4,1.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Wheel,6-80,Taper,50.0,3.0,3.0,6,1.67,1.33,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Wheel,7-60,Kick,50.0,2.0,2.0,4,2.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Wheel,7-60,Unite,50.0,2.0,2.0,4,2.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Wheel,9-60,Free Ball,92.9,13.0,1.0,14,1.15,2.0,0.6853073044604219,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Wheel,9-60,Hexa,71.4,10.0,4.0,14,1.4,1.5,0.4535045882751561,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Wheel,9-60,Kick,70.6,12.0,5.0,17,1.75,1.2,0.468664666737861,🟠 Burst / Over,🔵 Pierde por spin
+Pegasus Blast Wheel,9-60,Level,55.8,24.0,19.0,43,1.54,1.32,0.4110735806551172,🟠 Burst / Over,🔵 Pierde por spin
+Pegasus Blast Wheel,9-60,Rush,60.0,3.0,2.0,5,1.33,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Pegasus Blast Wheel,9-60,Taper,50.0,10.0,10.0,20,1.3,1.9,0.2992949144298199,🔵 Spin finish,🟠 Pierde por burst/over
+Pegasus Blast Wheel,9-60,Unite,45.0,9.0,11.0,20,1.56,1.36,0.25819502085709295,🟠 Burst / Over,🔵 Pierde por spin
+Perseus Dark Bumper,5-60,Hexa,50.0,1.0,1.0,2,1.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Perseus Dark Bumper,9-60,Ball,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Perseus Dark Bumper,9-60,Hexa,100.0,1.0,0.0,1,3.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Feather,3-60,Level,42.9,3.0,4.0,7,1.67,2.0,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Feather,9-70,Glide,57.1,4.0,3.0,7,1.0,1.67,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Flare Heavy,3-60,Level,100.0,3.0,0.0,3,1.67,0.0,0.4384939195509822,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Flare Vertical,5-60,Level,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Flare Wheel,9-60,Jolt,50.0,4.0,4.0,8,1.5,1.5,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Rudder,7-60,Level,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Rudder,7-60,Taper,33.3,2.0,4.0,6,1.5,1.0,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Rudder,9-60,Low Rush,66.7,2.0,1.0,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Rudder,9-60,Taper,60.0,3.0,2.0,5,2.33,2.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,1-60,Hexa,70.6,12.0,5.0,17,1.75,1.8,0.468664666737861,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,1-60,Level,50.0,2.0,2.0,4,2.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,1-60,Low Rush,51.9,28.0,26.0,54,1.82,1.31,0.38851475048465434,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,1-60,Point,40.0,4.0,6.0,10,1.75,1.5,0.16817758120350967,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,1-60,Rush,59.4,173.0,142.0,315,1.83,1.45,0.4939935888141,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,1-60,Taper,55.6,5.0,4.0,9,1.2,1.25,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,1-70,Kick,42.9,3.0,4.0,7,1.33,1.75,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,1-70,Level,50.0,1.0,1.0,2,3.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,1-70,Rush,25.0,2.0,6.0,8,2.0,1.67,0.07147768885802765,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,1-80,Rush,33.3,2.0,4.0,6,2.0,1.0,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,3-60,Ball,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,3-60,Flat,52.4,11.0,10.0,21,1.82,1.1,0.3236921790026675,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,3-60,Hexa,50.0,2.0,2.0,4,2.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,3-60,Level,83.3,5.0,1.0,6,2.2,1.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,3-60,Low Rush,56.0,14.0,11.0,25,1.64,1.82,0.37067017019564436,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,3-60,Orb,87.5,7.0,1.0,8,1.14,2.0,0.5291051942301385,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,3-60,Point,55.6,10.0,8.0,18,1.9,1.5,0.33716069428251627,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,3-60,Rush,62.2,171.0,105.0,276,1.885,1.705,0.5610170389285237,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,3-60,Taper,52.9,36.0,32.0,68,1.53,1.56,0.41240715813747064,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,3-60,Trans Kick,83.3,5.0,1.0,6,2.0,2.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,3-60,Under Needle,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,3-70,Hexa,70.0,7.0,3.0,10,1.14,1.67,0.3967732199795652,🔵 Spin finish,🟠 Pierde por burst/over
+Phoenix Wing,3-80,Taper,25.0,1.0,3.0,4,2.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,4-60,Flat,50.0,9.0,9.0,18,2.11,1.44,0.2903070395897999,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,4-60,Taper,60.0,3.0,2.0,5,2.0,1.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,Dot,57.1,4.0,3.0,7,1.25,1.67,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,Flat,70.0,21.0,9.0,30,1.62,1.11,0.5212387898833981,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,5-60,Gear Needle,25.0,1.0,3.0,4,2.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,Gear Point,0.0,0.0,3.0,3,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,Hexa,57.1,4.0,3.0,7,2.25,1.67,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,High Taper,28.6,2.0,5.0,7,2.5,2.0,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,Kick,25.0,1.0,3.0,4,1.0,1.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,Level,75.0,3.0,1.0,4,1.33,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,5-60,Point,45.3,43.0,52.0,95,1.72,1.37,0.35632609157265266,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,5-60,Rush,51.1,24.0,23.0,47,1.54,1.43,0.37242217589372884,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,5-60,Taper,56.8,21.0,16.0,37,1.62,1.56,0.40913906334200717,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,5-60,Unite,50.0,6.0,6.0,12,0.5,2.5,0.2537781703934222,🔵 Spin finish,🟢 Pierde por xtreme
+Phoenix Wing,5-80,Unite,66.7,4.0,2.0,6,1.75,1.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,6-60,Level,50.0,3.0,3.0,6,1.0,1.33,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,6-60,Rush,100.0,1.0,0.0,1,3.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,7-60,High Taper,57.1,4.0,3.0,7,1.75,2.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,7-60,Low Rush,55.0,11.0,9.0,20,1.82,1.56,0.34208200830759966,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,7-60,Point,80.0,4.0,1.0,5,1.5,3.0,0.37552826411853885,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,7-60,Rush,55.9,19.0,15.0,34,1.53,1.27,0.3945361778918369,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,7-70,Low Rush,63.6,7.0,4.0,11,1.29,2.0,0.35379677689163724,🔵 Spin finish,🟠 Pierde por burst/over
+Phoenix Wing,7-70,Under Flat,50.0,3.0,3.0,6,2.33,1.33,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,9-60,Ball,50.0,11.0,11.0,22,1.09,1.55,0.3072180469247956,🔵 Spin finish,🟠 Pierde por burst/over
+Phoenix Wing,9-60,Cyclone,66.7,6.0,3.0,9,1.67,1.67,0.35419734749908977,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,9-60,Gear Flat,58.6,17.0,12.0,29,2.06,1.5,0.4073752847851524,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,9-60,Hexa,70.0,7.0,3.0,10,1.29,2.0,0.3967732199795652,🔵 Spin finish,🟠 Pierde por burst/over
+Phoenix Wing,9-60,Low Orb,50.0,4.0,4.0,8,1.5,1.25,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,9-60,Low Rush,36.4,4.0,7.0,11,1.75,1.0,0.15166223614131386,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,9-60,Orb,25.0,5.0,15.0,20,1.6,1.33,0.11186005278940306,🟠 Burst / Over,🔵 Pierde por spin
+Phoenix Wing,9-60,Point,71.4,5.0,2.0,7,1.6,2.5,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Phoenix Wing,9-60,Rush,61.3,38.0,24.0,62,1.68,1.67,0.4884761620578099,🟠 Burst / Over,🟠 Pierde por burst/over
+Phoenix Wing,9-60,Taper,57.1,24.0,18.0,42,1.83,1.56,0.4220597791187447,🟠 Burst / Over,🟠 Pierde por burst/over
+Ptera Swing,1-80,Gear Flat,33.3,1.0,2.0,3,1.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Ptera Swing,1-80,Point,33.3,2.0,4.0,6,1.0,1.0,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Ptera Swing,3-80,Taper,50.0,2.0,2.0,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Ptera Swing,7-60,Ball,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,1-60,Gear Flat,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,3-80,Spike,16.7,1.0,5.0,6,2.0,1.6,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,4-60,Taper,37.5,3.0,5.0,8,1.0,0.8,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,5-60,Accel,85.7,6.0,1.0,7,2.17,1.0,0.4868654966809702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,5-60,Gear Point,33.3,1.0,2.0,3,2.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,5-60,High Taper,33.3,1.0,2.0,3,1.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,5-60,Level,50.0,1.0,1.0,2,3.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,7-60,Hexa,66.7,2.0,1.0,3,1.0,2.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Rhino Horn,7-60,Taper,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,1-60,Rush,40.0,2.0,3.0,5,2.0,1.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,3-60,Flat,33.3,1.0,2.0,3,1.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,3-60,Rush,55.6,5.0,4.0,9,2.6,1.0,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,5-60,Ball,75.0,3.0,1.0,4,1.33,2.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,5-60,Orb,71.4,5.0,2.0,7,1.4,2.5,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,5-60,Point,70.0,7.0,3.0,10,1.29,1.67,0.3967732199795652,🔵 Spin finish,🟠 Pierde por burst/over
+Roar Tyranno,9-60,Ball,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,9-60,Flat,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Roar Tyranno,9-60,Level,71.4,5.0,2.0,7,2.2,1.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Calibur,1-60,Hexa,40.0,4.0,6.0,10,1.5,1.33,0.16817758120350967,🟠 Burst / Over,🔵 Pierde por spin
+Samurai Calibur,1-60,Low Orb,55.6,35.0,28.0,63,1.49,1.68,0.43319420640871287,🔵 Spin finish,🟠 Pierde por burst/over
+Samurai Calibur,1-60,Low Rush,60.0,9.0,6.0,15,1.22,1.33,0.357464427565077,🔵 Spin finish,🔵 Pierde por spin
+Samurai Calibur,1-70,Low Rush,45.5,5.0,6.0,11,1.8,1.83,0.21270957543988048,🟠 Burst / Over,🟠 Pierde por burst/over
+Samurai Calibur,3-60,Wall Ball,50.0,2.0,2.0,4,1.0,3.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Calibur,6-60,Low Rush,20.0,1.0,4.0,5,1.0,1.5,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Calibur,9-60,Rush,42.9,3.0,4.0,7,2.0,1.5,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,1-60,Hexa,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,2-70,Level,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,3-60,Cyclone,50.0,3.0,3.0,6,1.67,2.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,3-60,Free Ball,25.0,2.0,6.0,8,1.0,1.33,0.07147768885802765,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,3-60,Wedge,50.0,3.0,3.0,6,1.67,1.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,4-60,Hexa,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,4-80,Level,66.7,2.0,1.0,3,2.0,2.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,5-60,Ball,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,5-60,Free Ball,20.0,1.0,4.0,5,1.0,1.25,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,5-60,Hexa,78.6,11.0,3.0,14,1.36,1.0,0.5241027622679172,🔵 Spin finish,🔵 Pierde por spin
+Samurai Saber,5-60,Level,50.0,4.0,4.0,8,1.5,2.5,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,7-60,Hexa,60.0,3.0,2.0,5,1.33,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,7-60,Level,25.0,1.0,3.0,4,1.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,7-70,Level,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,9-60,Elevate,66.7,2.0,1.0,3,1.5,2.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,9-60,Free Ball,55.6,5.0,4.0,9,1.6,1.5,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,9-60,Hexa,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,9-60,Level,33.3,2.0,4.0,6,2.0,1.25,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,9-60,Needle,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,9-60,Orb,100.0,2.0,0.0,2,2.5,0.0,0.3423719528896193,⚪ Datos insuficientes,⚪ Datos insuficientes
+Samurai Saber,9-60,Wedge,55.6,5.0,4.0,9,0.4,0.5,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,0-70,Wedge,50.0,2.0,2.0,4,1.0,2.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,1-60,Low Rush,75.0,3.0,1.0,4,1.33,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,1-60,Rush,60.0,6.0,4.0,10,1.33,1.0,0.3126695474501863,🔵 Spin finish,🔵 Pierde por spin
+Scorpio Spear,3-60,Free Ball,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,3-60,Gear Ball,70.0,7.0,3.0,10,1.29,2.0,0.3967732199795652,🔵 Spin finish,🟠 Pierde por burst/over
+Scorpio Spear,3-60,Jolt,75.0,6.0,2.0,8,1.67,2.5,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,3-60,Point,50.0,3.0,3.0,6,2.33,1.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,3-70,Unite,50.0,3.0,3.0,6,2.33,2.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,5-60,Free Ball,60.0,3.0,2.0,5,1.33,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,5-60,Hexa,33.3,2.0,4.0,6,1.0,1.0,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,7-60,Wedge,57.1,4.0,3.0,7,1.0,1.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,7-70,Hexa,75.0,3.0,1.0,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,9-60,Free Ball,66.7,10.0,5.0,15,1.2,1.4,0.4171312515121298,🔵 Spin finish,🔵 Pierde por spin
+Scorpio Spear,9-60,Hexa,42.9,3.0,4.0,7,1.33,1.5,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,9-60,Low Orb,67.35,69.0,31.0,100,1.4300000000000002,1.5950000000000002,0.5937376052204429,🔵 Spin finish,🟠 Pierde por burst/over
+Scorpio Spear,9-60,Point,50.0,6.0,6.0,12,1.33,1.0,0.2537781703934222,🔵 Spin finish,🔵 Pierde por spin
+Scorpio Spear,9-60,Wedge,40.0,2.0,3.0,5,1.0,2.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Scorpio Spear,9-80,Low Orb,72.7,8.0,3.0,11,1.13,2.0,0.4343497069897538,🔵 Spin finish,🟠 Pierde por burst/over
+Shark Scale,1-50,Jolt,75.0,3.0,1.0,4,2.0,2.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-50,Low Rush,51.7,15.0,14.0,29,1.8,1.14,0.34430737970569164,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,1-60,Ball,83.3,5.0,1.0,6,1.0,2.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-60,Free Ball,66.7,4.0,2.0,6,1.0,2.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-60,Kick,20.0,1.0,4.0,5,1.0,1.25,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-60,Low Rush,56.1,23.0,18.0,41,1.57,1.44,0.41040265151757305,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,1-60,Rush,69.2,18.0,8.0,26,1.83,1.38,0.5001138848576876,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,1-70,Free Ball,88.9,8.0,1.0,9,1.75,1.0,0.5649937852319398,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-70,Jolt,65.6,42.0,22.0,64,1.79,1.45,0.5340341181762039,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,1-70,Kick,75.0,27.0,9.0,36,1.48,1.89,0.5892923231679658,🔵 Spin finish,🟠 Pierde por burst/over
+Shark Scale,1-70,Low Orb,83.3,5.0,1.0,6,1.4,2.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-70,Low Rush,63.7,163.0,93.0,256,1.8,1.48,0.5761839137959475,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,1-70,Rush,75.0,6.0,2.0,8,2.0,1.0,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-70,Under Flat,0.0,0.0,4.0,4,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,1-80,Rush,63.2,12.0,7.0,19,2.33,1.29,0.41039157498156714,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,3-60,Free Ball,66.1,76.0,39.0,115,1.55,1.69,0.5703943230468682,🟠 Burst / Over,🟠 Pierde por burst/over
+Shark Scale,3-60,Jolt,64.7,22.0,12.0,34,1.73,1.42,0.4791365883001342,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,3-60,Kick,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,3-60,Low Rush,67.3,37.0,18.0,55,1.78,1.22,0.5410297617609947,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,3-60,Rush,61.9,13.0,8.0,21,1.62,1.63,0.40878295815501514,🟠 Burst / Over,🟠 Pierde por burst/over
+Shark Scale,3-60,Under Flat,66.7,2.0,1.0,3,2.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,3-80,Rush,66.7,4.0,2.0,6,2.0,2.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,4-50,Level,81.3,13.0,3.0,16,1.46,2.0,0.5699064013154177,🔵 Spin finish,🟠 Pierde por burst/over
+Shark Scale,4-50,Low Rush,100.0,6.0,0.0,6,1.5,0.0,0.6096569663469354,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,4-50,Under Flat,55.6,10.0,8.0,18,1.9,1.0,0.33716069428251627,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,5-60,Kick,64.3,9.0,5.0,14,2.0,2.2,0.3876400468214041,🟠 Burst / Over,🟠 Pierde por burst/over
+Shark Scale,5-60,Low Rush,55.8,24.0,19.0,43,1.83,1.53,0.4110735806551172,🟠 Burst / Over,🟠 Pierde por burst/over
+Shark Scale,7-60,Kick,0.0,0.0,3.0,3,0.0,1.67,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,7-60,Low Rush,83.3,5.0,1.0,6,1.4,2.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,7-60,Under Flat,0.0,0.0,6.0,6,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,9-60,Free Ball,80.0,16.0,4.0,20,1.75,1.75,0.5839782779742402,🟠 Burst / Over,🟠 Pierde por burst/over
+Shark Scale,9-60,Low Orb,55.6,10.0,8.0,18,1.3,1.5,0.33716069428251627,🔵 Spin finish,🟠 Pierde por burst/over
+Shark Scale,9-70,Low Rush,83.3,5.0,1.0,6,2.0,2.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shark Scale,9-80,Rush,62.5,5.0,3.0,8,1.2,1.67,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,1-60,Cyclone,16.7,1.0,5.0,6,3.0,1.6,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,1-60,Low Flat,39.1,9.0,14.0,23,2.11,1.14,0.22157377982382145,🟠 Burst / Over,🔵 Pierde por spin
+Sharke Edge,1-60,Low Rush,66.7,2.0,1.0,3,2.0,2.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,1-80,Low Flat,66.7,2.0,1.0,3,1.0,2.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,2-60,Gear Flat,50.0,4.0,4.0,8,2.75,1.5,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,2-60,Low Flat,47.4,9.0,10.0,19,1.78,1.6,0.2732950548744854,🟠 Burst / Over,🟠 Pierde por burst/over
+Sharke Edge,2-60,Low Rush,30.0,3.0,7.0,10,2.67,1.0,0.10778928748621182,🟢 Xtreme finish,🔵 Pierde por spin
+Sharke Edge,2-70,Kick,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,3-60,Gear Flat,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,3-60,Low Flat,66.65,7.0,12.0,19,1.5,0.54,0.19149272376273838,🟠 Burst / Over,🔵 Pierde por spin
+Sharke Edge,3-60,Low Rush,57.1,4.0,3.0,7,1.75,1.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,3-60,Rush,33.3,3.0,6.0,9,1.67,1.0,0.12058159868274292,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,3-60,Taper,75.0,3.0,1.0,4,2.33,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,3-80,Low Flat,62.5,5.0,3.0,8,1.6,1.67,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,4-55,Under Needle,0.0,0.0,3.0,3,0.0,1.67,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,4-60,Flat,37.5,3.0,5.0,8,2.0,1.0,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,4-60,Low Flat,45.0,9.0,11.0,20,2.0,1.91,0.25819502085709295,🟠 Burst / Over,🟠 Pierde por burst/over
+Sharke Edge,5-60,Cyclone,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,5-60,Gear Flat,50.0,2.0,2.0,4,2.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,5-60,Low Flat,25.0,3.0,9.0,12,2.0,1.22,0.08894003962896137,🟠 Burst / Over,🔵 Pierde por spin
+Sharke Edge,9-60,Cyclone,0.0,0.0,6.0,6,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,9-60,Taper,0.0,0.0,3.0,3,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,9-60,Unite,33.3,3.0,6.0,9,2.0,1.33,0.12058159868274292,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sharke Edge,9-60,Wedge,77.8,7.0,2.0,9,1.57,1.0,0.4525833436728054,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shelter Drake,7-60,Level,100.0,1.0,0.0,1,3.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shelter Drake,7-60,Taper,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shelter Drake,7-80,Gear Point,25.0,1.0,3.0,4,3.0,0.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shelter Drake,9-60,Taper,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shinobi Shadow,1-80,Point,0.0,0.0,3.0,3,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shinobi Shadow,4-80,Ball,0.0,0.0,2.0,2,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shinobi Shadow,6-80,Level,33.3,1.0,2.0,3,1.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shinobi Shadow,7-60,Needle,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Shinobi Shadow,9-70,Hexa,100.0,4.0,0.0,4,2.25,0.0,0.5100999795960008,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,0-80,Disc Ball,70.0,7.0,3.0,10,1.43,2.33,0.3967732199795652,🔵 Spin finish,🟠 Pierde por burst/over
+Silver Wolf,1-60,Merge,40.0,2.0,3.0,5,1.0,1.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,3-60,Ball,68.9,31.0,14.0,45,1.32,1.5,0.5433492001245103,🔵 Spin finish,🟠 Pierde por burst/over
+Silver Wolf,3-60,Free Ball,64.2,79.0,44.0,123,1.25,1.43,0.5544380921577126,🔵 Spin finish,🔵 Pierde por spin
+Silver Wolf,3-60,Point,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,3-70,Ball,50.0,2.0,2.0,4,2.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,3-80,Free Ball,82.4,14.0,3.0,17,1.5,2.0,0.5897007098262422,🟠 Burst / Over,🟠 Pierde por burst/over
+Silver Wolf,3-80,Hexa,60.0,3.0,2.0,5,1.0,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,4-60,Bound Spike,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,5-60,Dot,60.0,3.0,2.0,5,1.67,1.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,5-60,Free Ball,50.0,6.0,6.0,12,1.83,1.83,0.2537781703934222,🟠 Burst / Over,🟠 Pierde por burst/over
+Silver Wolf,5-70,Free Ball,73.3,11.0,4.0,15,1.18,2.0,0.48049110342313245,🔵 Spin finish,🟠 Pierde por burst/over
+Silver Wolf,5-80,Disc Ball,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,6-80,Hexa,100.0,2.0,0.0,2,1.0,0.0,0.3423719528896193,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,7-60,Free Ball,50.0,1.0,1.0,2,1.0,1.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-60,Ball,68.85,50.0,21.0,71,1.185,1.615,0.5898124223983721,🔵 Spin finish,🟠 Pierde por burst/over
+Silver Wolf,9-60,Disc Ball,25.0,1.0,3.0,4,3.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-60,Elevate,71.4,5.0,2.0,7,1.8,1.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-60,Free Ball,48.7,124.0,50.0,174,1.5899999999999999,1.225,0.6413820295802386,🟠 Burst / Over,🔵 Pierde por spin
+Silver Wolf,9-60,Hexa,50.0,3.0,3.0,6,1.33,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-60,Low Orb,66.7,4.0,2.0,6,1.0,2.5,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-60,Orb,63.2,12.0,7.0,19,1.42,2.14,0.41039157498156714,🔵 Spin finish,🟠 Pierde por burst/over
+Silver Wolf,9-70,Ball,66.7,6.0,3.0,9,1.0,1.67,0.35419734749908977,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-70,Disc Ball,75.0,3.0,1.0,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-70,Elevate,33.3,1.0,2.0,3,2.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-70,Free Ball,91.7,11.0,1.0,12,1.36,2.0,0.6461140782014047,🔵 Spin finish,🟠 Pierde por burst/over
+Silver Wolf,9-70,Hexa,64.7,11.0,6.0,17,1.09,1.17,0.4129996672121183,🔵 Spin finish,🔵 Pierde por spin
+Silver Wolf,9-70,Low Orb,16.7,1.0,5.0,6,2.0,1.6,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-70,Wedge,60.0,3.0,2.0,5,1.67,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-80,Free Ball,50.0,2.0,2.0,4,1.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Silver Wolf,9-80,Hexa,55.6,5.0,4.0,9,1.0,1.25,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sol Eclipse,5-70,Trans Kick,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sol Eclipse Free,5-60,Trans Kick,80.0,4.0,1.0,5,1.5,3.0,0.37552826411853885,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sol Eclipse Jaggy,6-60,Taper,62.5,5.0,3.0,8,2.0,2.0,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sphinx Cowl,5-60,Needle,33.3,1.0,2.0,3,1.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sphinx Cowl,7-60,Needle,50.0,3.0,3.0,6,1.33,1.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Sphinx Cowl,7-60,Point,0.0,0.0,3.0,3,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Starscream,9-70,Low Orb,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Steel Samurai,7-70,Point,50.0,1.0,1.0,2,2.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Talon Ptera,3-80,Needle,33.3,1.0,2.0,3,3.0,2.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Talon Ptera,5-70,Flat,20.0,1.0,4.0,5,2.0,1.0,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Talon Ptera,5-70,Gear Ball,33.3,2.0,4.0,6,2.0,1.25,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Talon Ptera,7-60,Free Ball,50.0,2.0,2.0,4,1.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,3-60,Ball,64.3,9.0,5.0,14,1.56,2.2,0.3876400468214041,🟠 Burst / Over,🟠 Pierde por burst/over
+Tusk Mammoth,3-60,High Taper,0.0,0.0,6.0,6,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,3-60,Orb,33.3,1.0,2.0,3,1.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,3-60,Taper,42.3,11.0,15.0,26,1.64,1.53,0.255441899027294,🟠 Burst / Over,🟠 Pierde por burst/over
+Tusk Mammoth,4-60,Ball,33.3,1.0,2.0,3,1.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,4-60,Orb,55.6,5.0,4.0,9,1.4,1.5,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,4-60,Taper,33.3,1.0,2.0,3,2.0,2.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,4-80,Taper,28.6,2.0,5.0,7,2.0,1.6,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,5-60,Needle,50.0,2.0,2.0,4,2.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,5-60,Taper,83.3,5.0,1.0,6,1.4,1.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,7-60,Point,33.3,2.0,4.0,6,1.5,1.75,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,7-60,Taper,50.0,3.0,3.0,6,1.67,1.33,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tusk Mammoth,9-60,Ball,50.0,8.0,8.0,16,1.38,1.75,0.2799923761135083,🔵 Spin finish,🟠 Pierde por burst/over
+Tyranno Beat,1-60,Cyclone,62.5,5.0,3.0,8,1.4,1.0,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,1-60,Level,65.0,13.0,7.0,20,2.0,1.14,0.43285051021946475,🟠 Burst / Over,🔵 Pierde por spin
+Tyranno Beat,1-60,Low Rush,66.05,15.0,10.0,25,2.0,1.4449999999999998,0.4073912778512734,🟠 Burst / Over,🔵 Pierde por spin
+Tyranno Beat,1-60,Rush,46.2,12.0,14.0,26,1.75,1.5,0.28755582695234905,🟠 Burst / Over,🟠 Pierde por burst/over
+Tyranno Beat,1-60,Taper,53.6,15.0,13.0,28,1.73,1.54,0.35812395142101666,🟠 Burst / Over,🟠 Pierde por burst/over
+Tyranno Beat,1-70,Kick,71.4,5.0,2.0,7,1.8,1.5,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,1-70,Low Rush,66.7,6.0,3.0,9,1.67,1.67,0.35419734749908977,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,2-60,Taper,0.0,0.0,1.0,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,2-60,Unite,50.0,5.0,5.0,10,2.0,1.4,0.2365895936154873,🟠 Burst / Over,🔵 Pierde por spin
+Tyranno Beat,2-70,Level,48.8,10.0,7.0,17,2.39,1.5,0.3600507438551554,🟠 Burst / Over,🟠 Pierde por burst/over
+Tyranno Beat,3-60,Rush,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,3-60,Taper,63.2,12.0,7.0,19,1.67,1.86,0.41039157498156714,🟠 Burst / Over,🟠 Pierde por burst/over
+Tyranno Beat,3-70,Rush,40.0,2.0,3.0,5,2.5,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,3-70,Taper,66.7,4.0,2.0,6,1.25,2.5,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,4-60,Bound Spike,50.0,1.0,1.0,2,1.0,1.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,4-60,Cyclone,55.6,5.0,4.0,9,2.0,1.5,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,4-60,Rush,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,5-60,Flat,33.3,6.0,12.0,18,2.0,1.5,0.16278554363662856,🟠 Burst / Over,🟠 Pierde por burst/over
+Tyranno Beat,5-60,Kick,44.4,4.0,5.0,9,1.75,1.4,0.188775429471914,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,5-60,Level,33.3,1.0,2.0,3,2.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,5-60,Point,47.1,8.0,9.0,17,2.5,1.44,0.26164801196088106,🟢 Xtreme finish,🔵 Pierde por spin
+Tyranno Beat,5-60,Rush,50.0,4.0,4.0,8,2.25,1.75,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,5-60,Taper,75.0,3.0,1.0,4,1.33,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,7-60,Low Rush,60.0,6.0,4.0,10,2.0,1.5,0.3126695474501863,🟠 Burst / Over,🟠 Pierde por burst/over
+Tyranno Beat,7-70,Rush,33.3,1.0,2.0,3,1.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,7-70,Taper,66.7,6.0,3.0,9,2.5,2.0,0.35419734749908977,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,7-70,Vortex,50.0,4.0,4.0,8,2.0,1.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,9-60,Ball,83.3,5.0,1.0,6,1.6,1.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,9-60,Flat,0.0,0.0,2.0,2,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,9-60,Low Flat,50.0,2.0,2.0,4,3.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,9-60,Point,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,9-60,Taper,49.15,15.0,16.0,31,1.355,1.165,0.3196998603127883,🔵 Spin finish,🔵 Pierde por spin
+Tyranno Beat,9-60,Unite,66.7,2.0,1.0,3,2.0,3.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Beat,9-80,Ball,60.0,6.0,4.0,10,1.5,2.0,0.3126695474501863,🟠 Burst / Over,🟠 Pierde por burst/over
+Tyranno Roar,3-60,Rush,33.3,1.0,2.0,3,1.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Tyranno Roar,9-60,High Needle,83.3,5.0,1.0,6,1.0,3.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,1-60,Ball,71.4,10.0,4.0,14,1.1,2.25,0.4535045882751561,🔵 Spin finish,🟠 Pierde por burst/over
+Unicorn Sting,1-60,Gear Ball,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,3-60,Dot,57.1,4.0,3.0,7,1.0,1.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,3-60,Orb,50.0,3.0,3.0,6,1.33,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,3-80,Ball,75.0,3.0,1.0,4,1.33,0.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,4-60,Orb,54.5,12.0,10.0,22,1.25,1.7,0.3465947328904156,🔵 Spin finish,🟠 Pierde por burst/over
+Unicorn Sting,5-60,Ball,25.0,1.0,3.0,4,1.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,5-60,Gear Point,33.3,2.0,4.0,6,1.0,1.75,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,5-60,Orb,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,9-60,Ball,60.0,3.0,2.0,5,1.33,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,9-60,Free Ball,69.2,9.0,4.0,13,1.22,1.75,0.4236888781333764,🔵 Spin finish,🟠 Pierde por burst/over
+Unicorn Sting,9-60,Gear Ball,42.9,3.0,4.0,7,1.67,2.25,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,9-60,Low Orb,83.3,5.0,1.0,6,1.0,3.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,9-60,Orb,57.8,26.0,19.0,45,1.38,1.74,0.4330053279594451,🔵 Spin finish,🟠 Pierde por burst/over
+Unicorn Sting,9-60,Point,46.7,7.0,8.0,15,1.29,1.5,0.24809225259746442,🔵 Spin finish,🟠 Pierde por burst/over
+Unicorn Sting,9-60,Wedge,50.0,5.0,5.0,10,1.2,0.4,0.2365895936154873,🔵 Spin finish,🟡 Alta tendencia a ganar
+Viper Tail,3-60,Rush,0.0,0.0,3.0,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Viper Tail,3-60,Taper,36.7,44.0,76.0,120,1.45,0.74,0.2858279826049079,🔵 Spin finish,🔵 Pierde por spin
+Viper Tail,4-60,Flat,75.0,3.0,1.0,4,1.67,2.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Viper Tail,5-60,Ball,0.0,0.0,4.0,4,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Viper Tail,5-60,Taper,40.0,2.0,3.0,5,2.0,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Viper Tail,5-80,Flat,66.7,4.0,2.0,6,1.75,1.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Viper Tail,5-80,Orb,16.65,1.0,4.0,5,1.0,1.25,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
+Weiss Tiger,9-80,Hexa,33.3,1.0,2.0,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,1-60,Flat,25.0,1.0,3.0,4,2.0,1.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,1-60,Free Ball,57.1,4.0,3.0,7,1.75,2.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,1-60,Kick,40.0,4.0,6.0,10,2.0,1.83,0.16817758120350967,🟠 Burst / Over,🟠 Pierde por burst/over
+Whale Wave,1-60,Level,100.0,1.0,0.0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,1-60,Low Flat,45.2,14.0,23.0,37,2.3,1.685,0.2406378746389103,🟠 Burst / Over,🟠 Pierde por burst/over
+Whale Wave,1-60,Low Rush,100.0,2.0,0.0,2,2.5,0.0,0.3423719528896193,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,1-60,Rush,41.2,7.0,10.0,17,2.0,1.3,0.21610786039131383,🟠 Burst / Over,🔵 Pierde por spin
+Whale Wave,1-60,Taper,0.0,0.0,7.0,7,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,1-70,Rush,50.0,3.0,3.0,6,1.33,2.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,3-60,Level,50.0,5.0,5.0,10,1.8,1.6,0.2365895936154873,🟠 Burst / Over,🟠 Pierde por burst/over
+Whale Wave,3-60,Low Flat,30.0,3.0,7.0,10,2.0,1.14,0.10778928748621182,🟠 Burst / Over,🔵 Pierde por spin
+Whale Wave,3-60,Taper,40.0,2.0,3.0,5,2.0,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,5-60,Dot,46.2,6.0,7.0,13,1.33,1.57,0.23205754301488138,🔵 Spin finish,🟠 Pierde por burst/over
+Whale Wave,5-60,Low Flat,11.1,1.0,8.0,9,1.0,1.63,0.019890371327130518,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,5-60,Taper,75.0,3.0,1.0,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,5-70,Taper,33.3,3.0,6.0,9,2.0,1.33,0.12058159868274292,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,7-60,Quake,16.7,1.0,5.0,6,1.0,1.0,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,7-60,Rush,0.0,0.0,2.0,2,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,9-60,Dot,75.0,15.0,5.0,20,1.73,1.2,0.5312949900419365,🟠 Burst / Over,🔵 Pierde por spin
+Whale Wave,9-60,Low Flat,71.4,5.0,2.0,7,2.8,1.5,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,9-60,Low Rush,42.9,3.0,4.0,7,2.0,2.0,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,9-60,Rush,40.0,2.0,3.0,5,1.5,3.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Whale Wave,9-60,Taper,100.0,1.0,0.0,1,2.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arc,9-60,Ball,40.0,2.0,3.0,5,1.0,1.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arc Bumper,4-55,Under Needle,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arc Erase,9-60,Jolt,50.0,2.0,2.0,4,1.5,2.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arc Heavy,7-60,Kick,50.0,3.0,3.0,6,2.0,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arc Heavy,9-60,Trans Point,50.0,2.0,2.0,4,1.5,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arc Heavy,9-60,Under Needle,60.0,6.0,4.0,10,1.5,1.25,0.3126695474501863,🟠 Burst / Over,🔵 Pierde por spin
+Wizard Arc Round,9-60,Low Orb,0.0,0.0,2.0,2,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,1-60,Jolt,66.7,2.0,1.0,3,2.0,2.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,3-60,Free Ball,66.7,2.0,1.0,3,1.0,2.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,3-80,Gear Needle,0.0,0.0,2.0,2,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,4-55,Low Orb,60.0,3.0,2.0,5,2.0,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,4-60,Gear Needle,33.3,1.0,2.0,3,1.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,4-80,Ball,14.3,1.0,6.0,7,0.0,0.67,0.02567895594897479,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,4-80,High Needle,25.0,1.0,3.0,4,2.0,1.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,4-80,Spike,33.3,1.0,2.0,3,1.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,5-60,Ball,75.0,6.0,2.0,8,1.83,1.5,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,5-60,Orb,64.2,43.0,24.0,67,0.74,1.04,0.5221828769475225,🔵 Spin finish,🔵 Pierde por spin
+Wizard Arrow,5-70,Disc Ball,0.0,0.0,1.0,1,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,5-80,Taper,75.0,6.0,2.0,8,1.83,1.5,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,7-60,Hexa,50.0,2.0,2.0,4,1.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Arrow,9-60,Ball,58.3,14.0,10.0,24,1.14,1.8,0.3883433764938864,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Arrow,9-60,Free Ball,50.0,7.0,7.0,14,1.86,1.57,0.2679886791947528,🟠 Burst / Over,🟠 Pierde por burst/over
+Wizard Arrow,9-70,Free Ball,55.6,5.0,4.0,9,1.4,1.5,0.26664734574402965,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,1-50,Hexa,69.2,18.0,8.0,26,1.39,1.63,0.5001138848576876,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,1-60,Ball,71.4,10.0,4.0,14,1.9,2.75,0.4535045882751561,🟠 Burst / Over,🟢 Pierde por xtreme
+Wizard Rod,1-60,Bound Spike,70.0,7.0,3.0,10,1.0,1.33,0.3967732199795652,🔵 Spin finish,🔵 Pierde por spin
+Wizard Rod,1-60,Free Ball,75.0,3.0,1.0,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,1-60,Hexa,71.3,479.0,193.0,672,1.27,1.68,0.6774543223048376,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,1-60,High Needle,90.9,10.0,1.0,11,1.4,1.0,0.6226353745137962,🔵 Spin finish,🔵 Pierde por spin
+Wizard Rod,1-60,Level,66.7,8.0,4.0,12,1.5,1.5,0.3906175873976139,🟠 Burst / Over,🟠 Pierde por burst/over
+Wizard Rod,1-60,Low Rush,50.0,2.0,2.0,4,1.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,1-60,Rush,75.0,3.0,1.0,4,1.33,3.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,1-60,Under Needle,61.150000000000006,93.0,59.0,152,1.115,1.76,0.5325219333033981,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,1-70,Hexa,78.6,33.0,9.0,42,1.24,1.67,0.6405986210195627,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,1-80,Hexa,87.0,20.0,3.0,23,1.1,2.0,0.678721020269818,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,3-60,Ball,66.2,175.0,97.0,272,1.155,1.625,0.5848224197292156,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,3-60,Dot,63.6,7.0,4.0,11,1.29,2.0,0.35379677689163724,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,3-60,Free Ball,71.4,15.0,6.0,21,1.0,1.33,0.5004322617716241,🔵 Spin finish,🔵 Pierde por spin
+Wizard Rod,3-60,Hexa,66.7,22.0,11.0,33,1.18,1.55,0.49607581799949974,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,3-60,High Needle,50.0,1.0,1.0,2,1.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,3-60,Level,77.8,14.0,4.0,18,1.71,1.5,0.547849735476945,🟠 Burst / Over,🟠 Pierde por burst/over
+Wizard Rod,3-60,Orb,50.0,3.0,3.0,6,1.33,1.0,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,3-60,Point,0.0,0.0,5.0,5,0.0,1.6,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,3-60,Taper,33.3,1.0,2.0,3,1.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,3-80,Free Ball,42.9,3.0,4.0,7,1.33,1.25,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,3-80,Orb,75.0,6.0,2.0,8,1.5,1.0,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,4-60,Level,50.0,2.0,2.0,4,2.0,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,5-60,Ball,57.9,11.0,8.0,19,1.27,1.88,0.3627555146516011,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,5-60,High Needle,25.0,1.0,3.0,4,1.0,0.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,5-60,Point,57.1,4.0,3.0,7,2.0,1.33,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,5-70,Disc Ball,0.0,0.0,2.0,2,0.0,1.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,5-70,Hexa,66.7,16.0,8.0,24,1.13,2.0,0.46705959494080457,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,6-60,Ball,50.0,5.0,5.0,10,1.4,2.0,0.2365895936154873,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,7-60,Ball,80.0,4.0,1.0,5,1.0,2.0,0.37552826411853885,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,7-60,Free Ball,100.0,3.0,0.0,3,1.33,0.0,0.4384939195509822,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,7-60,Hexa,61.5,8.0,5.0,13,1.38,2.0,0.3552248097226855,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,7-70,Hexa,60.0,8.0,4.0,12,1.4300000000000002,1.165,0.3906175873976139,🔵 Spin finish,🔵 Pierde por spin
+Wizard Rod,9-60,Ball,75.65,397.0,136.0,533,1.27,2.045,0.7061686022354574,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,9-60,Dot,71.1,27.0,11.0,38,1.41,1.73,0.5524256173381022,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,9-60,Free Ball,90.9,10.0,1.0,11,1.3,3.0,0.6226353745137962,🔵 Spin finish,🟢 Pierde por xtreme
+Wizard Rod,9-60,Gear Flat,37.5,3.0,5.0,8,1.33,2.4,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,9-60,Gear Needle,83.3,5.0,1.0,6,1.4,1.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,9-60,Hexa,74.2,66.0,23.0,89,1.27,1.96,0.641968636926015,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,9-60,High Needle,51.7,15.0,14.0,29,1.2,1.5,0.34430737970569164,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,9-60,Level,62.5,5.0,3.0,8,1.4,1.33,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,9-60,Low Orb,93.8,15.0,1.0,16,1.07,2.0,0.7167073163197013,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,9-60,Orb,57.1,8.0,6.0,14,1.0,2.0,0.3259026690286936,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,9-60,Taper,66.7,4.0,2.0,6,1.5,2.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,9-60,Under Needle,100.0,8.0,0.0,8,1.0,0.0,0.6755843804891231,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,9-60,Wedge,65.0,13.0,7.0,20,1.31,2.14,0.43285051021946475,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,9-70,Low Orb,56.3,9.0,7.0,16,1.44,1.43,0.3317819560677652,🔵 Spin finish,🔵 Pierde por spin
+Wizard Rod,9-70,Under Needle,60.0,3.0,2.0,5,1.0,2.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wolf Hunt Heavy,5-60,Level,42.9,3.0,4.0,7,1.67,1.0,0.15821692226262685,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Gale,3-70,Gear Needle,66.7,2.0,1.0,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Gale,9-60,Dot,50.0,2.0,2.0,4,1.5,3.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Gale,9-60,Gear Ball,71.4,5.0,2.0,7,1.4,1.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Gale,9-80,Dot,50.0,4.0,4.0,8,1.5,1.5,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Hover,1-60,Hexa,66.7,4.0,2.0,6,2.0,2.5,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Hover,1-60,Low Rush,60.0,6.0,4.0,10,1.17,1.5,0.3126695474501863,🔵 Spin finish,🟠 Pierde por burst/over
+Wyvern Hover,1-70,Low Rush,50.0,5.0,5.0,10,2.0,2.2,0.2365895936154873,🟠 Burst / Over,🟠 Pierde por burst/over
+Wyvern Hover,4-50,Low Rush,75.0,6.0,2.0,8,2.0,1.5,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Hover,6-60,Kick,60.0,6.0,4.0,10,1.83,1.5,0.3126695474501863,🟠 Burst / Over,🟠 Pierde por burst/over
+Wyvern Hover,7-60,Kick,30.0,3.0,7.0,10,0.33,0.71,0.10778928748621182,⚫ Alta tendencia a perder,🔵 Pierde por spin
+Wyvern Hover,7-60,Level,52.6,10.0,9.0,19,1.6,1.33,0.31707482511825114,🟠 Burst / Over,🔵 Pierde por spin
+Wyvern Hover,7-60,Low Rush,0.0,0.0,3.0,3,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Hover,9-60,Jolt,63.6,21.0,12.0,33,2.0,1.67,0.46615872621534094,🟠 Burst / Over,🟠 Pierde por burst/over
+Wyvern Hover,9-60,Kick,60.8,45.0,29.0,74,1.87,1.76,0.49419310534999844,🟠 Burst / Over,🟠 Pierde por burst/over
+Wyvern Hover,9-60,Level,50.0,2.0,2.0,4,1.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wyvern Hover,9-60,Low Rush,54.1,20.0,17.0,37,1.65,1.53,0.3838377952476737,🟠 Burst / Over,🟠 Pierde por burst/over
+Wyvern Hover,9-60,Rush,64.2,52.0,29.0,81,1.75,1.41,0.5333285955888399,🟠 Burst / Over,🔵 Pierde por spin
+Wyvern Hover,9-70,Low Rush,66.7,4.0,2.0,6,1.75,2.5,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
+Yell Kong,9-60,Orb,40.0,2.0,3.0,5,1.5,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
