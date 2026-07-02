@@ -60,12 +60,19 @@ if boton_demo(
                 if len(blades_mio) == 3:
                     break
 
-        # Extraer 3 combos únicos para rival (sin repetir dentro de rival)
+        # Extraer 3 combos únicos para rival:
+        # - Sin repetir piezas dentro de rival.
+        # - Sin coincidir exactamente (Blade + Ratchet + Bit) con ningún combo de mi deck.
         if len(blades_rival) < 3:
+            combos_mio = list(zip(blades_mio, ratchets_mio, bits_mio))
             for c in combos:
                 blade = c["Blade"]
                 ratchet = c["Ratchet"]
                 bit = c["Bit"]
+
+                # Evitar combo exacto ya presente en mi deck
+                if (blade, ratchet, bit) in combos_mio:
+                    continue
 
                 if blade not in blades_rival and ratchet not in ratchets_rival and bit not in bits_rival:
                     blades_rival.append(blade)

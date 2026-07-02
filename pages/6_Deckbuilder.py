@@ -62,11 +62,12 @@ if boton_demo(
                 break
 
     if len(blades_usados) == 3:
-        # Asignar valores
+        # Fijar solo los 3 Blades y dejar Ratchet + Bit sin fijar
+        # para que el optimizador haga su trabajo.
         for i in range(3):
             st.session_state[f"blade_{i}"]   = blades_usados[i]
-            st.session_state[f"ratchet_{i}"] = ratchets_usados[i]
-            st.session_state[f"bit_{i}"]     = bits_usados[i]
+            st.session_state[f"ratchet_{i}"] = "—"
+            st.session_state[f"bit_{i}"]     = "—"
         st.toast(f"🎬 Demo: {', '.join(blades_usados)}", icon="✨")
         st.rerun()
     else:
