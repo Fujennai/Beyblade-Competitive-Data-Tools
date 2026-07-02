@@ -1,7 +1,7 @@
 Blade,Ratchet,Bit,Win %,Wins,Losses,Partidas,Pts Ganados/Combate,Pts Cedidos/Combate,Wilson Score,Arquetipo victoria,Arquetipo derrota
 Aero Pegasus,1-50,Rush,60.0,3.0,2.0,5,2.0,1.0,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
 Aero Pegasus,1-60,Kick,58.3,14.0,10.0,24,1.07,1.3,0.3883433764938864,🔵 Spin finish,🔵 Pierde por spin
-Aero Pegasus,1-60,Low Rush,28.55,4.0,3.0,7,0.875,0.5,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Aero Pegasus,1-60,Low Rush,57.1,4.0,3.0,7,1.75,1.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
 Aero Pegasus,1-60,Point,90.9,10.0,1.0,11,1.7,1.0,0.6226353745137962,🟠 Burst / Over,🔵 Pierde por spin
 Aero Pegasus,1-60,Rush,60.0,18.0,12.0,30,1.56,1.42,0.42320052498273836,🟠 Burst / Over,🔵 Pierde por spin
 Aero Pegasus,1-70,Kick,68.4,13.0,6.0,19,1.85,2.0,0.4601001017506463,🟠 Burst / Over,🟠 Pierde por burst/over
@@ -572,7 +572,6 @@ Shark Scale,3-60,Rush,61.9,13.0,8.0,21,1.62,1.63,0.40878295815501514,🟠 Burst 
 Shark Scale,3-60,Under Flat,66.7,2.0,1.0,3,2.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,3-80,Rush,66.7,4.0,2.0,6,2.0,2.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,4-50,Level,81.3,13.0,3.0,16,1.46,2.0,0.5699064013154177,🔵 Spin finish,🟠 Pierde por burst/over
-Shark Scale,4-50,Low Rush,100.0,6.0,0.0,6,1.5,0.0,0.6096569663469354,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,4-50,Under Flat,55.6,10.0,8.0,18,1.9,1.0,0.33716069428251627,🟠 Burst / Over,🔵 Pierde por spin
 Shark Scale,5-60,Kick,64.3,9.0,5.0,14,2.0,2.2,0.3876400468214041,🟠 Burst / Over,🟠 Pierde por burst/over
 Shark Scale,5-60,Low Rush,55.8,24.0,19.0,43,1.83,1.53,0.4110735806551172,🟠 Burst / Over,🟠 Pierde por burst/over
@@ -716,7 +715,6 @@ Unicorn Sting,3-80,Ball,75.0,3.0,1.0,4,1.33,0.0,0.30063605244263664,⚪ Datos in
 Unicorn Sting,4-60,Orb,54.5,12.0,10.0,22,1.25,1.7,0.3465947328904156,🔵 Spin finish,🟠 Pierde por burst/over
 Unicorn Sting,5-60,Ball,25.0,1.0,3.0,4,1.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
 Unicorn Sting,5-60,Gear Point,33.3,2.0,4.0,6,1.0,1.75,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
-Unicorn Sting,5-60,Hexa,0.0,0.0,4.0,4,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Unicorn Sting,5-60,Orb,25.0,1.0,3.0,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
 Unicorn Sting,9-60,Ball,60.0,3.0,2.0,5,1.33,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
 Unicorn Sting,9-60,Free Ball,69.2,9.0,4.0,13,1.22,1.75,0.4236888781333764,🔵 Spin finish,🟠 Pierde por burst/over
