@@ -5,6 +5,7 @@ from itertools import permutations
 from data.loader import load_data
 from core.matchup import simular_deck_match, orden_optimo
 from components.demo_button import boton_demo, combos_aleatorios
+from core.compatibility import ratchet_repetido
 
 st.set_page_config(layout="wide")
 
@@ -52,7 +53,7 @@ if boton_demo(
                 ratchet = c["Ratchet"]
                 bit = c["Bit"]
 
-                if blade not in blades_mio and ratchet not in ratchets_mio and bit not in bits_mio:
+                if blade not in blades_mio and not ratchet_repetido(ratchet, ratchets_mio) and bit not in bits_mio:
                     blades_mio.append(blade)
                     ratchets_mio.append(ratchet)
                     bits_mio.append(bit)
@@ -74,7 +75,7 @@ if boton_demo(
                 if (blade, ratchet, bit) in combos_mio:
                     continue
 
-                if blade not in blades_rival and ratchet not in ratchets_rival and bit not in bits_rival:
+                if blade not in blades_rival and not ratchet_repetido(ratchet, ratchets_rival) and bit not in bits_rival:
                     blades_rival.append(blade)
                     ratchets_rival.append(ratchet)
                     bits_rival.append(bit)
@@ -153,7 +154,7 @@ for col, deck_list, prefix, label in [
 
             # Excluir Ratchets ya seleccionados EN EL MISMO DECK
             ratchets_usados = get_piezas_seleccionadas_deck("ratchet", i, prefix)
-            ratchet_opts = sorted([r for r in df["Ratchet"].unique() if r not in ratchets_usados])
+            ratchet_opts = sorted([r for r in df["Ratchet"].unique() if not ratchet_repetido(r, ratchets_usados)])
             ratchet = c2.selectbox("Ratchet", ["—"] + ratchet_opts, key=f"{prefix}_ratchet_{i}")
 
             # Excluir Bits ya seleccionados EN EL MISMO DECK

@@ -11,6 +11,7 @@ import numpy as np
 import pandas as pd
 
 from core.recommender import recomendar_builds
+from core.compatibility import ratchet_repetido
 
 
 def _score_deck(ws_list):
@@ -39,11 +40,11 @@ def optimizar_deck(df, fijados):
     # Buscar la mejor combinación sin repetir Blade, Ratchet ni Bit
     for _, r0 in candidatos[0].iterrows():
         for _, r1 in candidatos[1].iterrows():
-            if r1["Blade"] == r0["Blade"] or r1["Ratchet"] == r0["Ratchet"] or r1["Bit"] == r0["Bit"]:
+            if r1["Blade"] == r0["Blade"] or ratchet_repetido(r1["Ratchet"], [r0["Ratchet"]]) or r1["Bit"] == r0["Bit"]:
                 continue
             for _, r2 in candidatos[2].iterrows():
                 if (r2["Blade"] in (r0["Blade"], r1["Blade"]) or
-                    r2["Ratchet"] in (r0["Ratchet"], r1["Ratchet"]) or
+                    ratchet_repetido(r2["Ratchet"], (r0["Ratchet"], r1["Ratchet"])) or
                     r2["Bit"] in (r0["Bit"], r1["Bit"])):
                     continue
 

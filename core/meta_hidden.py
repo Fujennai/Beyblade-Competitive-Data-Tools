@@ -14,6 +14,7 @@ import numpy as np
 import itertools
 
 from core.model_loader import cargar_modelo
+from core.compatibility import UX_EXPANDED, blades_con_ux_expanded
 
 
 # ── Arquetipos esperados ──────────────────────────────────────────────────────
@@ -45,6 +46,12 @@ def generar_combos(df):
 
     combos = list(itertools.product(blades, ratchets, bits))
     df_all = pd.DataFrame(combos, columns=["Blade", "Ratchet", "Bit"])
+
+    # UX Expanded: el Ratchet va fusionado con el Blade, así que solo se
+    # combina con los Blades que realmente tienen esa versión.
+    ux_blades = blades_con_ux_expanded(df)
+    es_ux = df_all["Ratchet"] == UX_EXPANDED
+    df_all = df_all[~es_ux | df_all["Blade"].isin(ux_blades)]
 
     df_nuevos = df_all.merge(
         df[["Blade", "Ratchet", "Bit"]],

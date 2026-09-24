@@ -29,6 +29,11 @@ params = {
 # Ratchets "especiales" con nombre en lugar de formato N-N. Son válidos.
 ratchets_especiales = ["Turbo", "Operate"]
 
+# Ratchets "falsos" de varias palabras. Los UX Expanded llevan el Ratchet
+# fusionado con el Blade y la SBBL los registra con el Ratchet ficticio
+# "UX Expanded" (p.ej. "Glory Valkyrie UX Expanded X Rush").
+RATCHETS_MULTIPALABRA = ["UX Expanded"]
+
 # Palabras que aparecen en la web como si fueran un Ratchet pero en realidad
 # son Assist Blades (parte del Blade). Los combos que las muestren como
 # Ratchet se descartan, ya que el verdadero Ratchet (formato N-N) no se
@@ -46,7 +51,8 @@ def es_ratchet_valido(ratchet):
     s = str(ratchet).strip()
     if s in ASSIST_BLADES:
         return False
-    return bool(RATCHET_REGEX.match(s)) or s in ratchets_especiales
+    return (bool(RATCHET_REGEX.match(s)) or s in ratchets_especiales
+            or s in RATCHETS_MULTIPALABRA)
 
 
 # ----------------------------
@@ -66,6 +72,22 @@ def separar_componentes(texto):
     for i, p in enumerate(partes):
         if p in ASSIST_BLADES:
             continue  # ignorar Assist Blades, son parte del nombre del Blade
+
+        # Ratchets de varias palabras (UX Expanded)
+        multi = next(
+            (m for m in RATCHETS_MULTIPALABRA
+             if partes[i:i + len(m.split())] == m.split()),
+            None,
+        )
+        if multi and i > 0:
+            n = len(multi.split())
+            blade = " ".join(partes[:i])
+            resto = partes[i + n:]
+            if resto and resto[0] == "X":
+                resto = resto[1:]
+            bit = " ".join(resto) if resto else None
+            return blade, multi, bit
+
         if RATCHET_REGEX.match(p) or p in ratchets_especiales:
             blade = " ".join(partes[:i])
             ratchet = p

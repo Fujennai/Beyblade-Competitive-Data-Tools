@@ -3,7 +3,7 @@ import pandas as pd
 
 from data.loader import load_data
 from core.deckbuilder import optimizar_deck
-from core.compatibility import ratchets_validos
+from core.compatibility import ratchets_validos, ratchet_repetido, blades_con_ux_expanded, UX_EXPANDED
 from components.view_toggle import view_toggle
 from components.demo_button import boton_demo, combos_aleatorios
 
@@ -53,7 +53,7 @@ if boton_demo(
             bit = c["Bit"]
 
             # Verificar que no está ya seleccionado
-            if blade not in blades_usados and ratchet not in ratchets_usados and bit not in bits_usados:
+            if blade not in blades_usados and not ratchet_repetido(ratchet, ratchets_usados) and bit not in bits_usados:
                 blades_usados.append(blade)
                 ratchets_usados.append(ratchet)
                 bits_usados.append(bit)
@@ -99,12 +99,13 @@ for i in range(3):
         blade_sel = st.session_state.get(f"blade_{i}", "—")
         r_opts = ratchets_validos(
             blade_sel,
-            sorted(df["Ratchet"].unique())
+            sorted(df["Ratchet"].unique()),
+            blades_con_ux_expanded(df),
         ) if blade_sel != "—" else sorted(df["Ratchet"].unique())
 
         # Excluir Ratchets ya seleccionados en otros Beys
         ratchets_usados = get_piezas_seleccionadas("ratchet", i)
-        r_opts = [r for r in r_opts if r not in ratchets_usados]
+        r_opts = [r for r in r_opts if not ratchet_repetido(r, ratchets_usados)]
 
         ratchet = st.selectbox(
             f"Ratchet {i+1}",
@@ -272,7 +273,7 @@ for i, bey in enumerate(deck):
 
     # Excluir el combo ya recomendado y piezas usadas en otros beys
     otras_blades   = [b["Blade"]   for j, b in enumerate(deck) if j != i]
-    otras_ratchets = [b["Ratchet"] for j, b in enumerate(deck) if j != i]
+    otras_ratchets = [b["Ratchet"] for j, b in enumerate(deck) if j != i and b["Ratchet"] != UX_EXPANDED]
     otros_bits     = [b["Bit"]     for j, b in enumerate(deck) if j != i]
 
     df_alt = df_alt[
