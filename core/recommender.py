@@ -15,6 +15,7 @@ import numpy as np
 from itertools import product
 
 from core.model_loader import cargar_modelo
+from core.compatibility import filtrar_combos_validos, blades_con_ux_expanded
 
 COLS_SALIDA = [
     "Blade", "Ratchet", "Bit",
@@ -138,6 +139,8 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
 
     rows = list(product(blades, ratchets, bits))
     df_cand = pd.DataFrame(rows, columns=["Blade", "Ratchet", "Bit"])
+    # Solo combos legales (Clock Mirage, UX Expanded, formato de Ratchet...)
+    df_cand = filtrar_combos_validos(df_cand, blades_con_ux_expanded(df))
 
     if df_cand.empty:
         return pd.DataFrame()

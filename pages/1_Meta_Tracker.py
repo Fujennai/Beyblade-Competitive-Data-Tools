@@ -4,8 +4,11 @@ import pandas as pd
 
 from data.loader import load_data, load_history
 from core.metrics import calcular_agregados
-from core.trending import calcular_trending
-from components.charts import plot_winrate
+from core.trending import (
+    preparar_historial, elegir_ventana, deltas_ventana, tendencias, evolucion,
+    MIN_DIAS, MIN_PARTIDAS, MIN_RECIENTES, MIN_HISTORICAS,
+)
+from components.charts import plot_evolucion
 from components.tables import mostrar_top10
 from components.filters import filtros_dependientes
 
@@ -95,67 +98,122 @@ st.divider()
 
 
 # ----------------------------
-# Trending
+# Tendencias
 # ----------------------------
 
-st.subheader("🔥 Trending")
+st.subheader("🔥 Tendencias")
 
-st.info(
-    "¿Qué significa el Trending Score?\n\n"
-    "Este ranking mide qué combos están ganando relevancia recientemente.\n\n"
-    "Se calcula combinando:\n"
-    "- 📈 Crecimiento en número de partidas (uso)\n"
-    "- 🎯 Winrate actual\n"
-    "- ⚖️ Volumen total de partidas\n\n"
-    "👉 Un valor alto indica que el combo está creciendo rápido, se usa bastante y además tiene buen rendimiento.\n\n"
-    "⚠️ No significa necesariamente que sea el mejor combo, sino que su uso está aumentando."
+hist = preparar_historial(df_history)
+
+if hist.empty or hist["fecha"].nunique() < 2:
+    st.info("Aún no hay suficientes capturas en el histórico para calcular tendencias.")
+    st.stop()
+
+ventana = elegir_ventana(hist)
+fmt = lambda f: f.strftime("%d/%m/%Y")
+
+if ventana["partidas"] == 0:
+    ult = ventana["ultima_actividad"]
+    st.warning(
+        "Sin actividad registrada"
+        + (f" desde el {fmt(ult)}." if ult is not None else ".")
+        + " Las tendencias se actualizarán cuando entren partidas nuevas."
+    )
+    st.stop()
+
+st.caption(
+    f"📅 Periodo analizado: **{fmt(ventana['inicio'])} → {fmt(ventana['fin'])}** · "
+    f"**{ventana['partidas']}** partidas nuevas"
+    + ("" if ventana["suficiente"] else " · ⚠️ pocas partidas: resultados orientativos")
+    + (f" · última actividad registrada: {fmt(ventana['ultima_actividad'])}"
+       if ventana["ultima_actividad"] is not None and ventana["ultima_actividad"] < ventana["fin"] else "")
 )
 
-df_trending = calcular_trending(df_history).head(10)
+with st.expander("ℹ️ ¿Cómo se calculan las tendencias?"):
+    st.markdown(f"""
+- El periodo se amplía hacia atrás hasta cubrir al menos **{MIN_DIAS} días** y **{MIN_PARTIDAS} partidas nuevas**,
+  para que una semana con poca actividad no deje todo a cero.
+- **Variación de cuota**: qué porcentaje de las partidas del periodo lleva cada combo/pieza frente a su
+  porcentaje en todo lo anterior. La cuota reciente se suaviza hacia la histórica para que 1-2 partidas
+  sueltas no disparen el ranking.
+- **En alza**: gana cuota (mín. {MIN_RECIENTES} partidas en el periodo). **En caída**: pierde cuota
+  (mín. {MIN_HISTORICAS} partidas previas). **Novedades**: sin partidas antes del periodo.
+- El WR reciente solo cuenta las partidas del periodo; con pocas partidas es muy variable.
+""")
 
-st.dataframe(
-    df_trending[["combo", "trending_score"]].rename(columns={
-        "combo": "Combo",
-        "trending_score": "Trending Score (popularidad reciente)"
-    }),
-    use_container_width=True,
-    hide_index=True
-)
+deltas = deltas_ventana(hist, ventana)
+n_art = int(deltas["artefacto"].sum())
+if n_art:
+    st.caption(
+        f"ℹ️ {n_art} combos excluidos: aparecen en el periodo por un cambio del scraper "
+        "(p.ej. UX Expanded), no porque se empezaran a jugar ahora."
+    )
+
+nivel = st.radio("Nivel", ["Combo", "Blade", "Ratchet", "Bit"], horizontal=True, key="trend_nivel")
+tend = tendencias(deltas, nivel)
+
+COLS = {
+    "Nombre": nivel,
+    "Partidas_rec": "Partidas periodo",
+    "Partidas_prev": "Partidas previas",
+    "variacion_pp": "Variación cuota (pp)",
+    "cuota_rec": "Cuota periodo %",
+    "cuota_hist": "Cuota previa %",
+    "WR reciente": "WR periodo %",
+    "WR histórico": "WR previo %",
+}
+
+
+def _tabla(df_t):
+    if df_t.empty:
+        st.caption("Nada que mostrar en este periodo.")
+        return
+    t = df_t.head(10)[list(COLS)].copy()
+    t["cuota_rec"] *= 100
+    t["cuota_hist"] *= 100
+    t = t.rename(columns=COLS)
+    st.dataframe(
+        t, use_container_width=True, hide_index=True,
+        column_config={
+            "Partidas periodo": st.column_config.NumberColumn(format="%d"),
+            "Partidas previas": st.column_config.NumberColumn(format="%d"),
+            "Variación cuota (pp)": st.column_config.NumberColumn(format="%+.2f"),
+            "Cuota periodo %": st.column_config.NumberColumn(format="%.1f%%"),
+            "Cuota previa %": st.column_config.NumberColumn(format="%.1f%%"),
+            "WR periodo %": st.column_config.NumberColumn(format="%.1f%%"),
+            "WR previo %": st.column_config.NumberColumn(format="%.1f%%"),
+        },
+    )
+
+
+tab_alza, tab_caida, tab_nuevo = st.tabs(["📈 En alza", "📉 En caída", "🆕 Novedades"])
+with tab_alza:
+    _tabla(tend["en_alza"])
+with tab_caida:
+    _tabla(tend["en_caida"])
+with tab_nuevo:
+    _tabla(tend["novedades"])
 
 # ----------------------------
-# Evolución (desde Trending)
+# Evolución
 # ----------------------------
 
-st.subheader("📈 Evolución (Trending)")
+st.subheader("📈 Evolución semanal")
 
-df_trending = calcular_trending(df_history).head(10)
+candidatos = list(dict.fromkeys(
+    tend["en_alza"]["Nombre"].head(10).tolist()
+    + tend["en_caida"]["Nombre"].head(10).tolist()
+    + tend["novedades"]["Nombre"].head(10).tolist()
+))
 
-combo_sel = st.selectbox(
-    "Selecciona un combo trending",
-    df_trending["combo"].tolist(),
-    key="evo_trending"
-)
-
-if combo_sel:
-
-    blade_h, ratchet_h, bit_h = combo_sel.split(" | ")
-
-    df_combo = df_history[
-        (df_history["Blade"] == blade_h) &
-        (df_history["Ratchet"] == ratchet_h) &
-        (df_history["Bit"] == bit_h)
-    ]
-
-    if not df_combo.empty:
-
-        df_plot = df_combo.groupby("fecha").agg({"Win %": "mean"}).reset_index()
-
-        delta = df_plot["Win %"].iloc[-1] - df_plot["Win %"].iloc[0]
-
-        st.metric(
-            "Cambio total de winrate",
-            f"{df_plot['Win %'].iloc[-1]:.2f}%",
-            delta=f"{delta:.2f}%"
+if candidatos:
+    sel = st.selectbox(f"{nivel}", candidatos, key="evo_trend_sel")
+    evo = evolucion(hist, nivel, sel)
+    if evo.empty:
+        st.caption("Sin datos de evolución para esta selección.")
+    else:
+        plot_evolucion(evo, key="chart_evolucion")
+        st.caption(
+            "Barras: partidas nuevas por semana · Línea: % de las partidas de esa semana. "
+            "Las semanas sin actividad global no tienen cuota."
         )
-
-        plot_winrate(df_plot, key="chart_trending")

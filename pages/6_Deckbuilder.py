@@ -3,7 +3,7 @@ import pandas as pd
 
 from data.loader import load_data
 from core.deckbuilder import optimizar_deck
-from core.compatibility import ratchets_validos, ratchet_repetido, blades_con_ux_expanded, UX_EXPANDED
+from core.compatibility import ratchets_validos, ratchet_repetido, blade_repetido, blades_con_ux_expanded, UX_EXPANDED
 from components.view_toggle import view_toggle
 from components.demo_button import boton_demo, combos_aleatorios
 
@@ -53,7 +53,7 @@ if boton_demo(
             bit = c["Bit"]
 
             # Verificar que no está ya seleccionado
-            if blade not in blades_usados and not ratchet_repetido(ratchet, ratchets_usados) and bit not in bits_usados:
+            if not blade_repetido(blade, blades_usados) and not ratchet_repetido(ratchet, ratchets_usados) and bit not in bits_usados:
                 blades_usados.append(blade)
                 ratchets_usados.append(ratchet)
                 bits_usados.append(bit)
@@ -87,7 +87,7 @@ for i in range(3):
     with col1:
         # Excluir Blades ya seleccionadas en otros Beys
         blades_usadas = get_piezas_seleccionadas("blade", i)
-        blade_opts = sorted([b for b in df["Blade"].unique() if b not in blades_usadas])
+        blade_opts = sorted([b for b in df["Blade"].unique() if not blade_repetido(b, blades_usadas)])
 
         blade = st.selectbox(
             f"Blade {i+1}",
@@ -277,7 +277,7 @@ for i, bey in enumerate(deck):
     otros_bits     = [b["Bit"]     for j, b in enumerate(deck) if j != i]
 
     df_alt = df_alt[
-        ~df_alt["Blade"].isin(otras_blades) &
+        ~df_alt["Blade"].apply(lambda b: blade_repetido(b, otras_blades)) &
         ~df_alt["Ratchet"].isin(otras_ratchets) &
         ~df_alt["Bit"].isin(otros_bits) &
         ~((df_alt["Blade"] == bey["Blade"]) &

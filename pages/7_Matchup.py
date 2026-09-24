@@ -4,6 +4,7 @@ import pandas as pd
 from data.loader import load_data
 from core.matchup import prob_victoria, pts_esperados, ws_ponderado, _cargar_pesos
 from components.demo_button import boton_demo, combos_aleatorios
+from core.compatibility import ratchets_validos, blades_con_ux_expanded
 
 st.set_page_config(layout="wide")
 
@@ -47,7 +48,7 @@ col_a, col_sep, col_b = st.columns([5, 1, 5])
 with col_a:
     st.subheader("🔵 Combo A")
     blade_a   = st.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key="blade_a")
-    ratchet_a = st.selectbox("Ratchet", ["—"] + sorted(df["Ratchet"].unique()), key="ratchet_a")
+    ratchet_a = st.selectbox("Ratchet", ["—"] + (ratchets_validos(blade_a, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df)) if blade_a != "—" else sorted(df["Ratchet"].unique())), key="ratchet_a")
     bit_a     = st.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key="bit_a")
 
 with col_sep:
@@ -56,7 +57,7 @@ with col_sep:
 with col_b:
     st.subheader("🔴 Combo B")
     blade_b   = st.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key="blade_b")
-    ratchet_b = st.selectbox("Ratchet", ["—"] + sorted(df["Ratchet"].unique()), key="ratchet_b")
+    ratchet_b = st.selectbox("Ratchet", ["—"] + (ratchets_validos(blade_b, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df)) if blade_b != "—" else sorted(df["Ratchet"].unique())), key="ratchet_b")
     bit_b     = st.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key="bit_b")
 
 # ── Validar selección ─────────────────────────────────────────────────────────

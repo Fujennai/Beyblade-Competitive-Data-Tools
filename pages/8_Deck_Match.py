@@ -1,11 +1,11 @@
 import streamlit as st
 import pandas as pd
-from itertools import permutations
 
 from data.loader import load_data
-from core.matchup import simular_deck_match, orden_optimo
+from core.matchup import prob_victoria
+from core.deck_match import DeckMatch, ORDENES
 from components.demo_button import boton_demo, combos_aleatorios
-from core.compatibility import ratchet_repetido
+from core.compatibility import ratchet_repetido, blade_repetido, ratchets_validos, blades_con_ux_expanded
 
 st.set_page_config(layout="wide")
 
@@ -13,7 +13,7 @@ st.title("🏟️ Simulador de Deck Match")
 
 df = load_data()
 
-st.caption("Introduce los dos decks y simula quién tiene más probabilidades de ganar. Indica cuál es el tuyo para ver el orden óptimo.")
+st.caption("Introduce los dos decks y calcula quién tiene más probabilidades de ganar y cómo ordenar tus beys en cada ronda.")
 
 # ── Función auxiliar: obtener piezas ya seleccionadas en un deck ──
 def get_piezas_seleccionadas_deck(tipo_pieza, excluir_pos, prefix):
@@ -53,7 +53,7 @@ if boton_demo(
                 ratchet = c["Ratchet"]
                 bit = c["Bit"]
 
-                if blade not in blades_mio and not ratchet_repetido(ratchet, ratchets_mio) and bit not in bits_mio:
+                if not blade_repetido(blade, blades_mio) and not ratchet_repetido(ratchet, ratchets_mio) and bit not in bits_mio:
                     blades_mio.append(blade)
                     ratchets_mio.append(ratchet)
                     bits_mio.append(bit)
@@ -75,7 +75,7 @@ if boton_demo(
                 if (blade, ratchet, bit) in combos_mio:
                     continue
 
-                if blade not in blades_rival and not ratchet_repetido(ratchet, ratchets_rival) and bit not in bits_rival:
+                if not blade_repetido(blade, blades_rival) and not ratchet_repetido(ratchet, ratchets_rival) and bit not in bits_rival:
                     blades_rival.append(blade)
                     ratchets_rival.append(ratchet)
                     bits_rival.append(bit)
@@ -149,12 +149,14 @@ for col, deck_list, prefix, label in [
 
             # Excluir Blades ya seleccionadas EN EL MISMO DECK (pero NO en el otro)
             blades_usadas = get_piezas_seleccionadas_deck("blade", i, prefix)
-            blade_opts = sorted([b for b in df["Blade"].unique() if b not in blades_usadas])
+            blade_opts = sorted([b for b in df["Blade"].unique() if not blade_repetido(b, blades_usadas)])
             blade = c1.selectbox("Blade", ["—"] + blade_opts, key=f"{prefix}_blade_{i}")
 
             # Excluir Ratchets ya seleccionados EN EL MISMO DECK
             ratchets_usados = get_piezas_seleccionadas_deck("ratchet", i, prefix)
-            ratchet_opts = sorted([r for r in df["Ratchet"].unique() if not ratchet_repetido(r, ratchets_usados)])
+            base_ratchets = (ratchets_validos(blade, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df))
+                             if blade != "—" else sorted(df["Ratchet"].unique()))
+            ratchet_opts = [r for r in base_ratchets if not ratchet_repetido(r, ratchets_usados)]
             ratchet = c2.selectbox("Ratchet", ["—"] + ratchet_opts, key=f"{prefix}_ratchet_{i}")
 
             # Excluir Bits ya seleccionados EN EL MISMO DECK
@@ -172,20 +174,22 @@ if not completo or len(deck_mio) < 3 or len(deck_rival) < 3:
     st.info("🔎 Completa los dos decks para ver la simulación.")
     st.stop()
 
-# ── Simulación global ─────────────────────────────────────────────────────────
+# ── Cálculo exacto ────────────────────────────────────────────────────────────
 st.divider()
 
-with st.spinner("Simulando deck match..."):
-    # Probabilidad global: promedio sobre todos los órdenes de ambos decks
-    todas_probs = []
-    for mp in permutations(range(3)):
-        for rp in permutations(range(3)):
-            mi_orden    = [deck_mio[i]   for i in mp]
-            rival_orden = [deck_rival[i] for i in rp]
-            todas_probs.append(simular_deck_match(mi_orden, rival_orden, n_sims=2000))
+# P(A gana un combate): provisional, pendiente del punto 8 (modelo de fuerza)
+dm = DeckMatch(deck_mio, deck_rival, lambda a, b: prob_victoria(a["ws"], b["ws"]))
 
-    p_mio   = round(sum(todas_probs) / len(todas_probs), 4)
-    p_rival = round(1 - p_mio, 4)
+with st.spinner("Calculando deck match..."):
+    p_mio, x_mio, y_rival = dm.estrategias(0, 0)
+    p_azar = dm.valor_azar(0, 0)
+    M0 = dm.matriz(0, 0)
+p_rival = 1 - p_mio
+
+
+def _orden_txt(orden, deck):
+    return " → ".join(deck[i]["nombre"].split(" / ")[0] for i in orden)
+
 
 # ── Resultado visual ──────────────────────────────────────────────────────────
 bar_mio   = int(p_mio * 100)
@@ -193,7 +197,7 @@ bar_rival = int(p_rival * 100)
 
 st.markdown(f"""
 <div style="background:#1a1a2e;border-radius:12px;padding:20px;border:1px solid #2a2a4a;margin-bottom:16px">
-    <div style="text-align:center;font-size:1.1em;color:#aaa;margin-bottom:12px">Probabilidad de ganar el deck match</div>
+    <div style="text-align:center;font-size:1.1em;color:#aaa;margin-bottom:12px">Probabilidad de ganar el deck match (ambos eligiendo bien el orden)</div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
         <span style="color:#3498DB;font-weight:700;width:80px">Mi deck</span>
         <div style="flex:1;background:#2a2a4a;border-radius:4px;height:22px;overflow:hidden">
@@ -213,41 +217,90 @@ st.markdown(f"""
 </div>
 """, unsafe_allow_html=True)
 
+st.caption(f"Si ambos eligieran el orden al azar en cada ronda: **{p_azar*100:.1f}%** para mi deck.")
+
 st.divider()
 
-# ── Orden óptimo ──────────────────────────────────────────────────────────────
-st.subheader("📋 Orden óptimo de mi deck")
-st.caption("Ordenado por probabilidad media de ganar contra cualquier orden del rival.")
+# ── Orden en la 1ª ronda ──────────────────────────────────────────────────────
+st.subheader("📋 Orden en la primera ronda")
 
-with st.spinner("Calculando orden óptimo..."):
-    ranking = orden_optimo(deck_mio, deck_rival, n_sims=2000)
-
-for rank_idx, (perm, orden, prob) in enumerate(ranking):
-    color_rank = "#2ECC71" if rank_idx == 0 else "#888"
-    tag = " 👑 Óptimo" if rank_idx == 0 else ""
-
-    beys_html = "".join([
-        f'<div style="font-size:0.85em;color:#aaa;margin:2px 0">'
-        f'<span style="color:#666">Bey {j+1}</span> &nbsp; '
-        f'<span style="color:#fff;font-weight:600">{b["nombre"]}</span>'
-        f'{"<span style=\'color:#888;font-size:0.8em\'> · estimado</span>" if not b["real"] else ""}'
-        f'</div>'
-        for j, b in enumerate(orden)
-    ])
-
-    card = (
-        f'<div style="background:#1a1a2e;border-radius:10px;padding:14px 16px;'
-        f'border:1px solid {"#2ECC71" if rank_idx == 0 else "#2a2a4a"};margin-bottom:8px">'
-        f'<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">'
-        f'<span style="color:{color_rank};font-weight:700">#{rank_idx+1}{tag}</span>'
-        f'<span style="color:{color_rank};font-family:monospace;font-weight:700">{prob*100:.1f}% de victorias</span>'
-        f'</div>'
-        f'{beys_html}'
-        f'</div>'
-    )
-    st.markdown(card, unsafe_allow_html=True)
-
-st.caption(
-    "La probabilidad se calcula promediando contra todos los posibles órdenes del rival. "
-    "El bey 3 puede no jugarse si se alcanzan 4 puntos antes."
+rango = (M0.max() - M0.min()) * 100
+estrategia = sorted(
+    [(ORDENES[k], float(x_mio[k])) for k in range(6) if x_mio[k] > 0.01],
+    key=lambda t: t[1], reverse=True,
 )
+
+if rango < 1.0:
+    st.info(
+        f"🎲 En la primera ronda el orden apenas influye (como mucho {rango:.1f} puntos de diferencia "
+        "entre la mejor y la peor combinación). Donde sí importa es en las rondas siguientes, "
+        "según el marcador (ver más abajo)."
+    )
+elif len(estrategia) == 1:
+    st.success(f"Orden recomendado: **{_orden_txt(estrategia[0][0], deck_mio)}**")
+else:
+    st.markdown("Lo óptimo es **variar el orden** (el rival no debe poder predecirlo). Frecuencias recomendadas:")
+    for orden, peso in estrategia:
+        st.markdown(f"- **{peso*100:.0f}%** · {_orden_txt(orden, deck_mio)}")
+
+# ── Mejor respuesta si intuyes el orden del rival ─────────────────────────────
+with st.expander("🔍 ¿Intuyes el orden del rival?"):
+    opciones = {_orden_txt(o, deck_rival): o for o in ORDENES}
+    sel = st.selectbox("Orden del rival en la 1ª ronda", list(opciones), key="dm_orden_rival")
+    respuesta = dm.mejor_respuesta(opciones[sel])
+    st.dataframe(
+        pd.DataFrame([
+            {"Mi orden": _orden_txt(o, deck_mio), "P(ganar)": p * 100} for o, p in respuesta
+        ]),
+        use_container_width=True, hide_index=True,
+        column_config={"P(ganar)": st.column_config.ProgressColumn(format="%.1f%%", min_value=0, max_value=100)},
+    )
+
+# ── Estrategia según marcador ─────────────────────────────────────────────────
+st.subheader("🧮 Estrategia según el marcador")
+st.caption(
+    "Si tras una ronda nadie llega a 4 puntos, ambos eligen un orden nuevo sabiendo el marcador. "
+    "La recomendación cambia según cómo vaya la partida. Jugar bien puede dar menos que el azar "
+    "porque el rival también juega bien."
+)
+
+filas = []
+for sa, sb in dm.marcadores_posibles():
+    v, x, _ = dm.estrategias(sa, sb)
+    M = dm.matriz(sa, sb)
+    mejores = sorted([(ORDENES[k], float(x[k])) for k in range(6) if x[k] > 0.01],
+                     key=lambda t: t[1], reverse=True)
+    if (M.max() - M.min()) * 100 < 1.0:
+        rec = "Indiferente"
+    elif len(mejores) == 1:
+        rec = _orden_txt(mejores[0][0], deck_mio)
+    else:
+        rec = " | ".join(f"{p*100:.0f}% {_orden_txt(o, deck_mio)}" for o, p in mejores)
+    filas.append({
+        "Marcador (yo-rival)": f"{sa}-{sb}",
+        "P(ganar) si ambos juegan bien": v * 100,
+        "P(ganar) si ambos eligen al azar": dm.valor_azar(sa, sb) * 100,
+        "Orden recomendado": rec,
+    })
+
+st.dataframe(
+    pd.DataFrame(filas), use_container_width=True, hide_index=True,
+    column_config={
+        "P(ganar) si ambos juegan bien": st.column_config.NumberColumn(format="%.1f%%"),
+        "P(ganar) si ambos eligen al azar": st.column_config.NumberColumn(format="%.1f%%"),
+        "Orden recomendado": st.column_config.TextColumn(width="large"),
+    },
+)
+
+with st.expander("ℹ️ Supuestos del cálculo"):
+    st.markdown("""
+- **Formato**: ambos cambian de bey tras cada combate; primero a 4 puntos; si nadie llega tras 3 combates,
+  se elige un orden nuevo conociendo el marcador. Sin empates. Spin 1 · Burst/Over 2 · Xtreme 3.
+- **Cálculo exacto** (no simulación): cada ronda es un juego de suma cero entre los 6 órdenes de cada jugador,
+  resuelto por programación lineal. "Jugando bien" = ambos eligen de forma óptima.
+- **Puntos por combate**: media entre los puntos por victoria del ganador y los que suele ceder el perdedor,
+  repartida entre los dos valores enteros más cercanos (p.ej. 1,3 → 70% spin, 30% burst/over).
+  Solo tenemos medias, no el desglose de finishes.
+- **Probabilidad de ganar un combate**: provisional (Wilson relativo). No hay datos de enfrentamientos
+  directos, así que no se capturan counters específicos entre combos; por eso el orden suele influir poco.
+""")
