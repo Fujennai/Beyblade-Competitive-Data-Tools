@@ -38,4 +38,7 @@ jobs:
           git config --global user.email "actions@github.com"
           git add *.csv history/*.csv model.pkl
           git commit -m "Update scraped data and model" || echo "No changes"
+          # Integrar commits que hayan llegado a main mientras corría el job.
+          # En conflicto, prevalecen los datos recién generados por el scraper.
+          git pull --rebase -X theirs origin main
           git push
