@@ -4,3 +4,7 @@ Conceptos_Recomendados.md
 Conceptos_Asignaturas_Checklist.md
 Arquitectura_Conceptos_Por_Componente.md
 Aporte_Asignaturas.md
+
+# Python bytecode
+__pycache__/
+*.py[cod]

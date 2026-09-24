@@ -13,22 +13,18 @@ MEJORAS v2:
 import pandas as pd
 import numpy as np
 from itertools import product
-from sklearn.ensemble import GradientBoostingRegressor
-from sklearn.preprocessing import LabelEncoder
 
 from core.model_loader import cargar_modelo
 
 COLS_SALIDA = [
     "Blade", "Ratchet", "Bit",
     "Tipo",
-    "Wilson Score Predicho", "Win % Predicho",
+    "Wilson Score Predicho", "Win % Real",
     "Confianza", "Evidencia",
 ]
 
 TIPO_REAL     = "🎯 Real"
 TIPO_PREDICHO = "🔮 Predicho"
-
-_model_cache: dict = {}
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -99,51 +95,6 @@ def _ancla_y_confianza(blade, ratchet, bit, combo_dict, par_br, par_bb, par_rb,
     return ancla, peso_ancla, nivel, texto_evidencia
 
 
-# ── Modelo local (fallback si no hay model.pkl) ───────────────────────────────
-
-def _entrenar_modelo_local(df: pd.DataFrame, ws_mean: float,
-                            par_br: dict, par_bb: dict, par_rb: dict):
-    cache_key = id(df)
-    if cache_key in _model_cache:
-        return _model_cache[cache_key]
-
-    df = df.copy()
-    encoders = {}
-    for col in ["Blade", "Ratchet", "Bit"]:
-        le = LabelEncoder()
-        df[col + "_enc"] = le.fit_transform(df[col].astype(str))
-        encoders[col] = le
-
-    blade_dict   = df.groupby("Blade")["Wilson Score"].mean().to_dict()
-    ratchet_dict = df.groupby("Ratchet")["Wilson Score"].mean().to_dict()
-    bit_dict     = df.groupby("Bit")["Wilson Score"].mean().to_dict()
-
-    df["BR_score"] = df.apply(lambda r: par_br.get((r["Blade"], r["Ratchet"]), ws_mean), axis=1)
-    df["BB_score"] = df.apply(lambda r: par_bb.get((r["Blade"], r["Bit"]),     ws_mean), axis=1)
-    df["RB_score"] = df.apply(lambda r: par_rb.get((r["Ratchet"], r["Bit"]),   ws_mean), axis=1)
-
-    feature_cols = [
-        "Blade_enc", "Ratchet_enc", "Bit_enc",
-        "Blade_score", "Ratchet_score", "Bit_score",
-        "BR_score", "BB_score", "RB_score",
-    ]
-    df["Blade_score"]   = df["Blade"].map(blade_dict)
-    df["Ratchet_score"] = df["Ratchet"].map(ratchet_dict)
-    df["Bit_score"]     = df["Bit"].map(bit_dict)
-
-    X = df[feature_cols].values.astype(float)
-    y = df["Wilson Score"].values
-
-    model = GradientBoostingRegressor(
-        n_estimators=400, learning_rate=0.04, max_depth=4,
-        subsample=0.8, min_samples_leaf=3, random_state=42,
-    )
-    model.fit(X, y)
-    _model_cache[cache_key] = (model, encoders, feature_cols,
-                                blade_dict, ratchet_dict, bit_dict)
-    return model, encoders, feature_cols, blade_dict, ratchet_dict, bit_dict
-
-
 # ── Función principal ─────────────────────────────────────────────────────────
 
 def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
@@ -157,31 +108,21 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
     if df.empty or "Wilson Score" not in df.columns:
         return pd.DataFrame()
 
-    # Intentar cargar modelo compartido
-    try:
-        p = cargar_modelo()
-        model        = p["model"]
-        encoders     = p["encoders"]
-        feature_cols = p["feature_cols"]
-        blade_dict   = p["blade_dict"]
-        ratchet_dict = p["ratchet_dict"]
-        bit_dict     = p["bit_dict"]
-        ws_mean      = p["ws_mean"]
-        par_br       = p.get("par_br", _calcular_score_par(df, "Blade", "Ratchet"))
-        par_bb       = p.get("par_bb", _calcular_score_par(df, "Blade", "Bit"))
-        par_rb       = p.get("par_rb", _calcular_score_par(df, "Ratchet", "Bit"))
-        combo_dict   = p.get("combo_dict", {})
-    except FileNotFoundError:
-        ws_mean  = float(df["Wilson Score"].mean())
-        par_br   = _calcular_score_par(df, "Blade", "Ratchet")
-        par_bb   = _calcular_score_par(df, "Blade", "Bit")
-        par_rb   = _calcular_score_par(df, "Ratchet", "Bit")
-        combo_dict = {
-            (r["Blade"], r["Ratchet"], r["Bit"]): (r["Wilson Score"], int(r["Partidas"]))
-            for _, r in df.iterrows()
-        }
-        model, encoders, feature_cols, blade_dict, ratchet_dict, bit_dict = \
-            _entrenar_modelo_local(df, ws_mean, par_br, par_bb, par_rb)
+    # Modelo compartido (model.pkl, o entrenado en memoria por model_loader
+    # con el mismo código que train_model.py si no existe).
+    p = cargar_modelo()
+    model        = p["model"]
+    encoders     = p["encoders"]
+    feature_cols = p["feature_cols"]
+    blade_dict   = p["blade_dict"]
+    ratchet_dict = p["ratchet_dict"]
+    bit_dict     = p["bit_dict"]
+    ws_mean      = p["ws_mean"]
+    # Pickles antiguos pueden no traer los pares: se calculan solo si faltan.
+    par_br = p["par_br"] if "par_br" in p else _calcular_score_par(df, "Blade", "Ratchet")
+    par_bb = p["par_bb"] if "par_bb" in p else _calcular_score_par(df, "Blade", "Bit")
+    par_rb = p["par_rb"] if "par_rb" in p else _calcular_score_par(df, "Ratchet", "Bit")
+    combo_dict   = p.get("combo_dict", {})
 
     # Generar combos candidatos (incluye reales y predichos)
     blades   = [blade]   if blade   else sorted(df["Blade"].unique())
@@ -191,7 +132,7 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
     # Lookup de combos reales presentes en el dataset
     real_lookup = {
         (str(r["Blade"]), str(r["Ratchet"]), str(r["Bit"])):
-            (float(r["Wilson Score"]), int(r["Partidas"]))
+            (float(r["Wilson Score"]), int(r["Partidas"]), float(r["Win %"]))
         for _, r in df.iterrows()
     }
 
@@ -254,7 +195,9 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
     pred_final = (1 - pesos_ancla) * pred_ml + pesos_ancla * anclas
 
     df_enc["Wilson Score Predicho"] = np.round(pred_final, 4)
-    df_enc["Win % Predicho"]        = np.round(pred_final * 100, 2)
+    # No hay estimación de winrate para combos no jugados: solo Wilson predicho.
+    # "Win % Real" solo se rellena para combos con datos observados.
+    df_enc["Win % Real"]            = np.nan
     df_enc["Confianza"]             = niveles
     df_enc["Evidencia"]             = evidencias
     df_enc["Tipo"]                  = TIPO_PREDICHO
@@ -278,9 +221,10 @@ def recomendar_builds(df, blade=None, ratchet=None, bit=None, top_n=20,
             df_enc.loc[mask_real, "Wilson Score Predicho"] = np.round(
                 ws_real_arr[mask_real], 4
             )
-            df_enc.loc[mask_real, "Win % Predicho"] = np.round(
-                ws_real_arr[mask_real] * 100, 2
+            wr_real_arr = np.array(
+                [real_lookup[k][2] if k in real_lookup else np.nan for k in keys]
             )
+            df_enc.loc[mask_real, "Win % Real"] = np.round(wr_real_arr[mask_real], 2)
             df_enc.loc[mask_real, "Confianza"] = [
                 "🟢 Alta" if n >= 10 else "🟡 Media" for n in n_real_arr[mask_real]
             ]

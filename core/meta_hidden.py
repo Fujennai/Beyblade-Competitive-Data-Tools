@@ -159,7 +159,6 @@ def predecir_combos_nuevos(df, muestra=2000, min_confianza="media"):
     pred_final = (1 - pesos_ancla) * pred_ml + pesos_ancla * anclas
 
     df_nuevos["Wilson Score Predicho"] = np.round(pred_final, 4)
-    df_nuevos["Win % Predicho"]        = np.round(pred_final * 100, 2)
     df_nuevos["Confianza"]             = confianzas
 
     # Filtro de confianza
@@ -179,7 +178,7 @@ def predecir_combos_nuevos(df, muestra=2000, min_confianza="media"):
     return (
         df_nuevos[[
             "Blade", "Ratchet", "Bit",
-            "Wilson Score Predicho", "Win % Predicho",
+            "Wilson Score Predicho",
             "Confianza",
             "Arquetipo victoria", "Arquetipo derrota",
         ]]

@@ -24,6 +24,8 @@ import numpy as np
 from sklearn.ensemble import GradientBoostingRegressor
 from sklearn.preprocessing import LabelEncoder
 from scipy.stats import spearmanr
+from sklearn.model_selection import KFold
+from sklearn.metrics import r2_score, mean_absolute_error
 
 CSV_PATH   = "beyblade_stats.csv"
 MODEL_PATH = "model.pkl"
@@ -108,14 +110,95 @@ def calcular_ancla(blade, ratchet, bit, combo_dict, par_br, par_bb, par_rb,
     return float(ancla), float(peso_ancla)
 
 
+# ── Features sin fuga (leave-one-out) ─────────────────────────────────────────
+PAIRS = {"BR": ("Blade", "Ratchet"), "BB": ("Blade", "Bit"), "RB": ("Ratchet", "Bit")}
+
+
+def features_desde_stats(stats_df, target_df, ws_mean, loo=False):
+    """
+    Calcula Blade/Ratchet/Bit_score y BR/BB/RB_score para `target_df` usando las
+    Wins/Partidas agregadas de `stats_df`.
+
+    loo=True (target_df ES stats_df): se resta la propia fila antes de calcular
+    el Wilson. Así, en entrenamiento, las features de un combo nunca contienen
+    su propio resultado (el target) y el modelo ve lo mismo que verá al
+    predecir un combo no jugado.
+    """
+    out = pd.DataFrame(index=target_df.index)
+    grupos = [(c + "_score", [c], 1) for c in ["Blade", "Ratchet", "Bit"]]
+    grupos += [(k + "_score", list(v), MIN_PARTIDAS_PAR) for k, v in PAIRS.items()]
+
+    for col, keys, min_n in grupos:
+        agg = stats_df.groupby(keys)[["Wins", "Partidas"]].sum()
+        t = target_df[keys].merge(agg, left_on=keys, right_index=True, how="left")
+        w = t["Wins"].fillna(0).to_numpy(dtype=float)
+        n = t["Partidas"].fillna(0).to_numpy(dtype=float)
+        if loo:
+            w = w - target_df["Wins"].to_numpy(dtype=float)
+            n = n - target_df["Partidas"].to_numpy(dtype=float)
+        out[col] = [wilson(wi, ni) if ni >= min_n else ws_mean for wi, ni in zip(w, n)]
+    return out
+
+
+def _crear_modelo():
+    return GradientBoostingRegressor(
+        n_estimators=400,
+        learning_rate=0.04,
+        max_depth=4,
+        subsample=0.8,
+        min_samples_leaf=3,
+        random_state=42,
+    )
+
+
+def evaluar_cv(df, feature_cols, n_splits=5):
+    """
+    Validación cruzada que simula el uso real (predecir combos NO vistos):
+    en cada fold, las features del test se calculan solo con el train.
+    Devuelve métricas del modelo y de un baseline trivial (solo log(Partidas)).
+    """
+    y = df["Wilson Score"].to_numpy()
+    pred = np.zeros(len(df))
+    pred_base = np.zeros(len(df))
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=0)
+
+    for tr, te in kf.split(df):
+        a, b = df.iloc[tr], df.iloc[te]
+        wm = float(a["Wilson Score"].mean())
+        Xa = pd.concat([a, features_desde_stats(a, a, wm, loo=True)], axis=1)
+        Xb = pd.concat([b, features_desde_stats(a, b, wm)], axis=1)
+        pred[te] = _crear_modelo().fit(Xa[feature_cols].values, y[tr]).predict(Xb[feature_cols].values)
+
+        # Baseline: regresión lineal sobre log(Partidas)
+        coef = np.polyfit(a["Partidas_log"], y[tr], 1)
+        pred_base[te] = np.polyval(coef, b["Partidas_log"])
+
+    def _m(p):
+        return {
+            "r2": round(float(r2_score(y, p)), 4),
+            "mae": round(float(mean_absolute_error(y, p)), 4),
+            "spearman": round(float(spearmanr(y, p)[0]), 4),
+        }
+
+    return {"modelo": _m(pred), "baseline_log_partidas": _m(pred_base), "n_splits": n_splits}
+
+
 # ── Entrenamiento ─────────────────────────────────────────────────────────────
-def entrenar_y_guardar():
-    df = pd.read_csv(CSV_PATH)
+def construir_payload(df, evaluar=True, verbose=True):
+    """
+    Entrena el modelo y devuelve el payload completo (el mismo que se guarda
+    en model.pkl). Lo usa también core/model_loader.py como fallback en
+    memoria cuando no existe model.pkl, para que solo haya UNA forma de
+    entrenar el modelo.
+    evaluar=False omite la validación cruzada (más rápido).
+    """
+    log = print if verbose else (lambda *a, **k: None)
+    df = df.copy().reset_index(drop=True)
 
     if df.empty or "Wilson Score" not in df.columns:
         raise ValueError("CSV vacío o sin columna Wilson Score")
 
-    print(f"Filas cargadas: {len(df)}")
+    log(f"Filas cargadas: {len(df)}")
 
     # ── Label encoders ────────────────────────────────────────────────────────
     encoders = {}
@@ -131,26 +214,17 @@ def entrenar_y_guardar():
     ratchet_dict = calcular_score_pieza(df, "Ratchet")
     bit_dict     = calcular_score_pieza(df, "Bit")
 
-    df["Blade_score"]   = df["Blade"].map(blade_dict)
-    df["Ratchet_score"] = df["Ratchet"].map(ratchet_dict)
-    df["Bit_score"]     = df["Bit"].map(bit_dict)
-
     ws_mean = float(df["Wilson Score"].mean())
 
-    # ── NUEVO: Features de interacción par-a-par ──────────────────────────────
+    # Diccionarios con TODOS los datos: se usan en inferencia (combos no
+    # jugados, cuyo resultado no está en ninguno de estos agregados).
     par_br = calcular_score_par(df, "Blade", "Ratchet")
     par_bb = calcular_score_par(df, "Blade", "Bit")
     par_rb = calcular_score_par(df, "Ratchet", "Bit")
 
-    df["BR_score"] = df.apply(
-        lambda r: par_br.get((r["Blade"], r["Ratchet"]), ws_mean), axis=1
-    )
-    df["BB_score"] = df.apply(
-        lambda r: par_bb.get((r["Blade"], r["Bit"]), ws_mean), axis=1
-    )
-    df["RB_score"] = df.apply(
-        lambda r: par_rb.get((r["Ratchet"], r["Bit"]), ws_mean), axis=1
-    )
+    # Features de ENTRENAMIENTO sin fuga: leave-one-out (cada combo excluye
+    # su propio resultado de los scores de pieza y de par).
+    df = pd.concat([df, features_desde_stats(df, df, ws_mean, loo=True)], axis=1)
 
     # ── Feature set completo ──────────────────────────────────────────────────
     feature_cols = [
@@ -160,19 +234,22 @@ def entrenar_y_guardar():
         "BR_score", "BB_score", "RB_score",          # ← NUEVO
     ]
 
+    # ── Validación (simula predecir combos no vistos) ─────────────────────────
+    cv_metrics = None
+    if evaluar:
+        cv_metrics = evaluar_cv(
+            df.drop(columns=[c for c in feature_cols if c.endswith("_score")]),
+            feature_cols,
+        )
+        log(f"CV modelo:   {cv_metrics['modelo']}")
+        log(f"CV baseline: {cv_metrics['baseline_log_partidas']}  (solo log(Partidas))")
+
     X = df[feature_cols].values.astype(float)
     y = df["Wilson Score"].values
 
-    model = GradientBoostingRegressor(
-        n_estimators=400,
-        learning_rate=0.04,
-        max_depth=4,
-        subsample=0.8,
-        min_samples_leaf=3,
-        random_state=42,
-    )
+    model = _crear_modelo()
     model.fit(X, y)
-    print("Modelo entrenado.")
+    log("Modelo entrenado.")
 
     # ── NUEVO: dict combo real → (wilson, partidas) para ancla ───────────────
     combo_dict = {}
@@ -188,11 +265,11 @@ def entrenar_y_guardar():
     corr_bit,     _ = spearmanr(df["Bit_score"],     df["Wilson Score"])
     total = abs(corr_blade) + abs(corr_ratchet) + abs(corr_bit)
     piece_weights = {
-        "Blade":   round(abs(corr_blade)   / total, 4),
-        "Ratchet": round(abs(corr_ratchet) / total, 4),
-        "Bit":     round(abs(corr_bit)     / total, 4),
+        "Blade":   round(float(abs(corr_blade)   / total), 4),
+        "Ratchet": round(float(abs(corr_ratchet) / total), 4),
+        "Bit":     round(float(abs(corr_bit)     / total), 4),
     }
-    print(f"Pesos estimados por pieza: {piece_weights}")
+    log(f"Pesos estimados por pieza: {piece_weights}")
 
     # ── Partidas por pieza (para filtro de confianza) ─────────────────────────
     partidas_blade   = df.groupby("Blade")["Partidas"].sum().to_dict()
@@ -219,12 +296,20 @@ def entrenar_y_guardar():
         "partidas_bit":     partidas_bit,
         "min_partidas_confiable": MIN_PARTIDAS_CONFIABLE,
         "min_partidas_par":       MIN_PARTIDAS_PAR,
+        "cv_metrics":             cv_metrics,
     }
+
+    return payload
+
+
+def entrenar_y_guardar():
+    df = pd.read_csv(CSV_PATH)
+    payload = construir_payload(df, evaluar=True)
 
     with open(MODEL_PATH, "wb") as f:
         pickle.dump(payload, f)
 
-    print(f"✅ model.pkl guardado con {len(df)} filas y {len(feature_cols)} features")
+    print(f"✅ model.pkl guardado con {len(df)} filas y {len(payload['feature_cols'])} features")
 
 
 if __name__ == "__main__":

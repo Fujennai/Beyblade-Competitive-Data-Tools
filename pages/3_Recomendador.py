@@ -105,7 +105,7 @@ else:
         cols = st.columns(4)
         for idx, (_, row) in enumerate(df_rec.iterrows()):
             ws        = float(row["Wilson Score Predicho"])
-            winpct    = float(row["Win % Predicho"])
+            winpct    = row.get("Win % Real")
             bar_pct   = int(max(0, min(ws, 1)) * 100)
             blade_v   = row["Blade"]
             ratchet_v = row["Ratchet"]
@@ -132,7 +132,7 @@ else:
                 f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888">' +
                 f'<span>Wilson</span><span style="color:#fff;font-weight:700">{ws:.4f}</span></div>' +
                 f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888;margin-top:2px">' +
-                f'<span>Win %</span><span style="color:#fff;font-weight:700">{winpct:.2f}%</span></div>' +
+                f'<span>Win % real</span><span style="color:#fff;font-weight:700">{"—" if winpct is None or winpct != winpct else f"{winpct:.2f}%"}</span></div>' +
                 f'<div style="margin-top:8px;font-size:0.72em;color:#666">{tipo_v}<br>{conf_v}</div>' +
                 evidencia_html +
                 '</div>'
@@ -148,8 +148,9 @@ else:
                 min_value=0,
                 max_value=1,
             ),
-            "Win % Predicho": st.column_config.NumberColumn(
-                "Win % Predicho", format="%.2f%%"
+            "Win % Real": st.column_config.NumberColumn(
+                "Win % Real", format="%.2f%%",
+                help="Winrate observado. Vacío en combos predichos: el modelo solo estima Wilson Score.",
             ),
             "Confianza":  st.column_config.TextColumn("Confianza"),
             "Evidencia":  st.column_config.TextColumn(
@@ -162,7 +163,7 @@ else:
         base_cols = [
             "Blade", "Ratchet", "Bit",
             "Tipo",
-            "Wilson Score Predicho", "Win % Predicho",
+            "Wilson Score Predicho", "Win % Real",
             "Confianza",
         ]
         if detalle:

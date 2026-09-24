@@ -130,6 +130,42 @@ def wilson_score(wins, total, z=1.96):
     return (centre - margin) / denominator
 
 
+def agregar_duplicados(df):
+    """
+    La SBBL lista a veces el mismo combo en varias filas con estadísticas
+    distintas. Se suman Wins/Losses/Partidas y se RECALCULAN las métricas
+    derivadas (nunca media simple de porcentajes):
+      - Win %                = Wins / Partidas
+      - Pts Ganados/Combate  = media ponderada por Wins   (es por combate ganado)
+      - Pts Cedidos/Combate  = media ponderada por Losses (es por combate perdido)
+    """
+    df = df.copy()
+    pg, pc = "Pts Ganados/Combate", "Pts Cedidos/Combate"
+
+    df["_pg_num"] = (df[pg] * df["Wins"]).where(df[pg].notna(), 0)
+    df["_pg_den"] = df["Wins"].where(df[pg].notna(), 0)
+    df["_pc_num"] = (df[pc] * df["Losses"]).where(df[pc].notna(), 0)
+    df["_pc_den"] = df["Losses"].where(df[pc].notna(), 0)
+
+    g = df.groupby(["Blade", "Ratchet", "Bit"], as_index=False).agg(
+        Wins=("Wins", "sum"),
+        Losses=("Losses", "sum"),
+        Partidas=("Partidas", "sum"),
+        _pg_num=("_pg_num", "sum"), _pg_den=("_pg_den", "sum"),
+        _pc_num=("_pc_num", "sum"), _pc_den=("_pc_den", "sum"),
+        _pg_mean=(pg, "mean"), _pc_mean=(pc, "mean"),
+    )
+
+    g["Win %"] = (g["Wins"] / g["Partidas"] * 100).round(2)
+    # Si no hay victorias (o derrotas) no hay pesos: se usa la media simple,
+    # que en ese caso refleja el valor de la web (normalmente 0).
+    g[pg] = (g["_pg_num"] / g["_pg_den"].where(g["_pg_den"] > 0)).fillna(g["_pg_mean"]).round(3)
+    g[pc] = (g["_pc_num"] / g["_pc_den"].where(g["_pc_den"] > 0)).fillna(g["_pc_mean"]).round(3)
+
+    cols = ["Blade", "Ratchet", "Bit", "Win %", "Wins", "Losses", "Partidas", pg, pc]
+    return g[cols]
+
+
 def generar_datasets_agregados(df):
 
     df_blade = df.groupby("Blade")[["Wins", "Losses", "Partidas"]].sum().reset_index()
@@ -218,7 +254,7 @@ def scrape():
 
             # Métricas
             win_match = re.search(r"([\d\.]+)%", winrate_text)
-            wl_match = re.search(r"(\d+)W\s*-\s*(\d+)L", winrate_text)
+            wl_match = re.search(r"(-?\d+)W\s*-\s*(-?\d+)L", winrate_text)
 
             wins = int(wl_match.group(1)) if wl_match else None
             losses = int(wl_match.group(2)) if wl_match else None
@@ -259,19 +295,26 @@ def scrape():
     # ELIMINAR DUPLICADOS
     # ----------------------------
 
+    # Filas corruptas en origen (W/L ausentes o negativos, p.ej. "5W - -1L")
+    # se descartan ANTES de agregar: si no, sum() las trataría como 0.
+    corruptas = (
+        df["Wins"].isna() | df["Losses"].isna()
+        | (df["Wins"] < 0) | (df["Losses"] < 0)
+    )
+    if corruptas.any():
+        logging.warning(f"Filas con W/L inválidos descartadas: {int(corruptas.sum())}")
+        for _, r in df[corruptas].iterrows():
+            logging.warning(f"  {r['Blade']} {r['Ratchet']} {r['Bit']}: {r['Wins']}W-{r['Losses']}L")
+    df = df[~corruptas].copy()
+
+    descuadre = (df["Wins"] + df["Losses"]) != df["Partidas"]
+    if descuadre.any():
+        logging.warning(f"Filas con Wins+Losses != Partidas: {int(descuadre.sum())}")
+
     before = len(df)
-
-    df = df.groupby(["Blade", "Ratchet", "Bit"], as_index=False).agg({
-        "Win %": "mean",
-        "Wins": "sum",
-        "Losses": "sum",
-        "Partidas": "sum",
-        "Pts Ganados/Combate": "mean",
-        "Pts Cedidos/Combate": "mean"
-    })
-
+    df = agregar_duplicados(df)
     after = len(df)
-    logging.info(f"Duplicados eliminados: {before - after}")
+    logging.info(f"Duplicados agregados: {before - after}")
 
     # ----------------------------
     # Wilson Score

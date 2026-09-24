@@ -105,7 +105,7 @@ st.divider()
 m1, m2, m3 = st.columns(3)
 m1.metric("Combos encontrados",   len(df_fil))
 m2.metric("Mejor Wilson Score",   f"{df_fil['Wilson Score Predicho'].max():.4f}" if not df_fil.empty else "—")
-m3.metric("Mejor Win % Predicho", f"{df_fil['Win % Predicho'].max():.2f}%"       if not df_fil.empty else "—")
+m3.metric("Con confianza 🟡 Media", int((df_fil["Confianza"] == "🟡 Media").sum()) if not df_fil.empty else "—")
 
 st.divider()
 
@@ -122,7 +122,6 @@ else:
         cols = st.columns(4)
         for idx, (_, row) in enumerate(top.iterrows()):
             ws      = row["Wilson Score Predicho"]
-            winpct  = row["Win % Predicho"]
             bar_pct = int(ws * 100)
             arq_v   = row["Arquetipo victoria"]
             arq_d   = row["Arquetipo derrota"]
@@ -139,8 +138,6 @@ else:
                 '</div></div>' +
                 f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888">' +
                 f'<span>Wilson</span><span style="color:#fff;font-weight:700">{ws:.4f}</span></div>' +
-                f'<div style="display:flex;justify-content:space-between;font-size:0.8em;color:#888;margin-top:2px">' +
-                f'<span>Win %</span><span style="color:#fff;font-weight:700">{winpct:.2f}%</span></div>' +
                 f'<div style="margin-top:8px;font-size:0.72em;color:#666">{arq_v}<br>{arq_d}</div>' +
                 '</div>'
             )
@@ -157,10 +154,6 @@ else:
                     format="%.4f",
                     min_value=0,
                     max_value=1,
-                ),
-                "Win % Predicho": st.column_config.NumberColumn(
-                    "Win % Predicho",
-                    format="%.2f%%"
                 ),
                 "Arquetipo victoria": st.column_config.TextColumn("Arquetipo victoria"),
                 "Arquetipo derrota":  st.column_config.TextColumn("Arquetipo derrota"),
