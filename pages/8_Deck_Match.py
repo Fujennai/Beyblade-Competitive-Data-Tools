@@ -224,24 +224,44 @@ st.divider()
 # ── Orden en la 1ª ronda ──────────────────────────────────────────────────────
 st.subheader("📋 Orden en la primera ronda")
 
-rango = (M0.max() - M0.min()) * 100
-estrategia = sorted(
-    [(ORDENES[k], float(x_mio[k])) for k in range(6) if x_mio[k] > 0.01],
-    key=lambda t: t[1], reverse=True,
-)
+# No suponemos que el rival juegue óptimo: puntuamos cada orden contra un rival
+# que puede elegir cualquier orden (media) y desempatamos por el peor caso.
+media = M0.mean(axis=1)
+peor = M0.min(axis=1)
+ranking = sorted(range(6), key=lambda k: (media[k], peor[k]), reverse=True)
+mejor = ranking[0]
+rango = (media.max() - media.min()) * 100
 
+st.success(f"Orden recomendado: **{_orden_txt(ORDENES[mejor], deck_mio)}**")
 if rango < 1.0:
-    st.info(
-        f"🎲 En la primera ronda el orden apenas influye (como mucho {rango:.1f} puntos de diferencia "
-        "entre la mejor y la peor combinación). Donde sí importa es en las rondas siguientes, "
-        "según el marcador (ver más abajo)."
+    st.caption(
+        f"🎲 La ventaja es pequeña (como mucho {rango:.1f} puntos entre el mejor y el peor orden), "
+        "pero es el que mejor rinde frente a cualquier orden del rival."
     )
-elif len(estrategia) == 1:
-    st.success(f"Orden recomendado: **{_orden_txt(estrategia[0][0], deck_mio)}**")
-else:
-    st.markdown("Lo óptimo es **variar el orden** (el rival no debe poder predecirlo). Frecuencias recomendadas:")
-    for orden, peso in estrategia:
-        st.markdown(f"- **{peso*100:.0f}%** · {_orden_txt(orden, deck_mio)}")
+
+with st.expander("📊 Comparar los 6 órdenes"):
+    st.dataframe(
+        pd.DataFrame([
+            {
+                "Mi orden": _orden_txt(ORDENES[k], deck_mio),
+                "P(ganar) vs rival cualquiera": media[k] * 100,
+                "P(ganar) peor caso": peor[k] * 100,
+                "Frecuencia teórica óptima": float(x_mio[k]) * 100,
+            }
+            for k in ranking
+        ]),
+        use_container_width=True, hide_index=True,
+        column_config={
+            "P(ganar) vs rival cualquiera": st.column_config.ProgressColumn(format="%.1f%%", min_value=0, max_value=100),
+            "P(ganar) peor caso": st.column_config.NumberColumn(format="%.1f%%"),
+            "Frecuencia teórica óptima": st.column_config.NumberColumn(format="%.0f%%"),
+        },
+    )
+    st.caption(
+        "«Rival cualquiera»: media contra los 6 órdenes posibles del rival (no se asume que juegue óptimo). "
+        "«Peor caso»: si el rival acertara el mejor orden contra el tuyo. "
+        "«Frecuencia teórica»: cómo repartir el orden si el rival jugara perfecto (teoría de juegos)."
+    )
 
 # ── Mejor respuesta si intuyes el orden del rival ─────────────────────────────
 with st.expander("🔍 ¿Intuyes el orden del rival?"):
