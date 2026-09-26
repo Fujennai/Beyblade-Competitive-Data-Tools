@@ -4,7 +4,7 @@ import pandas as pd
 from data.loader import load_data
 from core.matchup import prob_victoria
 from core.deck_match import DeckMatch, ORDENES
-from components.demo_button import boton_demo, combos_aleatorios
+from components.demo_button import boton_autorellenar, deck_aleatorio
 from core.compatibility import ratchet_repetido, blade_repetido, ratchets_validos, blades_con_ux_expanded
 
 st.set_page_config(layout="wide")
@@ -26,82 +26,27 @@ def get_piezas_seleccionadas_deck(tipo_pieza, excluir_pos, prefix):
                 piezas.append(pieza)
     return piezas
 
-# ── Botón de demostración ─────────────────────────────────────────────────────
-if boton_demo(
-    key="demo_dm",
-    help_text="Rellena los dos decks con 6 combos reales aleatorios "
-              "(ponderados por partidas) para mostrar la simulación.",
-):
-    blades_mio = []
-    ratchets_mio = []
-    bits_mio = []
-    blades_rival = []
-    ratchets_rival = []
-    bits_rival = []
-    intentos = 0
-    max_intentos = 5
+# ── Autorrelleno por bando ────────────────────────────────────────────────────
+def _autorellenar_deck(prefix):
+    """Rellena un deck con 3 combos reales aleatorios, sin copiar combos del otro deck."""
+    otro = "rival" if prefix == "mio" else "mio"
+    combos_otro = [
+        tuple(st.session_state.get(f"{otro}_{p}_{i}", "—") for p in ("blade", "ratchet", "bit"))
+        for i in range(3)
+    ]
+    deck = deck_aleatorio(df, n=3, excluir=combos_otro)
+    if not deck:
+        st.toast("❌ No se encontraron suficientes combos únicos. Inténtalo de nuevo.", icon="⚠️")
+        return
+    for i, (blade, ratchet, bit) in enumerate(deck):
+        st.session_state[f"{prefix}_blade_{i}"]   = blade
+        st.session_state[f"{prefix}_ratchet_{i}"] = ratchet
+        st.session_state[f"{prefix}_bit_{i}"]     = bit
+    nombre = "Mi deck" if prefix == "mio" else "Deck rival"
+    st.toast(f"🎲 {nombre} autorellenado.", icon="✨")
 
-    # Intentar varias veces para encontrar 6 combos únicos (3 por deck, sin repeticiones dentro de cada deck)
-    while (len(blades_mio) < 3 or len(blades_rival) < 3) and intentos < max_intentos:
-        intentos += 1
-        combos = combos_aleatorios(df, n=50)  # Margen amplio para garantizar diversidad
 
-        # Extraer 3 combos únicos para mio
-        if len(blades_mio) < 3:
-            for c in combos:
-                blade = c["Blade"]
-                ratchet = c["Ratchet"]
-                bit = c["Bit"]
-
-                if not blade_repetido(blade, blades_mio) and not ratchet_repetido(ratchet, ratchets_mio) and bit not in bits_mio:
-                    blades_mio.append(blade)
-                    ratchets_mio.append(ratchet)
-                    bits_mio.append(bit)
-
-                if len(blades_mio) == 3:
-                    break
-
-        # Extraer 3 combos únicos para rival:
-        # - Sin repetir piezas dentro de rival.
-        # - Sin coincidir exactamente (Blade + Ratchet + Bit) con ningún combo de mi deck.
-        if len(blades_rival) < 3:
-            combos_mio = list(zip(blades_mio, ratchets_mio, bits_mio))
-            for c in combos:
-                blade = c["Blade"]
-                ratchet = c["Ratchet"]
-                bit = c["Bit"]
-
-                # Evitar combo exacto ya presente en mi deck
-                if (blade, ratchet, bit) in combos_mio:
-                    continue
-
-                if not blade_repetido(blade, blades_rival) and not ratchet_repetido(ratchet, ratchets_rival) and bit not in bits_rival:
-                    blades_rival.append(blade)
-                    ratchets_rival.append(ratchet)
-                    bits_rival.append(bit)
-
-                if len(blades_rival) == 3:
-                    break
-
-    if len(blades_mio) == 3 and len(blades_rival) == 3:
-        # Asignar a mi deck
-        for i in range(3):
-            st.session_state[f"mio_blade_{i}"]   = blades_mio[i]
-            st.session_state[f"mio_ratchet_{i}"] = ratchets_mio[i]
-            st.session_state[f"mio_bit_{i}"]     = bits_mio[i]
-
-        # Asignar a rival
-        for i in range(3):
-            st.session_state[f"rival_blade_{i}"]   = blades_rival[i]
-            st.session_state[f"rival_ratchet_{i}"] = ratchets_rival[i]
-            st.session_state[f"rival_bit_{i}"]     = bits_rival[i]
-
-        st.toast("🎬 Demo: 6 combos reales asignados a ambos decks.", icon="✨")
-        st.rerun()
-    else:
-        # Si falla, mostrar error
-        st.error(f"❌ No se encontraron suficientes combos únicos. Intenta de nuevo o selecciona manualmente.")
-        st.stop()
+_AUTO_HELP = "Rellena este deck con 3 combos reales aleatorios del dataset (ponderados por partidas)."
 
 # ── Helper ────────────────────────────────────────────────────────────────────
 def get_combo_data(df, blade, ratchet, bit, nombre):
@@ -143,6 +88,7 @@ for col, deck_list, prefix, label in [
 ]:
     with col:
         st.subheader(label)
+        boton_autorellenar(key=f"auto_dm_{prefix}", help_text=_AUTO_HELP, on_click=_autorellenar_deck, args=(prefix,))
         for i in range(3):
             st.markdown(f"**Bey {i+1}**")
             c1, c2, c3 = st.columns(3)

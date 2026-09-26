@@ -3,7 +3,7 @@ import pandas as pd
 
 from data.loader import load_data
 from core.matchup import prob_victoria, pts_esperados, ws_ponderado, _cargar_pesos
-from components.demo_button import boton_demo, combos_aleatorios
+from components.demo_button import boton_autorellenar, combos_aleatorios
 from core.compatibility import ratchets_validos, blades_con_ux_expanded
 
 st.set_page_config(layout="wide")
@@ -20,33 +20,29 @@ st.caption(
     f"Bit {pesos['Bit']*100:.0f}%"
 )
 
-# ── Botón de demostración ─────────────────────────────────────────────────────
-if boton_demo(
-    key="demo_match",
-    help_text="Elige dos combos reales aleatorios del dataset "
-              "(ponderados por partidas) para mostrar el matchup.",
-):
-    combos = combos_aleatorios(df, n=2)
-    if len(combos) >= 2:
-        a, b = combos[0], combos[1]
-        st.session_state["blade_a"]   = a["Blade"]
-        st.session_state["ratchet_a"] = a["Ratchet"]
-        st.session_state["bit_a"]     = a["Bit"]
-        st.session_state["blade_b"]   = b["Blade"]
-        st.session_state["ratchet_b"] = b["Ratchet"]
-        st.session_state["bit_b"]     = b["Bit"]
-        st.toast(
-            f"🎬 A: {a['Blade']} / {a['Ratchet']} / {a['Bit']}  ·  "
-            f"B: {b['Blade']} / {b['Ratchet']} / {b['Bit']}",
-            icon="✨",
-        )
-    st.rerun()
+# ── Autorrelleno por bando ────────────────────────────────────────────────────
+def _autorellenar_combo(lado):
+    """Rellena el combo A o B con uno real aleatorio distinto al del otro lado."""
+    otro = "b" if lado == "a" else "a"
+    combo_otro = tuple(st.session_state.get(f"{p}_{otro}", "—") for p in ("blade", "ratchet", "bit"))
+    for c in combos_aleatorios(df, n=10):
+        combo = (c["Blade"], c["Ratchet"], c["Bit"])
+        if combo != combo_otro:
+            st.session_state[f"blade_{lado}"]   = combo[0]
+            st.session_state[f"ratchet_{lado}"] = combo[1]
+            st.session_state[f"bit_{lado}"]     = combo[2]
+            st.toast(f"🎲 Combo {lado.upper()}: {' / '.join(combo)}", icon="✨")
+            return
+
+
+_AUTO_HELP = "Rellena este combo con uno real aleatorio del dataset (ponderado por partidas)."
 
 # ── Selección de combos ───────────────────────────────────────────────────────
 col_a, col_sep, col_b = st.columns([5, 1, 5])
 
 with col_a:
     st.subheader("🔵 Combo A")
+    boton_autorellenar(key="auto_match_a", help_text=_AUTO_HELP, on_click=_autorellenar_combo, args=("a",))
     blade_a   = st.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key="blade_a")
     ratchet_a = st.selectbox("Ratchet", ["—"] + (ratchets_validos(blade_a, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df)) if blade_a != "—" else sorted(df["Ratchet"].unique())), key="ratchet_a")
     bit_a     = st.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key="bit_a")
@@ -56,6 +52,7 @@ with col_sep:
 
 with col_b:
     st.subheader("🔴 Combo B")
+    boton_autorellenar(key="auto_match_b", help_text=_AUTO_HELP, on_click=_autorellenar_combo, args=("b",))
     blade_b   = st.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key="blade_b")
     ratchet_b = st.selectbox("Ratchet", ["—"] + (ratchets_validos(blade_b, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df)) if blade_b != "—" else sorted(df["Ratchet"].unique())), key="ratchet_b")
     bit_b     = st.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key="bit_b")

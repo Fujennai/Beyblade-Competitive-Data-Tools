@@ -5,7 +5,7 @@ from data.loader import load_data
 from core.deckbuilder import optimizar_deck
 from core.compatibility import ratchets_validos, ratchet_repetido, blade_repetido, blades_con_ux_expanded, UX_EXPANDED
 from components.view_toggle import view_toggle
-from components.demo_button import boton_demo, combos_aleatorios
+from components.demo_button import boton_autorellenar, combos_aleatorios
 
 st.set_page_config(layout="wide")
 
@@ -30,8 +30,8 @@ def get_piezas_seleccionadas(tipo_pieza, excluir_pos):
                 piezas.append(pieza)
     return piezas
 
-# ── Botón de demostración ─────────────────────────────────────────────────────
-if boton_demo(
+# ── Botón de autorrelleno ─────────────────────────────────────────────────────
+if boton_autorellenar(
     key="demo_db",
     help_text="Fija 3 Blades aleatorios de combos reales del dataset "
               "(ponderados por partidas) para que el optimizador construya el deck.",
@@ -68,7 +68,7 @@ if boton_demo(
             st.session_state[f"blade_{i}"]   = blades_usados[i]
             st.session_state[f"ratchet_{i}"] = "—"
             st.session_state[f"bit_{i}"]     = "—"
-        st.toast(f"🎬 Demo: {', '.join(blades_usados)}", icon="✨")
+        st.toast(f"🎲 Autorellenado: {', '.join(blades_usados)}", icon="✨")
         st.rerun()
     else:
         # Si falla, mostrar error
