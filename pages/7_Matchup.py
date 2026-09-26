@@ -4,6 +4,7 @@ import pandas as pd
 from data.loader import load_data
 from core.matchup import prob_victoria, pts_esperados, ws_ponderado, _cargar_pesos
 from components.demo_button import boton_autorellenar, combos_aleatorios
+from components.deck_io import deck_io
 from core.compatibility import ratchets_validos, assists_validos, reglas_desde, nombre_blade
 
 st.set_page_config(layout="wide")
@@ -71,6 +72,8 @@ with col_a:
     st.subheader("🔵 Combo A")
     boton_autorellenar(key="auto_match_a", help_text=_AUTO_HELP, on_click=_autorellenar_combo, args=("a",))
     blade_a, assist_a, ratchet_a, bit_a, completo_a = _selector_combo("a")
+    deck_io(df, reglas, key="io_match_a", n=1,
+            slot_key=lambda p, i: f"{p}_a")
 
 with col_sep:
     st.markdown("<div style='text-align:center;font-size:2em;margin-top:80px'>VS</div>", unsafe_allow_html=True)
@@ -79,6 +82,8 @@ with col_b:
     st.subheader("🔴 Combo B")
     boton_autorellenar(key="auto_match_b", help_text=_AUTO_HELP, on_click=_autorellenar_combo, args=("b",))
     blade_b, assist_b, ratchet_b, bit_b, completo_b = _selector_combo("b")
+    deck_io(df, reglas, key="io_match_b", n=1,
+            slot_key=lambda p, i: f"{p}_b")
 
 # ── Validar selección ─────────────────────────────────────────────────────────
 combos_completos = completo_a and completo_b

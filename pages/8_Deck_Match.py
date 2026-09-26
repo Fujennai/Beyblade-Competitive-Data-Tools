@@ -5,6 +5,7 @@ from data.loader import load_data
 from core.matchup import prob_victoria
 from core.deck_match import DeckMatch, ORDENES
 from components.demo_button import boton_autorellenar, deck_aleatorio
+from components.deck_io import deck_io
 from core.compatibility import (
     ratchet_repetido, blade_repetido, assist_repetido, ratchets_validos,
     assists_validos, reglas_desde, nombre_blade,
@@ -143,6 +144,9 @@ for col, deck_list, prefix, label in [
                 assist = "" if assist == "—" else assist
                 nombre = f"{nombre_blade(blade, assist)} / {ratchet} / {bit}"
                 deck_list.append(get_combo_data(df, blade, assist, ratchet, bit, nombre))
+
+        deck_io(df, reglas, key=f"io_{prefix}",
+                slot_key=lambda p, i, prefix=prefix: f"{prefix}_{p}_{i}")
 
 if not completo or len(deck_mio) < 3 or len(deck_rival) < 3:
     st.info("🔎 Completa los dos decks para ver la simulación.")

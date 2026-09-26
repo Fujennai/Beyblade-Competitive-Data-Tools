@@ -9,6 +9,8 @@ from core.compatibility import (
 )
 from components.view_toggle import view_toggle
 from components.demo_button import boton_autorellenar, combos_aleatorios
+from components.deck_io import deck_io
+from core.deck_format import exportar
 
 st.set_page_config(layout="wide")
 
@@ -173,6 +175,8 @@ for i in range(3):
     if bit     != "—": bey["Bit"]     = bit
     fijados.append(bey)
 
+deck_io(df, reglas, key="io_db", slot_key=lambda p, i: f"{p}_{i}")
+
 st.divider()
 
 # ── Optimización: leer total directamente del session_state ───────────────────
@@ -283,6 +287,9 @@ else:
         },
     )
     st.caption("🔒 Pieza elegida por ti · ✨ Sugerida por el sistema")
+
+with st.expander("📤 Exportar deck recomendado"):
+    st.code(exportar(deck), language=None)
 
 st.divider()
 

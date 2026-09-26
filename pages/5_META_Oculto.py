@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from data.loader import load_data
+from data.loader import load_data, FORMATO_DATOS
 from core.meta_hidden import predecir_combos_nuevos
 from components.view_toggle import view_toggle
 from components.demo_button import boton_demo, piezas_aleatorias
@@ -12,12 +12,13 @@ st.set_page_config(layout="wide")
 st.title("🧬 Descubridor de META oculto")
 
 @st.cache_data(ttl=3600)
-def get_combos_nuevos():
+def get_combos_nuevos(formato):
+    # formato: invalida la caché cuando cambia el formato de los datos
     df = load_data()
     return df, predecir_combos_nuevos(df, muestra=2000)
 
 with st.spinner("Calculando combos no explorados..."):
-    df, df_nuevos = get_combos_nuevos()
+    df, df_nuevos = get_combos_nuevos(FORMATO_DATOS)
 
 if df_nuevos.empty:
     st.warning("No se encontraron combos nuevos.")
