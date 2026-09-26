@@ -7,14 +7,17 @@ MEJORAS v2:
   - Usa features de interacción par-a-par (BR, BB, RB)
   - Aplica ancla bayesiana para combos con evidencia parcial
   - Filtra resultados con confianza muy baja antes de mostrarlos
+
+Incluye combinaciones Blade CX + Assist no jugadas (los Assists son
+intercambiables entre CX). Misma predicción que el recomendador
+(core.recommender.predecir).
 """
 
 import pandas as pd
-import numpy as np
-import itertools
 
 from core.model_loader import cargar_modelo
-from core.compatibility import filtrar_combos_validos, blades_con_ux_expanded
+from core.compatibility import generar_candidatos, reglas_desde, KEYS
+from core.recommender import predecir
 
 
 # ── Arquetipos esperados ──────────────────────────────────────────────────────
@@ -40,22 +43,15 @@ def _arquetipos_esperados(df, blade, ratchet, bit):
 
 # ── Generar combos no vistos ──────────────────────────────────────────────────
 def generar_combos(df):
-    blades   = df["Blade"].unique()
-    ratchets = df["Ratchet"].unique()
-    bits     = df["Bit"].unique()
-
-    combos = list(itertools.product(blades, ratchets, bits))
-    df_all = pd.DataFrame(combos, columns=["Blade", "Ratchet", "Bit"])
-
-    # Solo combos legales (Clock Mirage, UX Expanded, formato de Ratchet...)
-    df_all = filtrar_combos_validos(df_all, blades_con_ux_expanded(df))
-
-    df_nuevos = df_all.merge(
-        df[["Blade", "Ratchet", "Bit"]],
-        on=["Blade", "Ratchet", "Bit"],
-        how="left",
-        indicator=True,
+    """Combos legales (incluidos Blade CX + Assist nuevos) que no están en los datos."""
+    df_all = generar_candidatos(
+        sorted(df["Blade"].unique()),
+        sorted(df["Assist"].unique()),
+        sorted(df["Ratchet"].unique()),
+        sorted(df["Bit"].unique()),
+        reglas_desde(df),
     )
+    df_nuevos = df_all.merge(df[KEYS], on=KEYS, how="left", indicator=True)
     return df_nuevos[df_nuevos["_merge"] == "left_only"].drop(columns="_merge")
 
 
@@ -65,98 +61,14 @@ def predecir_combos_nuevos(df, muestra=2000, min_confianza="media"):
     min_confianza: "baja" → muestra todo, "media" → excluye solo Baja,
                    "alta" → solo Alta y Media.
     """
-    p            = cargar_modelo()
-    model        = p["model"]
-    encoders     = p["encoders"]
-    blade_dict   = p["blade_dict"]
-    ratchet_dict = p["ratchet_dict"]
-    bit_dict     = p["bit_dict"]
-    ws_mean      = p["ws_mean"]
-    par_br       = p.get("par_br", {})
-    par_bb       = p.get("par_bb", {})
-    par_rb       = p.get("par_rb", {})
-    combo_dict   = p.get("combo_dict", {})
-    feature_cols = p["feature_cols"]
+    p = cargar_modelo()
 
     df_nuevos = generar_combos(df)
     df_nuevos = df_nuevos.sample(min(muestra, len(df_nuevos)), random_state=42)
 
-    # Filtrar piezas no vistas
-    valid = pd.Series([True] * len(df_nuevos), index=df_nuevos.index)
-    for col in ["Blade", "Ratchet", "Bit"]:
-        valid &= df_nuevos[col].isin(set(encoders[col].classes_))
-    df_nuevos = df_nuevos[valid].copy()
-
+    df_nuevos = predecir(df_nuevos, p, df, partidas_supuestas=50)
     if df_nuevos.empty:
         return pd.DataFrame()
-
-    # Encodear
-    for col in ["Blade", "Ratchet", "Bit"]:
-        df_nuevos[col + "_enc"] = encoders[col].transform(df_nuevos[col].astype(str))
-
-    # Features individuales
-    df_nuevos["Partidas_log"]  = np.log1p(50)
-    df_nuevos["Blade_score"]   = df_nuevos["Blade"].map(blade_dict).fillna(ws_mean)
-    df_nuevos["Ratchet_score"] = df_nuevos["Ratchet"].map(ratchet_dict).fillna(ws_mean)
-    df_nuevos["Bit_score"]     = df_nuevos["Bit"].map(bit_dict).fillna(ws_mean)
-
-    # Features par-a-par
-    df_nuevos["BR_score"] = df_nuevos.apply(
-        lambda r: par_br.get((r["Blade"], r["Ratchet"]), ws_mean), axis=1)
-    df_nuevos["BB_score"] = df_nuevos.apply(
-        lambda r: par_bb.get((r["Blade"], r["Bit"]), ws_mean), axis=1)
-    df_nuevos["RB_score"] = df_nuevos.apply(
-        lambda r: par_rb.get((r["Ratchet"], r["Bit"]), ws_mean), axis=1)
-
-    X = df_nuevos[feature_cols].values.astype(float)
-    pred_ml = model.predict(X)
-
-    # Ancla bayesiana por combo
-    anclas      = []
-    pesos_ancla = []
-    confianzas  = []
-
-    for _, row in df_nuevos.iterrows():
-        evidencia_vals = []
-        pesos_ev       = []
-        n_reales       = 0
-
-        for par_dict, key in [
-            (par_br, (row["Blade"], row["Ratchet"])),
-            (par_bb, (row["Blade"], row["Bit"])),
-            (par_rb, (row["Ratchet"], row["Bit"])),
-        ]:
-            if key in par_dict:
-                evidencia_vals.append(par_dict[key])
-                pesos_ev.append(1.0)
-                n_reales += 1
-
-        evidencia_vals += [
-            blade_dict.get(row["Blade"], ws_mean),
-            ratchet_dict.get(row["Ratchet"], ws_mean),
-            bit_dict.get(row["Bit"], ws_mean),
-        ]
-        pesos_ev += [0.3, 0.3, 0.3]
-
-        ancla      = float(np.average(evidencia_vals, weights=pesos_ev))
-        peso_ancla = min(n_reales / 6.0, 0.85)
-        anclas.append(ancla)
-        pesos_ancla.append(peso_ancla)
-
-        if n_reales >= 2:
-            confianzas.append("🟡 Media")
-        elif n_reales == 1:
-            confianzas.append("🟠 Baja-Media")
-        else:
-            confianzas.append("🔴 Baja")
-
-    anclas      = np.array(anclas)
-    pesos_ancla = np.array(pesos_ancla)
-
-    pred_final = (1 - pesos_ancla) * pred_ml + pesos_ancla * anclas
-
-    df_nuevos["Wilson Score Predicho"] = np.round(pred_final, 4)
-    df_nuevos["Confianza"]             = confianzas
 
     # Filtro de confianza
     if min_confianza == "alta":
@@ -169,12 +81,12 @@ def predecir_combos_nuevos(df, muestra=2000, min_confianza="media"):
         lambda r: _arquetipos_esperados(df, r["Blade"], r["Ratchet"], r["Bit"]),
         axis=1,
     )
-    df_nuevos["Arquetipo victoria"] = arq.apply(lambda x: x[0])
-    df_nuevos["Arquetipo derrota"]  = arq.apply(lambda x: x[1])
+    df_nuevos["Arquetipo victoria"] = arq.apply(lambda x: x[0]) if not arq.empty else []
+    df_nuevos["Arquetipo derrota"]  = arq.apply(lambda x: x[1]) if not arq.empty else []
 
     return (
         df_nuevos[[
-            "Blade", "Ratchet", "Bit",
+            "Blade", "Assist", "Ratchet", "Bit",
             "Wilson Score Predicho",
             "Confianza",
             "Arquetipo victoria", "Arquetipo derrota",

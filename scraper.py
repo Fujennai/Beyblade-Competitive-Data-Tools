@@ -43,6 +43,21 @@ ASSIST_BLADES = {"Zillion"}
 # Un Ratchet numérico válido tiene formato "N-N" (p.ej. "1-60", "3-80").
 RATCHET_REGEX = re.compile(r"^\d+-\d+$")
 
+# Los CX se registran con el Assist al final del nombre del Blade
+# (lock chip + main blade [+ over blade] + assist). Con 3 o más palabras,
+# la última se guarda aparte en la columna "Assist"; en UX/BX va vacía.
+# Misma regla que core/compatibility.separar_blade_assist.
+PALABRAS_MIN_CX = 3
+KEYS = ["Blade", "Assist", "Ratchet", "Bit"]
+
+
+def separar_blade_assist(nombre):
+    """(blade, assist): "Pegasus Blast Wheel" -> ("Pegasus Blast", "Wheel")."""
+    palabras = str(nombre).split()
+    if len(palabras) >= PALABRAS_MIN_CX:
+        return " ".join(palabras[:-1]), palabras[-1]
+    return str(nombre).strip(), ""
+
 
 def es_ratchet_valido(ratchet):
     """True si el Ratchet es N-N o un especial reconocido (Turbo/Operate)."""
@@ -147,7 +162,7 @@ def agregar_duplicados(df):
     df["_pc_num"] = (df[pc] * df["Losses"]).where(df[pc].notna(), 0)
     df["_pc_den"] = df["Losses"].where(df[pc].notna(), 0)
 
-    g = df.groupby(["Blade", "Ratchet", "Bit"], as_index=False).agg(
+    g = df.groupby(KEYS, as_index=False, dropna=False).agg(
         Wins=("Wins", "sum"),
         Losses=("Losses", "sum"),
         Partidas=("Partidas", "sum"),
@@ -162,24 +177,26 @@ def agregar_duplicados(df):
     g[pg] = (g["_pg_num"] / g["_pg_den"].where(g["_pg_den"] > 0)).fillna(g["_pg_mean"]).round(3)
     g[pc] = (g["_pc_num"] / g["_pc_den"].where(g["_pc_den"] > 0)).fillna(g["_pc_mean"]).round(3)
 
-    cols = ["Blade", "Ratchet", "Bit", "Win %", "Wins", "Losses", "Partidas", pg, pc]
+    cols = KEYS + ["Win %", "Wins", "Losses", "Partidas", pg, pc]
     return g[cols]
 
 
 def generar_datasets_agregados(df):
 
     df_blade = df.groupby("Blade")[["Wins", "Losses", "Partidas"]].sum().reset_index()
+    df_assist = (df[df["Assist"] != ""]
+                 .groupby("Assist")[["Wins", "Losses", "Partidas"]].sum().reset_index())
     df_ratchet = df.groupby("Ratchet")[["Wins", "Losses", "Partidas"]].sum().reset_index()
     df_bit = df.groupby("Bit")[["Wins", "Losses", "Partidas"]].sum().reset_index()
 
-    for df_ in [df_blade, df_ratchet, df_bit]:
+    for df_ in [df_blade, df_assist, df_ratchet, df_bit]:
         df_["Wilson Score"] = df_.apply(
             lambda row: wilson_score(row["Wins"], row["Partidas"])
             if row["Partidas"] > 0 else None,
             axis=1
         )
 
-    return df_blade, df_ratchet, df_bit
+    return df_blade, df_assist, df_ratchet, df_bit
 
 
 # ----------------------------
@@ -269,8 +286,11 @@ def scrape():
             pts_ganados = float(nums[0]) if len(nums) > 0 else None
             pts_cedidos = float(nums[1]) if len(nums) > 1 else None
 
+            blade, assist = separar_blade_assist(blade)
+
             data.append({
                 "Blade": blade,
+                "Assist": assist,
                 "Ratchet": ratchet,
                 "Bit": bit,
                 "Win %": win_percent,
@@ -304,7 +324,7 @@ def scrape():
     if corruptas.any():
         logging.warning(f"Filas con W/L inválidos descartadas: {int(corruptas.sum())}")
         for _, r in df[corruptas].iterrows():
-            logging.warning(f"  {r['Blade']} {r['Ratchet']} {r['Bit']}: {r['Wins']}W-{r['Losses']}L")
+            logging.warning(f"  {r['Blade']} {r['Assist']} {r['Ratchet']} {r['Bit']}: {r['Wins']}W-{r['Losses']}L")
     df = df[~corruptas].copy()
 
     descuadre = (df["Wins"] + df["Losses"]) != df["Partidas"]
@@ -326,7 +346,8 @@ def scrape():
         axis=1
     )
 
-    # Limpieza
+    # Limpieza (Assist vacío es válido: UX/BX)
+    df["Assist"] = df["Assist"].fillna("")
     df.dropna(inplace=True)
     df = df[df['Partidas'] > 0]
     df = df[df['Win %'] <= 100]
@@ -404,9 +425,10 @@ def scrape():
     df.to_csv(f"history/beyblade_stats_{fecha}.csv", index=False)
     df.to_csv("beyblade_stats.csv", index=False)
 
-    df_blade, df_ratchet, df_bit = generar_datasets_agregados(df)
+    df_blade, df_assist, df_ratchet, df_bit = generar_datasets_agregados(df)
 
     df_blade.to_csv("blade_stats.csv", index=False)
+    df_assist.to_csv("assist_stats.csv", index=False)
     df_ratchet.to_csv("ratchet_stats.csv", index=False)
     df_bit.to_csv("bit_stats.csv", index=False)
 

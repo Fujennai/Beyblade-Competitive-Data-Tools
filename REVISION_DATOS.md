@@ -103,6 +103,19 @@ Revisión del 2026-09-24. Foco: todo lo que pueda llevar a mostrar datos falsos 
 - [x] Aplicado en `core/deckbuilder.py`, en `pages/6_Deckbuilder.py` (selectores, demo y alternativas) y en `pages/8_Deck_Match.py` (selectores y demo).
 - [x] De paso: `pages/8_Deck_Match.py` tenía una f-string con barra invertida (solo válida en Python ≥3.12; el devcontainer usa 3.11). Corregido.
 
+### [x] 12. Assist de los CX como pieza aparte
+- Regla (Alex): el Assist es una pieza propia de los CX, intercambiable entre CX. Los UX/BX no llevan Assist.
+- [x] `scraper.py`: nombres de 3 o más palabras → la última va a la columna `Assist` ("Pegasus Blast Wheel" → Blade "Pegasus Blast" + Assist "Wheel"; "Brachio Whip Outer Wheel" → "Brachio Whip Outer" + "Wheel"). El over blade sigue dentro del Blade. Nuevo `assist_stats.csv`; `blade_stats.csv` agrupa por lock chip + main blade.
+- [x] `beyblade_stats.csv` y todo `history/` migrados con la misma regla. `asegurar_assist()` separa al vuelo cualquier CSV antiguo sin la columna.
+- [x] `core/compatibility.py`: `blades_cx()` deduce los CX de los datos como los UX Expanded (≥3 partidas con Assist y ≥50 % de sus partidas). `combo_valido()` exige Assist si y solo si el Blade es CX. `generar_candidatos()` construye solo combos legales. `piezas_blade()`/`blade_repetido()` tratan el Assist como pieza física.
+  - Umbral del 50 % (no 80 %): en los CX es habitual registrar sin Assist ("Sol Eclipse": 13 con Assist, 4 sin él).
+  - Descartados por el loader como errores de registro: CX sin Assist (Bucks Antler 2p, Cerberus Flame 7p, Lightning L-Drago 4p, Sol Eclipse 4p, Wizard Arc 5p) y "Dran Sword Free" (3p, Dran Sword es BX).
+- [x] Modelo: `Assist_enc` y `Assist_score` como features; "sin Assist" usa ws_mean (con leave-one-out el grupo UX/BX codificaba el target y el R² CV caía de 0,45 a 0,34). R² CV 0,45 / Spearman 0,65 (antes 0,46 / 0,66). `par_ba` (Blade+Assist) como evidencia del ancla. `formato` en el payload: `model_loader` reentrena en memoria si `model.pkl` es antiguo.
+- [x] Recomendador, META Oculto y Deckbuilder proponen Blade CX + cualquier Assist aunque no se haya jugado. Ancla y predicción unificadas en `core/recommender.predecir()` (META Oculto la reutiliza).
+- [x] Selector de Assist en Recomendador, META Oculto, Deckbuilder, Matchup y Deck Match (desactivado en UX/BX, sin repetir en el deck). Filtro de Assist en META Tracker y Arquetipos, top 10 de Assists y tendencias por Assist (cuota sobre las partidas de CX).
+- Matchup / Deck Match: en combos no jugados, el hueco "Blade" de un CX es la media de Blade y Assist (provisional, pendiente de la 8).
+- Pendiente: META Oculto tiene ahora ~3 veces más candidatos (442k frente a 154k) y sigue muestreando 2000 al azar (la 7).
+
 ### [ ] 7. META Oculto
 - Toma 2000 combos al azar antes de ordenar, así que el top es el de una muestra aleatoria y no de todos los candidatos.
 - `_arquetipos_esperados` busca columnas que no existen y siempre devuelve "Desconocido".

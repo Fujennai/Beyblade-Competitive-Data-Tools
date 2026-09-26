@@ -5,13 +5,18 @@ from data.loader import load_data
 from core.matchup import prob_victoria
 from core.deck_match import DeckMatch, ORDENES
 from components.demo_button import boton_autorellenar, deck_aleatorio
-from core.compatibility import ratchet_repetido, blade_repetido, ratchets_validos, blades_con_ux_expanded
+from core.compatibility import (
+    ratchet_repetido, blade_repetido, assist_repetido, ratchets_validos,
+    assists_validos, reglas_desde, nombre_blade,
+)
 
 st.set_page_config(layout="wide")
 
 st.title("🏟️ Simulador de Deck Match")
 
 df = load_data()
+reglas = reglas_desde(df)
+TODOS_ASSISTS = sorted(a for a in df["Assist"].unique() if a)
 
 st.caption("Introduce los dos decks y calcula quién tiene más probabilidades de ganar y cómo ordenar tus beys en cada ronda.")
 
@@ -31,15 +36,17 @@ def _autorellenar_deck(prefix):
     """Rellena un deck con 3 combos reales aleatorios, sin copiar combos del otro deck."""
     otro = "rival" if prefix == "mio" else "mio"
     combos_otro = [
-        tuple(st.session_state.get(f"{otro}_{p}_{i}", "—") for p in ("blade", "ratchet", "bit"))
+        tuple(st.session_state.get(f"{otro}_{p}_{i}", "—") for p in ("blade", "assist", "ratchet", "bit"))
         for i in range(3)
     ]
+    combos_otro = [(b, "" if a == "—" else a, r, t) for b, a, r, t in combos_otro]
     deck = deck_aleatorio(df, n=3, excluir=combos_otro)
     if not deck:
         st.toast("❌ No se encontraron suficientes combos únicos. Inténtalo de nuevo.", icon="⚠️")
         return
-    for i, (blade, ratchet, bit) in enumerate(deck):
+    for i, (blade, assist, ratchet, bit) in enumerate(deck):
         st.session_state[f"{prefix}_blade_{i}"]   = blade
+        st.session_state[f"{prefix}_assist_{i}"]  = assist or "—"
         st.session_state[f"{prefix}_ratchet_{i}"] = ratchet
         st.session_state[f"{prefix}_bit_{i}"]     = bit
     nombre = "Mi deck" if prefix == "mio" else "Deck rival"
@@ -49,8 +56,9 @@ def _autorellenar_deck(prefix):
 _AUTO_HELP = "Rellena este deck con 3 combos reales aleatorios del dataset (ponderados por partidas)."
 
 # ── Helper ────────────────────────────────────────────────────────────────────
-def get_combo_data(df, blade, ratchet, bit, nombre):
-    row = df[(df["Blade"] == blade) & (df["Ratchet"] == ratchet) & (df["Bit"] == bit)]
+def get_combo_data(df, blade, assist, ratchet, bit, nombre):
+    row = df[(df["Blade"] == blade) & (df["Assist"] == assist)
+             & (df["Ratchet"] == ratchet) & (df["Bit"] == bit)]
     if not row.empty:
         r = row.iloc[0]
         return {
@@ -61,7 +69,9 @@ def get_combo_data(df, blade, ratchet, bit, nombre):
             "real":        True,
         }
     ws_vals, pts_g, pts_c = [], [], []
-    for col, val in [("Blade", blade), ("Ratchet", ratchet), ("Bit", bit)]:
+    for col, val in [("Blade", blade), ("Assist", assist), ("Ratchet", ratchet), ("Bit", bit)]:
+        if not val:
+            continue  # sin Assist (UX/BX)
         s = df[df[col] == val]
         if not s.empty:
             ws_vals.append(s["Wilson Score"].mean())
@@ -91,30 +101,48 @@ for col, deck_list, prefix, label in [
         boton_autorellenar(key=f"auto_dm_{prefix}", help_text=_AUTO_HELP, on_click=_autorellenar_deck, args=(prefix,))
         for i in range(3):
             st.markdown(f"**Bey {i+1}**")
-            c1, c2, c3 = st.columns(3)
+            c1, c1b, c2, c3 = st.columns([3, 2, 2, 3])
 
-            # Excluir Blades ya seleccionadas EN EL MISMO DECK (pero NO en el otro)
-            blades_usadas = get_piezas_seleccionadas_deck("blade", i, prefix)
-            blade_opts = sorted([b for b in df["Blade"].unique() if not blade_repetido(b, blades_usadas)])
+            def _sanear(key, opciones):
+                if st.session_state.get(key, "—") not in opciones:
+                    st.session_state[key] = "—"
+
+            # Excluir Blades que comparten pieza física con otras DEL MISMO DECK (no del otro)
+            blades_usadas = [(b, "") for b in get_piezas_seleccionadas_deck("blade", i, prefix)]
+            blade_opts = sorted([b for b in df["Blade"].unique()
+                                 if not blade_repetido(b, "", blades_usadas, reglas.cx)])
+            _sanear(f"{prefix}_blade_{i}", ["—"] + blade_opts)
             blade = c1.selectbox("Blade", ["—"] + blade_opts, key=f"{prefix}_blade_{i}")
+
+            # Assist: solo CX y sin repetir en el mismo deck
+            es_cx = blade in reglas.cx
+            assists_usados = get_piezas_seleccionadas_deck("assist", i, prefix)
+            assist_opts = [a for a in (assists_validos(blade, TODOS_ASSISTS, reglas.cx) if es_cx else [])
+                           if not assist_repetido(a, assists_usados)]
+            _sanear(f"{prefix}_assist_{i}", ["—"] + assist_opts)
+            assist = c1b.selectbox("Assist", ["—"] + assist_opts, key=f"{prefix}_assist_{i}",
+                                   disabled=not es_cx, help="Solo CX")
 
             # Excluir Ratchets ya seleccionados EN EL MISMO DECK
             ratchets_usados = get_piezas_seleccionadas_deck("ratchet", i, prefix)
-            base_ratchets = (ratchets_validos(blade, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df))
+            base_ratchets = (ratchets_validos(blade, sorted(df["Ratchet"].unique()), reglas.ux)
                              if blade != "—" else sorted(df["Ratchet"].unique()))
             ratchet_opts = [r for r in base_ratchets if not ratchet_repetido(r, ratchets_usados)]
+            _sanear(f"{prefix}_ratchet_{i}", ["—"] + ratchet_opts)
             ratchet = c2.selectbox("Ratchet", ["—"] + ratchet_opts, key=f"{prefix}_ratchet_{i}")
 
             # Excluir Bits ya seleccionados EN EL MISMO DECK
             bits_usados = get_piezas_seleccionadas_deck("bit", i, prefix)
             bit_opts = sorted([b for b in df["Bit"].unique() if b not in bits_usados])
+            _sanear(f"{prefix}_bit_{i}", ["—"] + bit_opts)
             bit = c3.selectbox("Bit", ["—"] + bit_opts, key=f"{prefix}_bit_{i}")
 
-            if any(v == "—" for v in [blade, ratchet, bit]):
+            if any(v == "—" for v in [blade, ratchet, bit]) or (es_cx and assist == "—"):
                 completo = False
             else:
-                nombre = f"{blade} / {ratchet} / {bit}"
-                deck_list.append(get_combo_data(df, blade, ratchet, bit, nombre))
+                assist = "" if assist == "—" else assist
+                nombre = f"{nombre_blade(blade, assist)} / {ratchet} / {bit}"
+                deck_list.append(get_combo_data(df, blade, assist, ratchet, bit, nombre))
 
 if not completo or len(deck_mio) < 3 or len(deck_rival) < 3:
     st.info("🔎 Completa los dos decks para ver la simulación.")

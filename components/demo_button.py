@@ -64,9 +64,9 @@ def piezas_aleatorias(df, col, n=1, seed=None):
 
 def deck_aleatorio(df, n=3, excluir=None, max_intentos=5):
     """
-    Devuelve N combos reales (Blade, Ratchet, Bit) sin repetir piezas dentro
-    del deck. `excluir` es una lista de combos exactos a evitar (p. ej. los
-    del otro bando). Devuelve [] si no consigue N combos válidos.
+    Devuelve N combos reales (Blade, Assist, Ratchet, Bit) sin repetir piezas
+    dentro del deck. `excluir` es una lista de combos exactos a evitar (p. ej.
+    los del otro bando). Devuelve [] si no consigue N combos válidos.
     """
     from core.compatibility import blade_repetido, ratchet_repetido
 
@@ -74,12 +74,12 @@ def deck_aleatorio(df, n=3, excluir=None, max_intentos=5):
     for _ in range(max_intentos):
         deck = []
         for c in combos_aleatorios(df, n=50):
-            combo = (c["Blade"], c["Ratchet"], c["Bit"])
+            combo = (c["Blade"], c.get("Assist", ""), c["Ratchet"], c["Bit"])
             if combo in excluir:
                 continue
-            if (blade_repetido(combo[0], [d[0] for d in deck])
-                    or ratchet_repetido(combo[1], [d[1] for d in deck])
-                    or combo[2] in [d[2] for d in deck]):
+            if (blade_repetido(combo[0], combo[1], [(d[0], d[1]) for d in deck])
+                    or ratchet_repetido(combo[2], [d[2] for d in deck])
+                    or combo[3] in [d[3] for d in deck]):
                 continue
             deck.append(combo)
             if len(deck) == n:

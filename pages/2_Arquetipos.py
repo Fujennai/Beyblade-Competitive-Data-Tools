@@ -4,6 +4,7 @@ import plotly.express as px
 from data.loader import load_data
 from components.filters import filtros_dependientes
 from components.view_toggle import view_toggle
+from core.compatibility import nombre_blade, nombre_combo
 
 st.set_page_config(layout="wide")
 
@@ -116,7 +117,7 @@ df["tipo_derrota_str"] = df["tipo_derrota"].astype(str)
 # Filtros dependientes
 # ----------------------------
 
-df_filtered, blade_sel, ratchet_sel, bit_sel = filtros_dependientes(
+df_filtered, blade_sel, ratchet_sel, bit_sel, assist_sel = filtros_dependientes(
     df,
     key_prefix="arquetipos"
 )
@@ -125,11 +126,11 @@ df_filtered, blade_sel, ratchet_sel, bit_sel = filtros_dependientes(
 # Nombre completo combo
 # ----------------------------
 
-df_filtered["Combo"] = (
-    df_filtered["Blade"] + " " +
-    df_filtered["Ratchet"] + " " +
-    df_filtered["Bit"]
-)
+df_filtered["Combo"] = [
+    nombre_combo(b, a, r, t)
+    for b, a, r, t in zip(df_filtered["Blade"], df_filtered["Assist"],
+                          df_filtered["Ratchet"], df_filtered["Bit"])
+]
 
 # ----------------------------
 # Estado checkbox
@@ -211,6 +212,7 @@ fig = px.scatter(
 
         "Combo": False,
         "Blade": False,
+        "Assist": False,
         "Ratchet": False,
         "Bit": False,
 
@@ -426,7 +428,7 @@ if modo == "cards":
             bar_pct = int(ws * 100)
             winpct  = row["Win %"]
             partidas= int(row["Partidas"])
-            r_blade  = row["Blade"]
+            r_blade  = nombre_blade(row["Blade"], row["Assist"])
             r_ratchet= row["Ratchet"]
             r_bit    = row["Bit"]
             arq_v   = row["Arquetipo de victoria"]
@@ -451,6 +453,7 @@ else:
     st.dataframe(
         df_table[[
             "Blade",
+            "Assist",
             "Ratchet",
             "Bit",
             "Partidas",

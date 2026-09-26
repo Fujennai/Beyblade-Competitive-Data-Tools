@@ -3,7 +3,10 @@ import pandas as pd
 
 from data.loader import load_data
 from core.deckbuilder import optimizar_deck
-from core.compatibility import ratchets_validos, ratchet_repetido, blade_repetido, blades_con_ux_expanded, UX_EXPANDED
+from core.compatibility import (
+    ratchets_validos, ratchet_repetido, blade_repetido, assist_repetido,
+    assists_validos, reglas_desde, nombre_blade,
+)
 from components.view_toggle import view_toggle
 from components.demo_button import boton_autorellenar, combos_aleatorios
 
@@ -19,6 +22,10 @@ st.caption(
     "🔒 = elegido por ti · ✨ = sugerido por el sistema"
 )
 
+reglas = reglas_desde(df)
+TODOS_ASSISTS = sorted(a for a in df["Assist"].unique() if a)
+
+
 # ── Función auxiliar: obtener piezas ya seleccionadas (excluyendo posición actual) ──
 def get_piezas_seleccionadas(tipo_pieza, excluir_pos):
     """Retorna lista de piezas del tipo especificado ya seleccionadas en otros Beys"""
@@ -30,45 +37,55 @@ def get_piezas_seleccionadas(tipo_pieza, excluir_pos):
                 piezas.append(pieza)
     return piezas
 
+
+def _sanear(key, opciones):
+    """Si el valor guardado ya no es una opción válida (p.ej. cambió el Blade), vuelve a "—"."""
+    if st.session_state.get(key, "—") not in opciones:
+        st.session_state[key] = "—"
+
+
 # ── Botón de autorrelleno ─────────────────────────────────────────────────────
 if boton_autorellenar(
     key="demo_db",
     help_text="Fija 3 Blades aleatorios de combos reales del dataset "
               "(ponderados por partidas) para que el optimizador construya el deck.",
 ):
-    blades_usados = []
+    combos_usados = []   # (blade, assist)
     ratchets_usados = []
     bits_usados = []
     intentos = 0
     max_intentos = 5
 
     # Intentar varias veces para encontrar 3 combos únicos
-    while len(blades_usados) < 3 and intentos < max_intentos:
+    while len(combos_usados) < 3 and intentos < max_intentos:
         intentos += 1
         combos = combos_aleatorios(df, n=30)  # Margen amplio para garantizar diversidad
 
         for c in combos:
-            blade = c["Blade"]
+            blade, assist = c["Blade"], c["Assist"]
             ratchet = c["Ratchet"]
             bit = c["Bit"]
 
-            # Verificar que no está ya seleccionado
-            if not blade_repetido(blade, blades_usados) and not ratchet_repetido(ratchet, ratchets_usados) and bit not in bits_usados:
-                blades_usados.append(blade)
+            # Verificar que no repite ninguna pieza física
+            if (not blade_repetido(blade, assist, combos_usados)
+                    and not ratchet_repetido(ratchet, ratchets_usados)
+                    and bit not in bits_usados):
+                combos_usados.append((blade, assist))
                 ratchets_usados.append(ratchet)
                 bits_usados.append(bit)
 
-            if len(blades_usados) == 3:
+            if len(combos_usados) == 3:
                 break
 
-    if len(blades_usados) == 3:
-        # Fijar solo los 3 Blades y dejar Ratchet + Bit sin fijar
+    if len(combos_usados) == 3:
+        # Fijar solo los 3 Blades y dejar Assist + Ratchet + Bit sin fijar
         # para que el optimizador haga su trabajo.
         for i in range(3):
-            st.session_state[f"blade_{i}"]   = blades_usados[i]
+            st.session_state[f"blade_{i}"]   = combos_usados[i][0]
+            st.session_state[f"assist_{i}"]  = "—"
             st.session_state[f"ratchet_{i}"] = "—"
             st.session_state[f"bit_{i}"]     = "—"
-        st.toast(f"🎲 Autorellenado: {', '.join(blades_usados)}", icon="✨")
+        st.toast(f"🎲 Autorellenado: {', '.join(b for b, _ in combos_usados)}", icon="✨")
         st.rerun()
     else:
         # Si falla, mostrar error
@@ -77,17 +94,25 @@ if boton_autorellenar(
 
 # ── Selección del usuario ─────────────────────────────────────────────────────
 st.subheader("🎯 Piezas fijadas")
+st.caption("El Assist solo se aplica a los CX y cualquier Assist sirve para cualquier CX.")
 
 fijados = []
 
 for i in range(3):
     st.markdown(f"**Bey {i+1}**")
-    col1, col2, col3 = st.columns(3)
+    col1, col1b, col2, col3 = st.columns([3, 2, 2, 3])
 
     with col1:
-        # Excluir Blades ya seleccionadas en otros Beys
-        blades_usadas = get_piezas_seleccionadas("blade", i)
-        blade_opts = sorted([b for b in df["Blade"].unique() if not blade_repetido(b, blades_usadas)])
+        # Excluir Blades que comparten pieza física con las de otros Beys.
+        # Con un Assist fijado solo tienen sentido los CX.
+        otras_blades = [(b, "") for b in get_piezas_seleccionadas("blade", i)]
+        assist_fijado = st.session_state.get(f"assist_{i}", "—") != "—"
+        blade_opts = sorted([
+            b for b in df["Blade"].unique()
+            if not blade_repetido(b, "", otras_blades, reglas.cx)
+            and (not assist_fijado or b in reglas.cx)
+        ])
+        _sanear(f"blade_{i}", ["—"] + blade_opts)
 
         blade = st.selectbox(
             f"Blade {i+1}",
@@ -95,17 +120,33 @@ for i in range(3):
             key=f"blade_{i}"
         )
 
+    with col1b:
+        # Assist: solo CX y sin repetir los de otros Beys
+        assists_usados = get_piezas_seleccionadas("assist", i)
+        base_assists = (TODOS_ASSISTS if blade == "—"
+                        else [a for a in assists_validos(blade, TODOS_ASSISTS, reglas.cx) if a])
+        assist_opts = [a for a in base_assists if not assist_repetido(a, assists_usados)]
+        _sanear(f"assist_{i}", ["—"] + assist_opts)
+
+        assist = st.selectbox(
+            f"Assist {i+1}",
+            ["—"] + assist_opts,
+            key=f"assist_{i}",
+            disabled=blade != "—" and blade not in reglas.cx,
+            help="Solo CX",
+        )
+
     with col2:
-        blade_sel = st.session_state.get(f"blade_{i}", "—")
         r_opts = ratchets_validos(
-            blade_sel,
+            blade,
             sorted(df["Ratchet"].unique()),
-            blades_con_ux_expanded(df),
-        ) if blade_sel != "—" else sorted(df["Ratchet"].unique())
+            reglas.ux,
+        ) if blade != "—" else sorted(df["Ratchet"].unique())
 
         # Excluir Ratchets ya seleccionados en otros Beys
         ratchets_usados = get_piezas_seleccionadas("ratchet", i)
         r_opts = [r for r in r_opts if not ratchet_repetido(r, ratchets_usados)]
+        _sanear(f"ratchet_{i}", ["—"] + r_opts)
 
         ratchet = st.selectbox(
             f"Ratchet {i+1}",
@@ -117,6 +158,7 @@ for i in range(3):
         # Excluir Bits ya seleccionados en otros Beys
         bits_usados = get_piezas_seleccionadas("bit", i)
         bit_opts = sorted([b for b in df["Bit"].unique() if b not in bits_usados])
+        _sanear(f"bit_{i}", ["—"] + bit_opts)
 
         bit = st.selectbox(
             f"Bit {i+1}",
@@ -126,6 +168,7 @@ for i in range(3):
 
     bey = {}
     if blade   != "—": bey["Blade"]   = blade
+    if assist  != "—": bey["Assist"]  = assist
     if ratchet != "—": bey["Ratchet"] = ratchet
     if bit     != "—": bey["Bit"]     = bit
     fijados.append(bey)
@@ -135,6 +178,7 @@ st.divider()
 # ── Optimización: leer total directamente del session_state ───────────────────
 total_fijadas = sum(
     (1 if st.session_state.get(f"blade_{i}",   "—") != "—" else 0) +
+    (1 if st.session_state.get(f"assist_{i}",  "—") != "—" else 0) +
     (1 if st.session_state.get(f"ratchet_{i}", "—") != "—" else 0) +
     (1 if st.session_state.get(f"bit_{i}",     "—") != "—" else 0)
     for i in range(3)
@@ -191,6 +235,7 @@ if modo_deck == "cards":
             '<div style="background:#1a1a2e;border-radius:12px;padding:18px;border:1px solid #2a2a4a">' +
             f'<div style="font-size:0.8em;color:#888;margin-bottom:10px">BEY {bey_num}</div>' +
             piece_row("Blade",   bey["Blade"],   bey["Blade fijada"])   +
+            (piece_row("Assist", bey["Assist"], bey["Assist fijado"]) if bey["Assist"] else "") +
             piece_row("Ratchet", bey["Ratchet"], bey["Ratchet fijado"]) +
             piece_row("Bit",     bey["Bit"],     bey["Bit fijado"])     +
             '<div style="margin:12px 0 4px">' +
@@ -217,6 +262,7 @@ else:
     for bey in deck:
         rows.append({
             "Blade":              label(bey["Blade"],   bey["Blade fijada"]),
+            "Assist":             label(bey["Assist"],  bey["Assist fijado"]) if bey["Assist"] else "",
             "Ratchet":            label(bey["Ratchet"], bey["Ratchet fijado"]),
             "Bit":                label(bey["Bit"],     bey["Bit fijado"]),
             "Wilson Score":       bey["Wilson Score"],
@@ -245,45 +291,46 @@ st.subheader("💬 Alternativas")
 
 from core.recommender import recomendar_builds
 
-piezas_usadas = {
-    "Blade":   [b["Blade"]   for b in deck],
-    "Ratchet": [b["Ratchet"] for b in deck],
-    "Bit":     [b["Bit"]     for b in deck],
-}
-
 for i, bey in enumerate(deck):
     blade_fijada   = bey["Blade fijada"]
+    assist_fijado  = bey["Assist fijado"]
     ratchet_fijado = bey["Ratchet fijado"]
     bit_fijado     = bey["Bit fijado"]
-    if blade_fijada and ratchet_fijado and bit_fijado:
+    if blade_fijada and ratchet_fijado and bit_fijado and (assist_fijado or not bey["Assist"]):
         continue
 
     bey_num    = bey["Bey"]
     bey_blade  = bey["Blade"]
+    bey_assist = bey["Assist"]
     bey_ratchet= bey["Ratchet"]
     bey_bit    = bey["Bit"]
-    st.markdown(f"**Bey {bey_num} — {bey_blade} / {bey_ratchet} / {bey_bit}**")
+    st.markdown(f"**Bey {bey_num} — {nombre_blade(bey_blade, bey_assist)} / {bey_ratchet} / {bey_bit}**")
 
     # Obtener alternativas manteniendo las piezas fijadas de este bey
-    blade_fijo   = bey_blade   if blade_fijada   else None
-    ratchet_fijo = bey_ratchet if ratchet_fijado else None
-    bit_fijo     = bey_bit     if bit_fijado     else None
-
-    df_alt = recomendar_builds(df, blade_fijo, ratchet_fijo, bit_fijo, top_n=50)
+    df_alt = recomendar_builds(
+        df,
+        bey_blade   if blade_fijada   else None,
+        bey_ratchet if ratchet_fijado else None,
+        bey_bit     if bit_fijado     else None,
+        top_n=50,
+        assist=bey_assist if assist_fijado else None,
+    )
 
     # Excluir el combo ya recomendado y piezas usadas en otros beys
-    otras_blades   = [b["Blade"]   for j, b in enumerate(deck) if j != i]
-    otras_ratchets = [b["Ratchet"] for j, b in enumerate(deck) if j != i and b["Ratchet"] != UX_EXPANDED]
-    otros_bits     = [b["Bit"]     for j, b in enumerate(deck) if j != i]
+    otros = [b for j, b in enumerate(deck) if j != i]
+    otras_blades   = [(b["Blade"], b["Assist"]) for b in otros]
+    otros_ratchets = [b["Ratchet"] for b in otros]
+    otros_bits     = [b["Bit"]     for b in otros]
 
-    df_alt = df_alt[
-        ~df_alt["Blade"].apply(lambda b: blade_repetido(b, otras_blades)) &
-        ~df_alt["Ratchet"].isin(otras_ratchets) &
-        ~df_alt["Bit"].isin(otros_bits) &
-        ~((df_alt["Blade"] == bey["Blade"]) &
-          (df_alt["Ratchet"] == bey["Ratchet"]) &
-          (df_alt["Bit"] == bey["Bit"]))
-    ].head(3)
+    if not df_alt.empty:
+        df_alt = df_alt[[
+            not blade_repetido(r["Blade"], r["Assist"], otras_blades)
+            and not ratchet_repetido(r["Ratchet"], otros_ratchets)
+            and r["Bit"] not in otros_bits
+            and (r["Blade"], r["Assist"], r["Ratchet"], r["Bit"])
+                != (bey_blade, bey_assist, bey_ratchet, bey_bit)
+            for _, r in df_alt.iterrows()
+        ]].head(3)
 
     if df_alt.empty:
         st.caption("No hay alternativas disponibles.")
@@ -291,6 +338,7 @@ for i, bey in enumerate(deck):
         alt_cols = st.columns(len(df_alt))
         for col_idx, (_, alt) in enumerate(df_alt.iterrows()):
             alt_blade   = alt["Blade"]
+            alt_assist  = alt["Assist"]
             alt_ratchet = alt["Ratchet"]
             alt_bit     = alt["Bit"]
             delta = alt["Wilson Score Predicho"] - bey["Wilson Score"]
@@ -310,6 +358,7 @@ for i, bey in enumerate(deck):
                 '<div style="background:#1a1a2e;border-radius:10px;padding:14px 16px;border:1px solid #2a2a4a;margin-bottom:4px">' +
                 '<div style="line-height:2em;margin-bottom:8px">' +
                 piece_html("Blade",   alt_blade,   bey_blade)   + '<br>' +
+                (piece_html("Assist", alt_assist, bey_assist) + '<br>' if alt_assist else '') +
                 piece_html("Ratchet", alt_ratchet, bey_ratchet) + '<br>' +
                 piece_html("Bit",     alt_bit,     bey_bit) +
                 '</div>' +

@@ -3,12 +3,14 @@ from data.loader import load_data
 from core.recommender import recomendar_builds
 from components.view_toggle import view_toggle
 from components.demo_button import boton_demo, piezas_aleatorias
+from core.compatibility import reglas_desde, assists_validos, nombre_blade
 
 st.set_page_config(layout="wide")
 
 st.title("🔧 Recomendador Predictivo de Builds")
 
 df = load_data()
+reglas = reglas_desde(df)
 
 # ── Botón de demostración ─────────────────────────────────────────────────────
 if boton_demo(
@@ -19,16 +21,32 @@ if boton_demo(
     blades = piezas_aleatorias(df, "Blade", n=1)
     if blades:
         st.session_state["rec_blade"]   = blades[0]
+        st.session_state["rec_assist"]  = "Todos"
         st.session_state["rec_ratchet"] = "Todos"
         st.session_state["rec_bit"]     = "Todos"
         st.toast(f"🎬 Demo: Blade = {blades[0]}", icon="✨")
     st.rerun()
 
 # ── Filtros ────────────────────────────────────────────────────────────────────
-col1, col2, col3, col4, col5, col6 = st.columns([2, 2, 2, 1, 1.3, 1])
+col1, col1b, col2, col3, col4, col5, col6 = st.columns([2, 1.3, 1.3, 2, 1, 1.3, 1])
 
 with col1:
     blade = st.selectbox("Blade", ["Todos"] + sorted(df["Blade"].unique()), key="rec_blade")
+
+with col1b:
+    # Solo los CX llevan Assist (y cualquier Assist vale para cualquier CX)
+    todos_assists = sorted(a for a in df["Assist"].unique() if a)
+    assist_opts = ["Todos"] + (
+        todos_assists if blade == "Todos"
+        else [a for a in assists_validos(blade, todos_assists, reglas.cx) if a]
+    )
+    if st.session_state.get("rec_assist", "Todos") not in assist_opts:
+        st.session_state["rec_assist"] = "Todos"
+    assist = st.selectbox(
+        "Assist", assist_opts, key="rec_assist",
+        disabled=len(assist_opts) == 1,
+        help="Solo CX. Elegir un Assist limita la búsqueda a Blades CX.",
+    )
 
 with col2:
     ratchet = st.selectbox("Ratchet", ["Todos"] + sorted(df["Ratchet"].unique()), key="rec_ratchet")
@@ -53,13 +71,14 @@ with col6:
 tipo = {"🎯 Solo reales": "real", "🔮 Solo predichos": "predicho"}.get(tipo_label)
 
 blade   = None if blade   == "Todos" else blade
+assist  = None if assist  == "Todos" else assist
 ratchet = None if ratchet == "Todos" else ratchet
 bit     = None if bit     == "Todos" else bit
 
 # ── Bloqueo: requiere al menos una pieza fijada ───────────────────────────────
-if not any([blade, ratchet, bit]):
+if not any([blade, assist, ratchet, bit]):
     st.info(
-        "👆 Selecciona al menos una pieza (**Blade**, **Ratchet** o **Bit**) "
+        "👆 Selecciona al menos una pieza (**Blade**, **Assist**, **Ratchet** o **Bit**) "
         "para generar recomendaciones."
     )
     st.stop()
@@ -71,6 +90,7 @@ with st.spinner("Generando predicciones..."):
         top_n=int(top_n),
         solo_confiables=solo_confiables,
         tipo=tipo,
+        assist=assist,
     )
 
 # ── Resultados ────────────────────────────────────────────────────────────────
@@ -107,7 +127,7 @@ else:
             ws        = float(row["Wilson Score Predicho"])
             winpct    = row.get("Win % Real")
             bar_pct   = int(max(0, min(ws, 1)) * 100)
-            blade_v   = row["Blade"]
+            blade_v   = nombre_blade(row["Blade"], row["Assist"])
             ratchet_v = row["Ratchet"]
             bit_v     = row["Bit"]
             tipo_v    = row.get("Tipo", "")
@@ -161,7 +181,7 @@ else:
         }
         # "Evidencia" solo se muestra si el usuario activa el toggle de detalle.
         base_cols = [
-            "Blade", "Ratchet", "Bit",
+            "Blade", "Assist", "Ratchet", "Bit",
             "Tipo",
             "Wilson Score Predicho", "Win % Real",
             "Confianza",

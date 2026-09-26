@@ -1,4 +1,7 @@
+import html
 import streamlit as st
+
+from core.compatibility import nombre_blade
 
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -14,7 +17,10 @@ def _col_score(df):
 def _nombre_pieza(row, nombre):
     nombre_lower = nombre.lower()
     if "combo" in nombre_lower:
-        return row.get("Blade", "?"), f"{row.get('Ratchet','?')} · {row.get('Bit','?')}"
+        blade = nombre_blade(row.get("Blade", "?"), row.get("Assist", ""))
+        return blade, f"{row.get('Ratchet','?')} · {row.get('Bit','?')}"
+    if "assist" in nombre_lower:
+        return row.get("Assist", "?"), None
     if "blade" in nombre_lower:
         return row.get("Blade", "?"), None
     if "ratchet" in nombre_lower:
@@ -24,16 +30,73 @@ def _nombre_pieza(row, nombre):
     return str(row.iloc[0]), None
 
 
-RANK_COLORS = ["#FFD700", "#C0C0C0", "#CD7F32"]
+RANK_COLORS = ["#E8B923", "#B8BCC6", "#C98A4B"]
+BAR_FLOOR = 0.40   # la barra parte de aquí para que se noten las diferencias
+MIN_PARTIDAS = 30  # por debajo, la muestra se marca como poco fiable
+
+_CSS = """
+<style>
+.lb{font-family:inherit;margin-top:4px}
+.lb-head{display:flex;justify-content:space-between;font-size:.72em;color:#6b7280;
+  text-transform:uppercase;letter-spacing:.05em;padding:0 4px 6px;border-bottom:1px solid #23263a}
+.lb-row{display:grid;grid-template-columns:28px 1fr auto;align-items:center;gap:10px;
+  padding:9px 4px;border-bottom:1px solid #1c1f30}
+.lb-rank{font-weight:700;font-size:.9em;color:#6b7280;text-align:center}
+.lb-name{color:#e5e7eb;font-weight:600;font-size:.92em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.lb-sub{color:#9ca3af;font-weight:400;font-size:.85em}
+.lb-meta{color:#6b7280;font-size:.74em;margin-top:1px}
+.lb-low{color:#d9a441}
+.lb-bar{height:3px;background:#23263a;border-radius:2px;margin-top:5px}
+.lb-bar>div{height:3px;border-radius:2px;background:#6EC1E4}
+.lb-score{font-variant-numeric:tabular-nums;font-weight:600;font-size:.92em;color:#d1d5db}
+</style>
+"""
+
+
+def _leaderboard_html(df_sorted, nombre, col_score):
+    max_ws = df_sorted[col_score].max() or 1
+    rows = []
+    for idx, (_, row) in enumerate(df_sorted.iterrows()):
+        ws = float(row[col_score])
+        titulo, subtitulo = _nombre_pieza(row, nombre)
+        color = RANK_COLORS[idx] if idx < 3 else None
+        rank_style = f' style="color:{color}"' if color else ""
+        score_style = f' style="color:{color}"' if color else ""
+
+        meta = []
+        if "Partidas" in row and row["Partidas"] == row["Partidas"]:
+            p = int(row["Partidas"])
+            if p < MIN_PARTIDAS:
+                meta.append(f'<span class="lb-low" title="Muestra pequeña">{p} partidas ⚠</span>')
+            else:
+                meta.append(f"{p} partidas")
+        winpct = row.get("Win %", None)
+        if winpct is not None and winpct == winpct:
+            meta.append(f"{winpct:.1f}% WR")
+
+        sub_html = f' <span class="lb-sub">{html.escape(str(subtitulo))}</span>' if subtitulo else ""
+        bar_pct = max(3, min(100, (ws - BAR_FLOOR) / max(max_ws - BAR_FLOOR, 1e-9) * 100))
+        rows.append(
+            f'<div class="lb-row">'
+            f'<div class="lb-rank"{rank_style}>{idx + 1}</div>'
+            f'<div style="min-width:0">'
+            f'<div class="lb-name">{html.escape(str(titulo))}{sub_html}</div>'
+            f'<div class="lb-meta">{" · ".join(meta)}</div>'
+            f'<div class="lb-bar"><div style="width:{bar_pct:.0f}%"></div></div>'
+            f'</div>'
+            f'<div class="lb-score"{score_style}>{ws:.3f}</div>'
+            f'</div>'
+        )
+    head = f'<div class="lb-head"><span>{html.escape(nombre)}</span><span>{html.escape(col_score)}</span></div>'
+    return _CSS + '<div class="lb">' + head + "".join(rows) + "</div>"
 
 
 # ── Componente principal ──────────────────────────────────────────────────────
 
 def mostrar_top10(df, nombre, key_suffix=None):
     """
-    Muestra un top 10 con toggle cards/tabla.
+    Muestra un top 10 como ranking compacto (una fila por pieza) con toggle a tabla.
     Funciona tanto en el layout principal como dentro de st.columns.
-    No anida st.columns internamente para evitar errores de Streamlit.
     """
     key = f"top10_{nombre.lower().replace(' ', '_')}"
     if key_suffix:
@@ -43,12 +106,10 @@ def mostrar_top10(df, nombre, key_suffix=None):
         st.session_state[key] = "cards"
 
     st.subheader(f"🏆 Top 10 {nombre}")
-    label = "📊 Tabla" if st.session_state[key] == "cards" else "🃏 Cards"
+    label = "📊 Tabla" if st.session_state[key] == "cards" else "🏅 Ranking"
     if st.button(label, key=f"{key}_btn"):
         st.session_state[key] = "tabla" if st.session_state[key] == "cards" else "cards"
         st.rerun()
-
-    modo = st.session_state[key]
 
     if df.empty:
         st.warning("No hay datos")
@@ -61,54 +122,7 @@ def mostrar_top10(df, nombre, key_suffix=None):
 
     df_sorted = df.sort_values(by=col_score, ascending=False).head(10)
 
-    if modo == "cards":
-        cols = st.columns(4)
-        for idx, (_, row) in enumerate(df_sorted.iterrows()):
-            ws       = row[col_score]
-            bar_pct  = int(ws * 100)
-            partidas = int(row["Partidas"]) if "Partidas" in row else None
-            winpct   = row.get("Win %", None)
-
-            titulo, subtitulo = _nombre_pieza(row, nombre)
-
-            rank_color = RANK_COLORS[idx] if idx < 3 else "#555"
-            rank_label = ["🥇", "🥈", "🥉"][idx] if idx < 3 else f"#{idx+1}"
-            border     = rank_color if idx < 3 else "#2a2a4a"
-
-            subtitulo_html = (
-                f'<div style="font-size:0.82em;color:#aaa;margin-bottom:2px">{subtitulo}</div>'
-                if subtitulo else ""
-            )
-            meta_parts = []
-            if partidas is not None:
-                meta_parts.append(f"{partidas} partidas")
-            if winpct is not None:
-                meta_parts.append(f"{winpct:.1f}% WR")
-            meta_html = (
-                f'<div style="font-size:0.78em;color:#666;margin-bottom:8px">{" · ".join(meta_parts)}</div>'
-                if meta_parts else ""
-            )
-
-            card = (
-                f'<div style="background:#1a1a2e;border-radius:12px;padding:14px 16px;'
-                f'border:1px solid {border};margin-bottom:8px">'
-                f'<div style="display:flex;align-items:center;margin-bottom:6px">'
-                f'<span style="font-size:1.1em">{rank_label}</span>'
-                f'</div>'
-                f'<div style="font-weight:700;font-size:0.95em;color:#fff;margin-bottom:4px">{titulo}</div>'
-                + subtitulo_html
-                + meta_html +
-                '<div style="margin:6px 0 8px">'
-                '<div style="background:#2a2a4a;border-radius:4px;height:5px">'
-                f'<div style="background:#6EC1E4;width:{bar_pct}%;height:5px;border-radius:4px"></div>'
-                '</div></div>'
-                f'<div style="display:flex;justify-content:space-between;align-items:center;font-size:0.8em">'
-                f'<span style="color:#888">Wilson Score</span>'
-                f'<span style="color:{rank_color};font-weight:700">{ws:.4f}</span>'
-                f'</div>'
-                '</div>'
-            )
-            with cols[idx % 4]:
-                st.markdown(card, unsafe_allow_html=True)
+    if st.session_state[key] == "cards":
+        st.markdown(_leaderboard_html(df_sorted, nombre, col_score), unsafe_allow_html=True)
     else:
         st.dataframe(df_sorted, use_container_width=True, hide_index=True)

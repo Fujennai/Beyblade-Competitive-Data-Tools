@@ -5,6 +5,7 @@ from data.loader import load_data
 from core.meta_hidden import predecir_combos_nuevos
 from components.view_toggle import view_toggle
 from components.demo_button import boton_demo, piezas_aleatorias
+from core.compatibility import nombre_blade
 
 st.set_page_config(layout="wide")
 
@@ -31,6 +32,7 @@ if boton_demo(
     blades = piezas_aleatorias(df, "Blade", n=1)
     if blades:
         st.session_state["mo_blade"]   = blades[0]
+        st.session_state["mo_assist"]  = "Todos"
         st.session_state["mo_ratchet"] = "Todos"
         st.session_state["mo_bit"]     = "Todos"
         st.session_state["mo_arq_v"]   = "Todos"
@@ -41,10 +43,18 @@ if boton_demo(
 # ── Filtros ───────────────────────────────────────────────────────────────────
 st.subheader("🔎 Filtros")
 
-col1, col2, col3 = st.columns(3)
+col1, col1b, col2, col3 = st.columns(4)
 
 with col1:
     blade = st.selectbox("Blade", ["Todos"] + sorted(df_nuevos["Blade"].unique()), key="mo_blade")
+
+with col1b:
+    base_assist = df_nuevos if blade == "Todos" else df_nuevos[df_nuevos["Blade"] == blade]
+    assist_opts = ["Todos"] + sorted(a for a in base_assist["Assist"].unique() if a)
+    if st.session_state.get("mo_assist", "Todos") not in assist_opts:
+        st.session_state["mo_assist"] = "Todos"
+    assist = st.selectbox("Assist", assist_opts, key="mo_assist",
+                          disabled=len(assist_opts) == 1, help="Solo CX.")
 
 with col2:
     ratchet = st.selectbox("Ratchet", ["Todos"] + sorted(df_nuevos["Ratchet"].unique()), key="mo_ratchet")
@@ -94,6 +104,7 @@ with col5:
 df_fil = df_nuevos.copy()
 
 if blade        != "Todos": df_fil = df_fil[df_fil["Blade"]               == blade]
+if assist       != "Todos": df_fil = df_fil[df_fil["Assist"]              == assist]
 if ratchet      != "Todos": df_fil = df_fil[df_fil["Ratchet"]             == ratchet]
 if bit          != "Todos": df_fil = df_fil[df_fil["Bit"]                 == bit]
 if arq_victoria != "Todos": df_fil = df_fil[df_fil["Arquetipo victoria"]  == arq_victoria]
@@ -125,7 +136,7 @@ else:
             bar_pct = int(ws * 100)
             arq_v   = row["Arquetipo victoria"]
             arq_d   = row["Arquetipo derrota"]
-            blade   = row["Blade"]
+            blade   = nombre_blade(row["Blade"], row["Assist"])
             ratchet = row["Ratchet"]
             bit     = row["Bit"]
             card = (

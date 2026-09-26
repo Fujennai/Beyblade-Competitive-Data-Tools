@@ -68,7 +68,7 @@ min_partidas = st.slider(
     0
 )
 
-df_filtered, blade, ratchet, bit = filtros_dependientes(df_main, key_prefix="main")
+df_filtered, blade, ratchet, bit, assist = filtros_dependientes(df_main, key_prefix="main")
 df_filtered = df_filtered[df_filtered["Partidas"] >= min_partidas]
 
 st.caption(f"{len(df_filtered)} combinaciones encontradas")
@@ -81,17 +81,23 @@ st.divider()
 
 mostrar_top10(df_filtered, "Combos")
 
-df_blade, df_ratchet, df_bit = calcular_agregados(df_filtered)
+df_blade, df_assist, df_ratchet, df_bit = calcular_agregados(df_filtered)
 
-col1, col2, col3 = st.columns(3)
+col1, col2 = st.columns(2)
 
 with col1:
     mostrar_top10(df_blade, "Blades")
 
 with col2:
-    mostrar_top10(df_ratchet, "Ratchets")
+    mostrar_top10(df_assist, "Assists")
+    st.caption("Assists: solo CX. En CX, el Blade es lock chip + main blade (+ over blade).")
+
+col3, col4 = st.columns(2)
 
 with col3:
+    mostrar_top10(df_ratchet, "Ratchets")
+
+with col4:
     mostrar_top10(df_bit, "Bits")
 
 st.divider()
@@ -149,7 +155,9 @@ if n_art:
         "(p.ej. UX Expanded), no porque se empezaran a jugar ahora."
     )
 
-nivel = st.radio("Nivel", ["Combo", "Blade", "Ratchet", "Bit"], horizontal=True, key="trend_nivel")
+nivel = st.radio("Nivel", ["Combo", "Blade", "Assist", "Ratchet", "Bit"], horizontal=True, key="trend_nivel")
+if nivel == "Assist":
+    st.caption("Assists: la cuota se calcula sobre las partidas de CX.")
 tend = tendencias(deltas, nivel)
 
 COLS = {

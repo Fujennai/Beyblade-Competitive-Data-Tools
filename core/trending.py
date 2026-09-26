@@ -19,7 +19,9 @@ Diseño:
 import numpy as np
 import pandas as pd
 
-from core.compatibility import filtrar_combos_validos, blades_con_ux_expanded
+from core.compatibility import (
+    filtrar_combos_validos, reglas_desde, asegurar_assist, nombre_combo, KEYS,
+)
 from core.metrics import wilson
 
 MIN_DIAS = 28
@@ -36,7 +38,10 @@ CAMBIOS_PARSER = {
     "UX Expanded": "2026-09-24",   # Ratchet ficticio de los UX Expanded
 }
 
-KEYS = ["Blade", "Ratchet", "Bit"]
+
+def _nombre_combo(d):
+    return [nombre_combo(b, a, r, t, sep=" · ")
+            for b, a, r, t in zip(d["Blade"], d["Assist"], d["Ratchet"], d["Bit"])]
 
 
 # ── Preparación ───────────────────────────────────────────────────────────────
@@ -45,10 +50,10 @@ def preparar_historial(df_history):
     """Limpia el histórico: solo combos legales y columnas necesarias."""
     if df_history is None or df_history.empty:
         return pd.DataFrame(columns=KEYS + ["Wins", "Losses", "Partidas", "fecha"])
-    h = df_history[KEYS + ["Wins", "Losses", "Partidas", "fecha"]].copy()
+    h = asegurar_assist(df_history)[KEYS + ["Wins", "Losses", "Partidas", "fecha"]].copy()
     h["fecha"] = pd.to_datetime(h["fecha"])
     ultima = h[h["fecha"] == h["fecha"].max()]
-    h = filtrar_combos_validos(h, blades_con_ux_expanded(ultima))
+    h = filtrar_combos_validos(h, reglas_desde(ultima))
     return h
 
 
@@ -131,15 +136,17 @@ def _metricas(g):
 
 def tendencias(d, nivel="Combo"):
     """
-    nivel: "Combo", "Blade", "Ratchet" o "Bit".
+    nivel: "Combo", "Blade", "Assist", "Ratchet" o "Bit".
     Devuelve dict con DataFrames: en_alza, en_caida, novedades.
     """
     d = d[~d["artefacto"]].copy()
     cols = ["Wins_rec", "Losses_rec", "Partidas_rec", "Wins_prev", "Partidas_prev"]
     if nivel == "Combo":
-        d["Nombre"] = d["Blade"] + " · " + d["Ratchet"] + " · " + d["Bit"]
+        d["Nombre"] = _nombre_combo(d)
         g = d.groupby("Nombre", as_index=False)[cols].sum()
     else:
+        if nivel == "Assist":
+            d = d[d["Assist"] != ""]   # solo CX
         g = d.groupby(nivel, as_index=False)[cols].sum().rename(columns={nivel: "Nombre"})
     g = _metricas(g)
 
@@ -159,12 +166,14 @@ def tendencias(d, nivel="Combo"):
 def evolucion(h, nivel, nombre, freq="W-MON"):
     """
     Partidas nuevas y cuota de uso por semana para un combo o una pieza.
-    nombre para "Combo": "Blade · Ratchet · Bit".
+    nombre para "Combo": "Blade Assist · Ratchet · Bit".
     """
     h = h.copy()
     if nivel == "Combo":
-        h["Nombre"] = h["Blade"] + " · " + h["Ratchet"] + " · " + h["Bit"]
+        h["Nombre"] = _nombre_combo(h)
     else:
+        if nivel == "Assist":
+            h = h[h["Assist"] != ""]
         h["Nombre"] = h[nivel]
     acum = h.groupby(["fecha", "Nombre"])["Partidas"].sum().unstack(fill_value=0).sort_index()
     nuevas = acum.diff().clip(lower=0).iloc[1:]           # la 1ª captura no tiene periodo

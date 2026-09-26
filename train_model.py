@@ -27,8 +27,15 @@ from scipy.stats import spearmanr
 from sklearn.model_selection import KFold
 from sklearn.metrics import r2_score, mean_absolute_error
 
+from core.compatibility import filtrar_df, SIN_ASSIST
+
+PIEZAS = ["Blade", "Assist", "Ratchet", "Bit"]
+
 CSV_PATH   = "beyblade_stats.csv"
 MODEL_PATH = "model.pkl"
+# Versión del formato del payload. core/model_loader.py reentrena en memoria si
+# model.pkl es de un formato anterior (p.ej. sin Assist).
+FORMATO_PAYLOAD = 2
 
 # Partidas mínimas reales para considerar un combo "confiable"
 MIN_PARTIDAS_CONFIABLE = 10
@@ -64,59 +71,13 @@ def calcular_score_par(df, col_a, col_b):
     return {(row[col_a], row[col_b]): row["score"] for _, row in stats.iterrows()}
 
 
-# ── NUEVO: Ancla bayesiana para inferencia ────────────────────────────────────
-def calcular_ancla(blade, ratchet, bit, combo_dict, par_br, par_bb, par_rb,
-                   blade_dict, ratchet_dict, bit_dict, ws_mean):
-    """
-    Calcula un score ancla ponderado por evidencia real:
-      - Si el combo existe en datos reales → ancla fuerte (peso alto)
-      - Si hay pares observados → ancla media
-      - Si solo hay scores de piezas individuales → ancla débil
-
-    Devuelve (ancla_score, peso_ancla) donde peso_ancla ∈ [0, 1].
-    Un peso_ancla alto → confiar más en ancla que en ML.
-    """
-    evidencia = []
-    pesos     = []
-
-    # Combo completo real
-    if (blade, ratchet, bit) in combo_dict:
-        ws_real, n_real = combo_dict[(blade, ratchet, bit)]
-        # Peso basado en partidas: a 30 partidas ya es muy fiable
-        w = min(n_real / 30.0, 1.0)
-        evidencia.append(ws_real)
-        pesos.append(w * 3.0)  # triple peso vs. pares
-
-    # Pares observados
-    for par_dict, key in [
-        (par_br, (blade, ratchet)),
-        (par_bb, (blade, bit)),
-        (par_rb, (ratchet, bit)),
-    ]:
-        if key in par_dict:
-            evidencia.append(par_dict[key])
-            pesos.append(1.0)
-
-    # Piezas individuales (siempre disponibles)
-    evidencia.append(blade_dict.get(blade, ws_mean))
-    evidencia.append(ratchet_dict.get(ratchet, ws_mean))
-    evidencia.append(bit_dict.get(bit, ws_mean))
-    pesos.extend([0.3, 0.3, 0.3])
-
-    ancla = np.average(evidencia, weights=pesos)
-    # El peso total del ancla sobre el ML: normalizado entre 0.1 y 0.85
-    peso_ancla = min(sum(pesos[:len(evidencia) - 3]) / 6.0, 0.85)
-
-    return float(ancla), float(peso_ancla)
-
-
 # ── Features sin fuga (leave-one-out) ─────────────────────────────────────────
 PAIRS = {"BR": ("Blade", "Ratchet"), "BB": ("Blade", "Bit"), "RB": ("Ratchet", "Bit")}
 
 
 def features_desde_stats(stats_df, target_df, ws_mean, loo=False):
     """
-    Calcula Blade/Ratchet/Bit_score y BR/BB/RB_score para `target_df` usando las
+    Calcula Blade/Assist/Ratchet/Bit_score y BR/BB/RB_score para `target_df` usando las
     Wins/Partidas agregadas de `stats_df`.
 
     loo=True (target_df ES stats_df): se resta la propia fila antes de calcular
@@ -125,7 +86,7 @@ def features_desde_stats(stats_df, target_df, ws_mean, loo=False):
     predecir un combo no jugado.
     """
     out = pd.DataFrame(index=target_df.index)
-    grupos = [(c + "_score", [c], 1) for c in ["Blade", "Ratchet", "Bit"]]
+    grupos = [(c + "_score", [c], 1) for c in PIEZAS]
     grupos += [(k + "_score", list(v), MIN_PARTIDAS_PAR) for k, v in PAIRS.items()]
 
     for col, keys, min_n in grupos:
@@ -137,6 +98,11 @@ def features_desde_stats(stats_df, target_df, ws_mean, loo=False):
             w = w - target_df["Wins"].to_numpy(dtype=float)
             n = n - target_df["Partidas"].to_numpy(dtype=float)
         out[col] = [wilson(wi, ni) if ni >= min_n else ws_mean for wi, ni in zip(w, n)]
+    # "Sin Assist" (UX/BX) no es una pieza: score neutro. Con leave-one-out, un
+    # grupo tan grande daría un valor casi constante que codifica el propio
+    # resultado (más victorias -> score LOO algo menor) y el modelo aprendería
+    # ese artefacto (R² CV 0,45 -> 0,34).
+    out.loc[target_df["Assist"] == SIN_ASSIST, "Assist_score"] = ws_mean
     return out
 
 
@@ -193,7 +159,8 @@ def construir_payload(df, evaluar=True, verbose=True):
     evaluar=False omite la validación cruzada (más rápido).
     """
     log = print if verbose else (lambda *a, **k: None)
-    df = df.copy().reset_index(drop=True)
+    # Solo combos legales, con la columna Assist (vacía en UX/BX)
+    df = filtrar_df(df).reset_index(drop=True)
 
     if df.empty or "Wilson Score" not in df.columns:
         raise ValueError("CSV vacío o sin columna Wilson Score")
@@ -202,7 +169,7 @@ def construir_payload(df, evaluar=True, verbose=True):
 
     # ── Label encoders ────────────────────────────────────────────────────────
     encoders = {}
-    for col in ["Blade", "Ratchet", "Bit"]:
+    for col in PIEZAS:
         le = LabelEncoder()
         df[col + "_enc"] = le.fit_transform(df[col].astype(str))
         encoders[col] = le
@@ -211,6 +178,8 @@ def construir_payload(df, evaluar=True, verbose=True):
     df["Partidas_log"] = np.log1p(df["Partidas"])
 
     blade_dict   = calcular_score_pieza(df, "Blade")
+    # Assist: solo CX. Sin Assist (UX/BX) usa ws_mean (ver features_desde_stats)
+    assist_dict  = calcular_score_pieza(df[df["Assist"] != SIN_ASSIST], "Assist")
     ratchet_dict = calcular_score_pieza(df, "Ratchet")
     bit_dict     = calcular_score_pieza(df, "Bit")
 
@@ -221,6 +190,8 @@ def construir_payload(df, evaluar=True, verbose=True):
     par_br = calcular_score_par(df, "Blade", "Ratchet")
     par_bb = calcular_score_par(df, "Blade", "Bit")
     par_rb = calcular_score_par(df, "Ratchet", "Bit")
+    # Blade CX + Assist (el antiguo "Blade completo"): solo como evidencia del ancla
+    par_ba = calcular_score_par(df[df["Assist"] != SIN_ASSIST], "Blade", "Assist")
 
     # Features de ENTRENAMIENTO sin fuga: leave-one-out (cada combo excluye
     # su propio resultado de los scores de pieza y de par).
@@ -228,9 +199,9 @@ def construir_payload(df, evaluar=True, verbose=True):
 
     # ── Feature set completo ──────────────────────────────────────────────────
     feature_cols = [
-        "Blade_enc", "Ratchet_enc", "Bit_enc",
+        "Blade_enc", "Assist_enc", "Ratchet_enc", "Bit_enc",
         "Partidas_log",
-        "Blade_score", "Ratchet_score", "Bit_score",
+        "Blade_score", "Assist_score", "Ratchet_score", "Bit_score",
         "BR_score", "BB_score", "RB_score",          # ← NUEVO
     ]
 
@@ -254,7 +225,7 @@ def construir_payload(df, evaluar=True, verbose=True):
     # ── NUEVO: dict combo real → (wilson, partidas) para ancla ───────────────
     combo_dict = {}
     for _, row in df.iterrows():
-        combo_dict[(row["Blade"], row["Ratchet"], row["Bit"])] = (
+        combo_dict[(row["Blade"], row["Assist"], row["Ratchet"], row["Bit"])] = (
             float(row["Wilson Score"]),
             int(row["Partidas"]),
         )
@@ -273,6 +244,7 @@ def construir_payload(df, evaluar=True, verbose=True):
 
     # ── Partidas por pieza (para filtro de confianza) ─────────────────────────
     partidas_blade   = df.groupby("Blade")["Partidas"].sum().to_dict()
+    partidas_assist  = df.groupby("Assist")["Partidas"].sum().to_dict()
     partidas_ratchet = df.groupby("Ratchet")["Partidas"].sum().to_dict()
     partidas_bit     = df.groupby("Bit")["Partidas"].sum().to_dict()
 
@@ -282,6 +254,7 @@ def construir_payload(df, evaluar=True, verbose=True):
         "encoders":        encoders,
         "feature_cols":    feature_cols,
         "blade_dict":      blade_dict,
+        "assist_dict":     assist_dict,
         "ratchet_dict":    ratchet_dict,
         "bit_dict":        bit_dict,
         "ws_mean":         ws_mean,
@@ -290,13 +263,16 @@ def construir_payload(df, evaluar=True, verbose=True):
         "par_br":          par_br,
         "par_bb":          par_bb,
         "par_rb":          par_rb,
+        "par_ba":          par_ba,
         "combo_dict":      combo_dict,
         "partidas_blade":   partidas_blade,
+        "partidas_assist":  partidas_assist,
         "partidas_ratchet": partidas_ratchet,
         "partidas_bit":     partidas_bit,
         "min_partidas_confiable": MIN_PARTIDAS_CONFIABLE,
         "min_partidas_par":       MIN_PARTIDAS_PAR,
         "cv_metrics":             cv_metrics,
+        "formato":                FORMATO_PAYLOAD,
     }
 
     return payload

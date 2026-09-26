@@ -4,18 +4,20 @@ import pandas as pd
 from data.loader import load_data
 from core.matchup import prob_victoria, pts_esperados, ws_ponderado, _cargar_pesos
 from components.demo_button import boton_autorellenar, combos_aleatorios
-from core.compatibility import ratchets_validos, blades_con_ux_expanded
+from core.compatibility import ratchets_validos, assists_validos, reglas_desde, nombre_blade
 
 st.set_page_config(layout="wide")
 
 st.title("⚔️ Calculadora de Matchup")
 
 df = load_data()
+reglas = reglas_desde(df)
+TODOS_ASSISTS = sorted(a for a in df["Assist"].unique() if a)
 
 pesos = _cargar_pesos()
 st.caption(
     f"Selecciona dos combos para predecir quién tiene ventaja. "
-    f"Pesos estimados: Blade {pesos['Blade']*100:.0f}% · "
+    f"Pesos estimados: Blade (+ Assist en CX) {pesos['Blade']*100:.0f}% · "
     f"Ratchet {pesos['Ratchet']*100:.0f}% · "
     f"Bit {pesos['Bit']*100:.0f}%"
 )
@@ -24,18 +26,43 @@ st.caption(
 def _autorellenar_combo(lado):
     """Rellena el combo A o B con uno real aleatorio distinto al del otro lado."""
     otro = "b" if lado == "a" else "a"
-    combo_otro = tuple(st.session_state.get(f"{p}_{otro}", "—") for p in ("blade", "ratchet", "bit"))
+    combo_otro = tuple(st.session_state.get(f"{p}_{otro}", "—") for p in ("blade", "assist", "ratchet", "bit"))
     for c in combos_aleatorios(df, n=10):
-        combo = (c["Blade"], c["Ratchet"], c["Bit"])
+        combo = (c["Blade"], c["Assist"] or "—", c["Ratchet"], c["Bit"])
         if combo != combo_otro:
             st.session_state[f"blade_{lado}"]   = combo[0]
-            st.session_state[f"ratchet_{lado}"] = combo[1]
-            st.session_state[f"bit_{lado}"]     = combo[2]
-            st.toast(f"🎲 Combo {lado.upper()}: {' / '.join(combo)}", icon="✨")
+            st.session_state[f"assist_{lado}"]  = combo[1]
+            st.session_state[f"ratchet_{lado}"] = combo[2]
+            st.session_state[f"bit_{lado}"]     = combo[3]
+            nombre = f"{nombre_blade(c['Blade'], c['Assist'])} / {combo[2]} / {combo[3]}"
+            st.toast(f"🎲 Combo {lado.upper()}: {nombre}", icon="✨")
             return
 
 
 _AUTO_HELP = "Rellena este combo con uno real aleatorio del dataset (ponderado por partidas)."
+
+
+def _selector_combo(lado):
+    """Selectores Blade / Assist / Ratchet / Bit de un bando. Assist solo en CX."""
+    blade = st.selectbox("Blade", ["—"] + sorted(df["Blade"].unique()), key=f"blade_{lado}")
+
+    es_cx = blade in reglas.cx
+    assist_opts = ["—"] + (assists_validos(blade, TODOS_ASSISTS, reglas.cx) if es_cx else [])
+    if st.session_state.get(f"assist_{lado}", "—") not in assist_opts:
+        st.session_state[f"assist_{lado}"] = "—"
+    assist = st.selectbox("Assist", assist_opts, key=f"assist_{lado}",
+                          disabled=not es_cx, help="Solo CX")
+
+    r_opts = (ratchets_validos(blade, sorted(df["Ratchet"].unique()), reglas.ux)
+              if blade != "—" else sorted(df["Ratchet"].unique()))
+    if st.session_state.get(f"ratchet_{lado}", "—") not in ["—"] + r_opts:
+        st.session_state[f"ratchet_{lado}"] = "—"
+    ratchet = st.selectbox("Ratchet", ["—"] + r_opts, key=f"ratchet_{lado}")
+    bit = st.selectbox("Bit", ["—"] + sorted(df["Bit"].unique()), key=f"bit_{lado}")
+
+    # Un CX sin Assist aún no es un combo completo; un UX/BX no lleva Assist
+    completo = all(v != "—" for v in (blade, ratchet, bit)) and (assist != "—" or not es_cx)
+    return blade, ("" if assist == "—" else assist), ratchet, bit, completo
 
 # ── Selección de combos ───────────────────────────────────────────────────────
 col_a, col_sep, col_b = st.columns([5, 1, 5])
@@ -43,9 +70,7 @@ col_a, col_sep, col_b = st.columns([5, 1, 5])
 with col_a:
     st.subheader("🔵 Combo A")
     boton_autorellenar(key="auto_match_a", help_text=_AUTO_HELP, on_click=_autorellenar_combo, args=("a",))
-    blade_a   = st.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key="blade_a")
-    ratchet_a = st.selectbox("Ratchet", ["—"] + (ratchets_validos(blade_a, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df)) if blade_a != "—" else sorted(df["Ratchet"].unique())), key="ratchet_a")
-    bit_a     = st.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key="bit_a")
+    blade_a, assist_a, ratchet_a, bit_a, completo_a = _selector_combo("a")
 
 with col_sep:
     st.markdown("<div style='text-align:center;font-size:2em;margin-top:80px'>VS</div>", unsafe_allow_html=True)
@@ -53,12 +78,10 @@ with col_sep:
 with col_b:
     st.subheader("🔴 Combo B")
     boton_autorellenar(key="auto_match_b", help_text=_AUTO_HELP, on_click=_autorellenar_combo, args=("b",))
-    blade_b   = st.selectbox("Blade",   ["—"] + sorted(df["Blade"].unique()),   key="blade_b")
-    ratchet_b = st.selectbox("Ratchet", ["—"] + (ratchets_validos(blade_b, sorted(df["Ratchet"].unique()), blades_con_ux_expanded(df)) if blade_b != "—" else sorted(df["Ratchet"].unique())), key="ratchet_b")
-    bit_b     = st.selectbox("Bit",     ["—"] + sorted(df["Bit"].unique()),     key="bit_b")
+    blade_b, assist_b, ratchet_b, bit_b, completo_b = _selector_combo("b")
 
 # ── Validar selección ─────────────────────────────────────────────────────────
-combos_completos = all(v != "—" for v in [blade_a, ratchet_a, bit_a, blade_b, ratchet_b, bit_b])
+combos_completos = completo_a and completo_b
 
 if not combos_completos:
     st.info("🔎 Selecciona ambos combos completos para ver el análisis.")
@@ -77,13 +100,19 @@ def _arquetipo_mas_comun(df, col, val, columna_arq):
     return mode.iloc[0] if not mode.empty else INSUFICIENTE
 
 
-def get_combo_data(df, blade, ratchet, bit):
-    # Wilson Score ponderado por pieza
+def get_combo_data(df, blade, assist, ratchet, bit):
+    # Wilson Score ponderado por pieza. En los CX, el hueco "Blade" es
+    # Blade + Assist: media de los dos.
     ws_blade   = df[df["Blade"]   == blade  ]["Wilson Score"].mean() if blade   else 0.5
+    if assist:
+        ws_assist = df[df["Assist"] == assist]["Wilson Score"].mean()
+        if ws_assist == ws_assist:  # no NaN
+            ws_blade = (ws_blade + ws_assist) / 2 if ws_blade == ws_blade else ws_assist
     ws_ratchet = df[df["Ratchet"] == ratchet]["Wilson Score"].mean() if ratchet else 0.5
     ws_bit     = df[df["Bit"]     == bit    ]["Wilson Score"].mean() if bit     else 0.5
 
-    row = df[(df["Blade"] == blade) & (df["Ratchet"] == ratchet) & (df["Bit"] == bit)]
+    row = df[(df["Blade"] == blade) & (df["Assist"] == assist)
+             & (df["Ratchet"] == ratchet) & (df["Bit"] == bit)]
     if not row.empty:
         r = row.iloc[0]
         return {
@@ -102,7 +131,9 @@ def get_combo_data(df, blade, ratchet, bit):
     arq_d = _arquetipo_mas_comun(df, "Blade", blade, "Arquetipo derrota")  if "Arquetipo derrota"  in df.columns else INSUFICIENTE
 
     pts_g, pts_c = [], []
-    for col, val in [("Blade", blade), ("Ratchet", ratchet), ("Bit", bit)]:
+    for col, val in [("Blade", blade), ("Assist", assist), ("Ratchet", ratchet), ("Bit", bit)]:
+        if not val:
+            continue  # sin Assist (UX/BX)
         s = df[df[col] == val]
         if not s.empty:
             pts_g.append(s["Pts Ganados/Combate"].mean())
@@ -119,8 +150,10 @@ def get_combo_data(df, blade, ratchet, bit):
         "real":        False,
     }
 
-data_a = get_combo_data(df, blade_a, ratchet_a, bit_a)
-data_b = get_combo_data(df, blade_b, ratchet_b, bit_b)
+data_a = get_combo_data(df, blade_a, assist_a, ratchet_a, bit_a)
+data_b = get_combo_data(df, blade_b, assist_b, ratchet_b, bit_b)
+nombre_a = nombre_blade(blade_a, assist_a)
+nombre_b = nombre_blade(blade_b, assist_b)
 
 # ── Cálculo ───────────────────────────────────────────────────────────────────
 p_a = prob_victoria(data_a["ws"], data_b["ws"])
@@ -143,7 +176,7 @@ resultado_html = f"""
 <div style="background:#1a1a2e;border-radius:12px;padding:20px;border:1px solid #2a2a4a;margin-bottom:16px">
     <div style="text-align:center;font-size:1.1em;color:#aaa;margin-bottom:12px">Probabilidad de victoria</div>
     <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
-        <span style="color:{color_a};font-weight:700;width:80px">{blade_a[:12]}</span>
+        <span style="color:{color_a};font-weight:700;width:80px">{nombre_a[:12]}</span>
         <div style="flex:1;background:#2a2a4a;border-radius:4px;height:22px;overflow:hidden">
             <div style="background:{color_a};width:{bar_a}%;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px">
                 <span style="color:#fff;font-size:0.85em;font-weight:700">{p_a*100:.1f}%</span>
@@ -151,7 +184,7 @@ resultado_html = f"""
         </div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
-        <span style="color:{color_b};font-weight:700;width:80px">{blade_b[:12]}</span>
+        <span style="color:{color_b};font-weight:700;width:80px">{nombre_b[:12]}</span>
         <div style="flex:1;background:#2a2a4a;border-radius:4px;height:22px;overflow:hidden">
             <div style="background:{color_b};width:{bar_b}%;height:100%;border-radius:4px;display:flex;align-items:center;padding-left:8px">
                 <span style="color:#fff;font-size:0.85em;font-weight:700">{p_b*100:.1f}%</span>
@@ -269,8 +302,8 @@ st.divider()
 col1, col2 = st.columns(2)
 
 for col, data, blade, ratchet, bit, color, label in [
-    (col1, data_a, blade_a, ratchet_a, bit_a, color_a, "A"),
-    (col2, data_b, blade_b, ratchet_b, bit_b, color_b, "B"),
+    (col1, data_a, nombre_a, ratchet_a, bit_a, color_a, "A"),
+    (col2, data_b, nombre_b, ratchet_b, bit_b, color_b, "B"),
 ]:
     with col:
         tipo = "✅ Datos reales" if data["real"] else "🔮 Estimado"

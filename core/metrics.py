@@ -6,13 +6,14 @@ def wilson(w, n, z=1.96):
 
 
 def calcular_agregados(df):
-    df_blade = df.groupby("Blade")[["Wins", "Losses", "Partidas"]].sum().reset_index()
-    df_ratchet = df.groupby("Ratchet")[["Wins", "Losses", "Partidas"]].sum().reset_index()
-    df_bit = df.groupby("Bit")[["Wins", "Losses", "Partidas"]].sum().reset_index()
+    """Agregados por pieza: Blade, Assist (solo CX), Ratchet y Bit."""
+    cols = ["Wins", "Losses", "Partidas"]
+    df_blade = df.groupby("Blade")[cols].sum().reset_index()
+    df_assist = df[df["Assist"] != ""].groupby("Assist")[cols].sum().reset_index()
+    df_ratchet = df.groupby("Ratchet")[cols].sum().reset_index()
+    df_bit = df.groupby("Bit")[cols].sum().reset_index()
 
-    for df_ in [df_blade, df_ratchet, df_bit]:
-        df_["Wilson Score"] = df_.apply(
-            lambda row: wilson(row["Wins"], row["Partidas"]), axis=1
-        )
+    for df_ in [df_blade, df_assist, df_ratchet, df_bit]:
+        df_["Wilson Score"] = [wilson(w, n) for w, n in zip(df_["Wins"], df_["Partidas"])]
 
-    return df_blade, df_ratchet, df_bit
+    return df_blade, df_assist, df_ratchet, df_bit

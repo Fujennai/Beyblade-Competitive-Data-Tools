@@ -1,38 +1,29 @@
 import streamlit as st
 
+# Piezas filtrables. El Assist solo existe en los CX: sus opciones no incluyen
+# el valor vacío (UX/BX) y elegir uno deja solo combos CX.
+PIEZAS = [("blade", "Blade"), ("assist", "Assist"), ("ratchet", "Ratchet"), ("bit", "Bit")]
+
 
 def filtros_dependientes(df, key_prefix="filter"):
 
-    st.subheader("🔎 Filtros por piezas")    
+    st.subheader("🔎 Filtros por piezas")
 
     if st.button("🔄 Resetear filtros"):
-
-        # valores reales
-        st.session_state[f"{key_prefix}_blade"] = "Todos"
-        st.session_state[f"{key_prefix}_ratchet"] = "Todos"
-        st.session_state[f"{key_prefix}_bit"] = "Todos"
-
-        # widgets visuales
-        st.session_state[f"{key_prefix}_blade_box"] = "Todos"
-        st.session_state[f"{key_prefix}_ratchet_box"] = "Todos"
-        st.session_state[f"{key_prefix}_bit_box"] = "Todos"
-
-        # estados previos
-        st.session_state[f"{key_prefix}_prev_blade"] = "Todos"
-        st.session_state[f"{key_prefix}_prev_ratchet"] = "Todos"
-        st.session_state[f"{key_prefix}_prev_bit"] = "Todos"
-
+        for k, _ in PIEZAS:
+            # valores reales, widgets visuales y estados previos
+            st.session_state[f"{key_prefix}_{k}"] = "Todos"
+            st.session_state[f"{key_prefix}_{k}_box"] = "Todos"
+            st.session_state[f"{key_prefix}_prev_{k}"] = "Todos"
         st.rerun()
 
-    col1, col2, col3 = st.columns(3)
+    columnas = st.columns(len(PIEZAS))
 
     # ==================================================
     # ESTADO ACTUAL
     # ==================================================
 
-    blade_sel = st.session_state.get(f"{key_prefix}_blade", "Todos")
-    ratchet_sel = st.session_state.get(f"{key_prefix}_ratchet", "Todos")
-    bit_sel = st.session_state.get(f"{key_prefix}_bit", "Todos")
+    sel = {k: st.session_state.get(f"{key_prefix}_{k}", "Todos") for k, _ in PIEZAS}
 
     # ==================================================
     # HELPERS
@@ -58,118 +49,48 @@ def filtros_dependientes(df, key_prefix="filter"):
 
         return display.split(" (")[0]
 
-    # ==================================================
-    # BLADE
-    # ==================================================
-
-    df_blade = df.copy()
-
-    if ratchet_sel != "Todos":
-        df_blade = df_blade[df_blade["Ratchet"] == ratchet_sel]
-
-    if bit_sel != "Todos":
-        df_blade = df_blade[df_blade["Bit"] == bit_sel]
-
-    blade_counts = df_blade["Blade"].value_counts().to_dict()
-
-    blade_options = build_options(
-        blade_counts.keys(),
-        blade_counts,
-        blade_sel
-    )
+    def filtrar(d, excepto=None):
+        for k, col in PIEZAS:
+            if k != excepto and sel[k] != "Todos":
+                d = d[d[col] == sel[k]]
+        return d
 
     # ==================================================
-    # RATCHET
+    # OPCIONES (cada pieza filtrada por las demás)
     # ==================================================
 
-    df_ratchet = df.copy()
+    displays = {}
+    for (k, col), c in zip(PIEZAS, columnas):
+        valores = filtrar(df, excepto=k)[col]
+        if col == "Assist":
+            valores = valores[valores != ""]
+        counts = valores.value_counts().to_dict()
+        options = build_options(counts.keys(), counts, sel[k])
 
-    if blade_sel != "Todos":
-        df_ratchet = df_ratchet[df_ratchet["Blade"] == blade_sel]
-
-    if bit_sel != "Todos":
-        df_ratchet = df_ratchet[df_ratchet["Bit"] == bit_sel]
-
-    ratchet_counts = df_ratchet["Ratchet"].value_counts().to_dict()
-
-    ratchet_options = build_options(
-        ratchet_counts.keys(),
-        ratchet_counts,
-        ratchet_sel
-    )
-
-    # ==================================================
-    # BIT
-    # ==================================================
-
-    df_bit = df.copy()
-
-    if blade_sel != "Todos":
-        df_bit = df_bit[df_bit["Blade"] == blade_sel]
-
-    if ratchet_sel != "Todos":
-        df_bit = df_bit[df_bit["Ratchet"] == ratchet_sel]
-
-    bit_counts = df_bit["Bit"].value_counts().to_dict()
-
-    bit_options = build_options(
-        bit_counts.keys(),
-        bit_counts,
-        bit_sel
-    )
-
-    # ==================================================
-    # SELECTBOXES
-    # ==================================================
-
-    blade_display = col1.selectbox(
-        "Blade",
-        blade_options,
-        index=blade_options.index(blade_sel)
-        if blade_sel in blade_options else 0,
-        key=f"{key_prefix}_blade_box"
-    )
-
-    ratchet_display = col2.selectbox(
-        "Ratchet",
-        ratchet_options,
-        index=ratchet_options.index(ratchet_sel)
-        if ratchet_sel in ratchet_options else 0,
-        key=f"{key_prefix}_ratchet_box"
-    )
-
-    bit_display = col3.selectbox(
-        "Bit",
-        bit_options,
-        index=bit_options.index(bit_sel)
-        if bit_sel in bit_options else 0,
-        key=f"{key_prefix}_bit_box"
-    )
+        displays[k] = c.selectbox(
+            col,
+            options,
+            index=options.index(sel[k]) if sel[k] in options else 0,
+            key=f"{key_prefix}_{k}_box",
+            help="Solo CX. Con un Assist elegido solo se muestran CX." if col == "Assist" else None,
+        )
 
     # ==================================================
     # LIMPIAR VALORES
     # ==================================================
 
-    blade_sel = clean_value(blade_display)
-    ratchet_sel = clean_value(ratchet_display)
-    bit_sel = clean_value(bit_display)
+    sel = {k: clean_value(displays[k]) for k, _ in PIEZAS}
 
     # guardar
-    st.session_state[f"{key_prefix}_blade"] = blade_sel
-    st.session_state[f"{key_prefix}_ratchet"] = ratchet_sel
-    st.session_state[f"{key_prefix}_bit"] = bit_sel
+    for k, _ in PIEZAS:
+        st.session_state[f"{key_prefix}_{k}"] = sel[k]
 
     # detectar cambios
-    changed = (
-        blade_sel != st.session_state.get(f"{key_prefix}_prev_blade")
-        or ratchet_sel != st.session_state.get(f"{key_prefix}_prev_ratchet")
-        or bit_sel != st.session_state.get(f"{key_prefix}_prev_bit")
-    )
+    changed = any(sel[k] != st.session_state.get(f"{key_prefix}_prev_{k}") for k, _ in PIEZAS)
 
     # guardar estados previos
-    st.session_state[f"{key_prefix}_prev_blade"] = blade_sel
-    st.session_state[f"{key_prefix}_prev_ratchet"] = ratchet_sel
-    st.session_state[f"{key_prefix}_prev_bit"] = bit_sel
+    for k, _ in PIEZAS:
+        st.session_state[f"{key_prefix}_prev_{k}"] = sel[k]
 
     # rerun inmediato
     if changed:
@@ -179,16 +100,7 @@ def filtros_dependientes(df, key_prefix="filter"):
     # FILTRADO FINAL
     # ==================================================
 
-    df_filtered = df.copy()
-
-    if blade_sel != "Todos":
-        df_filtered = df_filtered[df_filtered["Blade"] == blade_sel]
-
-    if ratchet_sel != "Todos":
-        df_filtered = df_filtered[df_filtered["Ratchet"] == ratchet_sel]
-
-    if bit_sel != "Todos":
-        df_filtered = df_filtered[df_filtered["Bit"] == bit_sel]
+    df_filtered = filtrar(df.copy())
 
     # ==================================================
     # INFO
@@ -209,9 +121,8 @@ def filtros_dependientes(df, key_prefix="filter"):
             f"Partidas totales: {partidas_totales}"
         )
 
-    return (
-        df_filtered,
-        None if blade_sel == "Todos" else blade_sel,
-        None if ratchet_sel == "Todos" else ratchet_sel,
-        None if bit_sel == "Todos" else bit_sel
-    )
+    def _v(k):
+        return None if sel[k] == "Todos" else sel[k]
+
+    # (df, blade, ratchet, bit, assist)
+    return df_filtered, _v("blade"), _v("ratchet"), _v("bit"), _v("assist")

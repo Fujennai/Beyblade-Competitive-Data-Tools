@@ -2,7 +2,7 @@ import pandas as pd
 import os
 import streamlit as st
 
-from core.compatibility import filtrar_df
+from core.compatibility import filtrar_df, asegurar_assist
 
 
 @st.cache_data(ttl=3600)
@@ -18,7 +18,8 @@ def load_history():
 
     for file in files:
         if file.endswith(".csv"):
-            df = pd.read_csv(f"history/{file}")
+            # asegurar_assist: capturas sin columna Assist se separan al vuelo
+            df = asegurar_assist(pd.read_csv(f"history/{file}"))
             df["fecha"] = file.replace("beyblade_stats_", "").replace(".csv", "")
             dfs.append(df)
 
