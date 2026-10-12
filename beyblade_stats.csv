@@ -179,7 +179,7 @@ Ghost Circle,,9-80,Low Orb,12.5,1,7,8,1.0,1.43,0.02241690886329618,⚪ Datos ins
 Glory Valkyrie,,UX Expanded,Elevate,57.14,4,3,7,2.0,2.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
 Glory Valkyrie,,UX Expanded,Free Flat,57.14,4,3,7,1.75,1.33,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
 Glory Valkyrie,,UX Expanded,Kick,50.0,3,3,6,1.33,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
-Glory Valkyrie,,UX Expanded,Rush,56.76,21,16,37,2.0,1.31,0.40913906334200717,🟠 Burst / Over,🔵 Pierde por spin
+Glory Valkyrie,,UX Expanded,Rush,58.54,24,17,41,2.04,1.29,0.433668353568366,🟠 Burst / Over,🔵 Pierde por spin
 Golem Rock,,0-80,High Needle,61.54,8,5,13,1.13,2.0,0.3552248097226855,🔵 Spin finish,🟠 Pierde por burst/over
 Golem Rock,,1-60,Low Orb,100.0,1,0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
 Golem Rock,,1-60,Under Needle,42.11,8,11,19,1.88,2.0,0.2314162039203038,🟠 Burst / Over,🟠 Pierde por burst/over
@@ -195,10 +195,10 @@ Golem Rock,,6-80,Low Orb,71.43,5,2,7,2.0,2.0,0.35892909014821267,⚪ Datos insuf
 Golem Rock,,7-60,Low Rush,25.0,1,3,4,2.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
 Golem Rock,,7-60,Orb,33.33,1,2,3,1.0,2.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
 Golem Rock,,9-60,Low Flat,0.0,0,2,2,0.0,1.5,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
-Golem Rock,,9-60,Low Orb,76.47,26,8,34,1.35,1.88,0.6000353719173557,🔵 Spin finish,🟠 Pierde por burst/over
+Golem Rock,,9-60,Low Orb,74.36,29,10,39,1.31,1.8,0.589180432321585,🔵 Spin finish,🟠 Pierde por burst/over
 Golem Rock,,9-60,Under Needle,70.0,7,3,10,1.57,2.0,0.3967732199795652,🟠 Burst / Over,🟠 Pierde por burst/over
 Golem Rock,,9-60,Unite,40.0,2,3,5,1.5,2.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
-Heavens Ring,,1-60,Kick,62.5,10,6,16,1.9,1.5,0.38640647097934805,🟠 Burst / Over,🟠 Pierde por burst/over
+Heavens Ring,,1-60,Kick,59.09,13,9,22,1.77,1.56,0.3873447738289381,🟠 Burst / Over,🟠 Pierde por burst/over
 Heavens Ring,,7-60,Hexa,70.0,7,3,10,1.0,1.33,0.3967732199795652,🔵 Spin finish,🔵 Pierde por spin
 Hells Chain,,3-80,Point,33.33,2,4,6,3.0,1.5,0.09676933255921684,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Chain,,5-60,Ball,28.57,2,5,7,1.5,1.8,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -225,7 +225,7 @@ Hells Hammer,,3-60,High Taper,50.0,5,5,10,1.4,2.4,0.2365895936154873,🔵 Spin f
 Hells Hammer,,3-70,Flat,20.0,1,4,5,2.0,1.25,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Hammer,,3-70,Hexa,28.57,2,5,7,2.0,1.598,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Hammer,,3-70,Jolt,26.67,4,11,15,1.75,1.36,0.10897276103182815,🟠 Burst / Over,🔵 Pierde por spin
-Hells Hammer,,3-70,Kick,57.14,4,3,7,2.0,1.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Hammer,,3-70,Kick,50.0,5,5,10,1.8,1.2,0.2365895936154873,🟠 Burst / Over,🔵 Pierde por spin
 Hells Hammer,,3-70,Rush,55.0,33,27,60,1.73,1.33,0.424917145489815,🟠 Burst / Over,🔵 Pierde por spin
 Hells Hammer,,3-80,Low Flat,33.33,1,2,3,2.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Hammer,,3-80,Unite,50.0,3,3,6,1.0,1.33,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -235,7 +235,8 @@ Hells Hammer,,7-60,Ball,57.14,4,3,7,1.5,1.67,0.2504542304090258,⚪ Datos insufi
 Hells Hammer,,9-60,Dot,66.67,2,1,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Hammer,,9-60,Low Flat,0.0,0,3,3,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Hammer,,9-60,Rush,38.24,13,21,34,2.0,1.62,0.23899964851608782,🟠 Burst / Over,🟠 Pierde por burst/over
-Hells Nether,,UX Expanded,Free Ball,45.45,5,6,11,1.2,1.83,0.21270957543988048,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Nether,,UX Expanded,Free Ball,53.33,8,7,15,1.5,1.71,0.3011663015105079,🟠 Burst / Over,🟠 Pierde por burst/over
+Hells Nether,,UX Expanded,Hexa,50.0,1,1,2,1.0,1.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Reaper,,9-60,Hexa,66.67,2,1,3,1.0,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Reaper,Charge,9-60,Ball,16.67,1,5,6,2.0,1.6,0.030052585871730285,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Reaper,Jaggy,7-60,Kick,50.0,1,1,2,1.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -248,7 +249,7 @@ Hells Scythe,,1-60,Ball,75.0,3,1,4,1.67,2.0,0.30063605244263664,⚪ Datos insufi
 Hells Scythe,,1-60,Kick,50.0,3,3,6,2.0,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Scythe,,1-60,Taper,25.0,1,3,4,2.0,1.67,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Scythe,,1-80,Rubber Accel,50.0,4,4,8,1.0,1.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
-Hells Scythe,,3-60,Ball,66.07,37,19,56,1.43,1.79,0.5299920896078809,🔵 Spin finish,🟠 Pierde por burst/over
+Hells Scythe,,3-60,Ball,62.71,37,22,59,1.43,1.73,0.49953356682142125,🔵 Spin finish,🟠 Pierde por burst/over
 Hells Scythe,,3-60,Free Ball,77.97,46,13,59,1.37,2.23,0.6586705755334911,🔵 Spin finish,🟠 Pierde por burst/over
 Hells Scythe,,3-60,Point,40.0,2,3,5,2.0,1.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Scythe,,3-60,Taper,44.0,11,14,25,1.64,1.71,0.26665374947002574,🟠 Burst / Over,🟠 Pierde por burst/over
@@ -394,7 +395,7 @@ Meteor Dragoon,,1-60,Taper,50.0,4,4,8,1.5,1.0,0.2152125268244419,⚪ Datos insuf
 Meteor Dragoon,,5-60,Level,54.05,20,17,37,1.8,1.53,0.3838377952476737,🟠 Burst / Over,🟠 Pierde por burst/over
 Meteor Dragoon,,7-55,Level,63.64,7,4,11,1.71,1.75,0.35379677689163724,🟠 Burst / Over,🟠 Pierde por burst/over
 Meteor Dragoon,,7-60,Level,75.0,27,9,36,1.59,1.67,0.5892923231679658,🟠 Burst / Over,🟠 Pierde por burst/over
-Meteor Dragoon,,7-70,Level,50.0,19,19,38,1.37,1.47,0.3484967553286069,🔵 Spin finish,🔵 Pierde por spin
+Meteor Dragoon,,7-70,Level,50.0,23,23,46,1.3,1.39,0.3611870167007237,🔵 Spin finish,🔵 Pierde por spin
 Meteor Dragoon,,9-60,Level,28.57,2,5,7,2.0,1.2,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
 Meteor Dragoon,,9-70,Level,37.5,6,10,16,2.17,1.4,0.18480982554752803,🟠 Burst / Over,🔵 Pierde por spin
 Meteor Dragoon,,9-70,Low Rush,63.64,7,4,11,1.86,1.5,0.35379677689163724,🟠 Burst / Over,🟠 Pierde por burst/over
@@ -608,8 +609,8 @@ Shark Scale,,1-70,Low Rush,63.02,167,98,265,1.81,1.5,0.5705907464672456,🟠 Bur
 Shark Scale,,1-70,Rush,75.0,6,2,8,2.0,1.0,0.40926987910258916,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,,1-70,Under Flat,0.0,0,4,4,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,,1-80,Rush,63.16,12,7,19,2.33,1.29,0.41039157498156714,🟠 Burst / Over,🔵 Pierde por spin
-Shark Scale,,3-60,Free Ball,66.07,111,57,168,1.64,1.72,0.5862387565033531,🟠 Burst / Over,🟠 Pierde por burst/over
-Shark Scale,,3-60,Jolt,68.89,31,14,45,1.58,1.36,0.5433492001245103,🟠 Burst / Over,🔵 Pierde por spin
+Shark Scale,,3-60,Free Ball,65.19,118,63,181,1.69,1.75,0.5800300173767687,🟠 Burst / Over,🟠 Pierde por burst/over
+Shark Scale,,3-60,Jolt,66.67,32,16,48,1.56,1.5,0.5253984633247204,🟠 Burst / Over,🟠 Pierde por burst/over
 Shark Scale,,3-60,Kick,25.0,1,3,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,,3-60,Low Rush,67.65,46,22,68,1.83,1.41,0.5584427498007829,🟠 Burst / Over,🔵 Pierde por spin
 Shark Scale,,3-60,Rush,61.9,13,8,21,1.62,1.63,0.40878295815501514,🟠 Burst / Over,🟠 Pierde por burst/over
@@ -844,11 +845,11 @@ Wizard Rod,,1-50,Hexa,69.23,18,8,26,1.39,1.63,0.5001138848576876,🔵 Spin finis
 Wizard Rod,,1-60,Ball,71.43,10,4,14,1.9,2.75,0.4535045882751561,🟠 Burst / Over,🟢 Pierde por xtreme
 Wizard Rod,,1-60,Bound Spike,70.0,7,3,10,1.0,1.33,0.3967732199795652,🔵 Spin finish,🔵 Pierde por spin
 Wizard Rod,,1-60,Free Ball,75.0,3,1,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
-Wizard Rod,,1-60,Hexa,71.54,543,216,759,1.26,1.68,0.6822916489501185,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,,1-60,Hexa,71.65,551,218,769,1.26,1.68,0.6836452747567544,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,1-60,High Needle,90.91,10,1,11,1.4,1.0,0.6226353745137962,🔵 Spin finish,🔵 Pierde por spin
 Wizard Rod,,1-60,Level,66.67,8,4,12,1.5,1.5,0.3906175873976139,🟠 Burst / Over,🟠 Pierde por burst/over
 Wizard Rod,,1-60,Low Rush,50.0,2,2,4,1.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
-Wizard Rod,,1-60,Narrow,100.0,5,0,5,1.4,0.0,0.565508505247919,⚪ Datos insuficientes,⚪ Datos insuficientes
+Wizard Rod,,1-60,Narrow,85.71,6,1,7,1.33,1.0,0.4868654966809702,⚪ Datos insuficientes,⚪ Datos insuficientes
 Wizard Rod,,1-60,Rush,62.5,5,3,8,1.2,2.0,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
 Wizard Rod,,1-60,Under Needle,61.18,93,59,152,1.203,1.798,0.5325219333033981,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,1-70,Hexa,78.57,33,9,42,1.24,1.67,0.6405986210195627,🔵 Spin finish,🟠 Pierde por burst/over
@@ -880,11 +881,11 @@ Wizard Rod,,9-60,Dot,71.05,27,11,38,1.41,1.73,0.5524256173381022,🔵 Spin finis
 Wizard Rod,,9-60,Free Ball,90.91,10,1,11,1.3,3.0,0.6226353745137962,🔵 Spin finish,🟢 Pierde por xtreme
 Wizard Rod,,9-60,Gear Flat,37.5,3,5,8,1.33,2.4,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
 Wizard Rod,,9-60,Gear Needle,83.33,5,1,6,1.4,1.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
-Wizard Rod,,9-60,Hexa,74.16,66,23,89,1.27,1.96,0.641968636926015,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,,9-60,Hexa,72.83,67,25,92,1.3,2.04,0.6295795515958801,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,9-60,High Needle,51.72,15,14,29,1.2,1.5,0.34430737970569164,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,9-60,Level,62.5,5,3,8,1.4,1.33,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
 Wizard Rod,,9-60,Low Orb,93.75,15,1,16,1.07,2.0,0.7167073163197013,🔵 Spin finish,🟠 Pierde por burst/over
-Wizard Rod,,9-60,Narrow,82.61,19,4,23,1.32,2.25,0.6286194521470434,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,,9-60,Narrow,75.86,22,7,29,1.27,2.0,0.5789204778167131,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,9-60,Orb,57.14,8,6,14,1.0,2.0,0.3259026690286936,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,9-60,Taper,66.67,4,2,6,1.5,2.0,0.2999883213415286,⚪ Datos insuficientes,⚪ Datos insuficientes
 Wizard Rod,,9-60,Under Needle,100.0,8,0,8,1.0,0.0,0.6755843804891231,⚪ Datos insuficientes,⚪ Datos insuficientes
