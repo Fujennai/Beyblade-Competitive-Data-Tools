@@ -38,7 +38,7 @@ Brachio Whip Outer,Wheel,9-60,Narrow,70.0,14,6,20,1.14,1.83,0.4810232237710205,�
 Bucks Antler,,3-60,Low Rush,50.0,1,1,2,1.0,2.0,0.09452865480086611,⚪ Datos insuficientes,⚪ Datos insuficientes
 Bucks Antler,Wheel,9-60,Kick,50.0,2,2,4,2.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
 Bullet Griffon,,UX Expanded,Hexa,47.06,8,9,17,1.25,1.89,0.26164801196088106,🔵 Spin finish,🟠 Pierde por burst/over
-Bullet Griffon,,UX Expanded,Point,66.67,2,1,3,2.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
+Bullet Griffon,,UX Expanded,Point,45.45,5,6,11,2.6,1.67,0.21270957543988048,🟢 Xtreme finish,🟠 Pierde por burst/over
 Cerberus Flame,,4-55,Kick,71.43,5,2,7,1.6,2.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
 Cerberus Flame,Heavy,9-60,Hexa,57.14,8,6,14,1.0,1.33,0.3259026690286936,🔵 Spin finish,🔵 Pierde por spin
 Cerberus Flame,Massive,3-60,Kick,66.67,8,4,12,1.88,1.0,0.3906175873976139,🟠 Burst / Over,🔵 Pierde por spin
@@ -47,7 +47,7 @@ Cerberus Flame,Wheel,9-60,Hexa,0.0,0,2,2,0.0,3.0,0.0,⚪ Datos insuficientes,⚪
 Clock Mirage,,4-55,Low Orb,50.0,6,6,12,0.83,1.0,0.2537781703934222,🔵 Spin finish,🔵 Pierde por spin
 Clock Mirage,,4-55,Under Needle,80.0,4,1,5,1.0,2.0,0.37552826411853885,⚪ Datos insuficientes,⚪ Datos insuficientes
 Clock Mirage,,7-55,Low Orb,71.43,5,2,7,1.2,2.0,0.35892909014821267,⚪ Datos insuficientes,⚪ Datos insuficientes
-Clock Mirage,,7-55,Under Needle,54.84,17,14,31,1.29,1.86,0.37771879603669134,🔵 Spin finish,🟠 Pierde por burst/over
+Clock Mirage,,7-55,Under Needle,57.5,23,17,40,1.22,1.88,0.4219480043605999,🔵 Spin finish,🟠 Pierde por burst/over
 Cobalt Dragoon,,0-70,Elevate,0.0,0,1,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Cobalt Dragoon,,1-60,Cyclone,66.67,2,1,3,1.5,1.0,0.20765495512648788,⚪ Datos insuficientes,⚪ Datos insuficientes
 Cobalt Dragoon,,1-60,Elevate,66.18,45,23,68,1.49,1.87,0.5433701723652863,🔵 Spin finish,🟠 Pierde por burst/over
@@ -86,7 +86,7 @@ Cobalt Dragoon,,7-60,Level,66.67,8,4,12,1.5,1.5,0.3906175873976139,🟠 Burst / 
 Cobalt Dragoon,,7-60,Point,63.16,24,14,38,1.63,2.07,0.4728367282426011,🟠 Burst / Over,🟠 Pierde por burst/over
 Cobalt Dragoon,,7-70,Elevate,70.83,17,7,24,1.35,2.0,0.5083193634129031,🔵 Spin finish,🟠 Pierde por burst/over
 Cobalt Dragoon,,9-60,Cyclone,20.0,1,4,5,1.0,1.0,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
-Cobalt Dragoon,,9-60,Elevate,62.5,25,15,40,1.2,1.67,0.4703216005453191,🔵 Spin finish,🟠 Pierde por burst/over
+Cobalt Dragoon,,9-60,Elevate,60.38,32,21,53,1.25,1.71,0.4694123578888073,🔵 Spin finish,🟠 Pierde por burst/over
 Cobalt Dragoon,,9-60,Point,20.0,1,4,5,1.0,1.5,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
 Cobalt Dragoon,,9-70,Elevate,86.11,31,5,36,1.42,2.2,0.7134014871960681,🔵 Spin finish,🟠 Pierde por burst/over
 Cobalt Drake,,1-60,Rush,30.0,3,7,10,2.0,1.14,0.10778928748621182,🟠 Burst / Over,🔵 Pierde por spin
@@ -147,7 +147,7 @@ Dran Sword,,3-60,High Needle,50.0,3,3,6,1.33,2.0,0.1876128068994087,⚪ Datos in
 Dran Sword,,3-60,Low Flat,28.57,2,5,7,2.5,1.4,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
 Dran Sword,,3-60,Orb,0.0,0,1,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Dran Sword,,3-60,Point,58.33,7,5,12,1.71,1.6,0.3195073356553728,🟠 Burst / Over,🟠 Pierde por burst/over
-Dran Sword,,3-60,Rush,37.5,6,10,16,1.67,1.3,0.18480982554752803,🟠 Burst / Over,🔵 Pierde por spin
+Dran Sword,,3-60,Rush,40.0,8,12,20,1.63,1.25,0.21880396741419272,🟠 Burst / Over,🔵 Pierde por spin
 Dran Sword,,3-60,Taper,48.72,19,20,39,1.42,1.45,0.3386492878313309,🔵 Spin finish,🔵 Pierde por spin
 Dran Sword,,3-60,Vortex,50.0,9,9,18,2.11,1.56,0.2903070395897999,🟠 Burst / Over,🟠 Pierde por burst/over
 Dran Sword,,3-80,Flat,40.0,2,3,5,2.5,1.67,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -206,7 +206,7 @@ Hells Chain,,5-60,Dot,45.83,11,13,24,1.73,1.62,0.27891058351681425,🟠 Burst / 
 Hells Chain,,5-60,Free Ball,12.5,1,7,8,1.0,1.43,0.02241690886329618,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Chain,,5-60,Hexa,33.33,3,6,9,1.67,1.33,0.12058159868274292,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Chain,,5-60,High Needle,50.0,2,2,4,1.5,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
-Hells Chain,,5-60,High Taper,66.67,8,4,12,1.751,2.75,0.3906175873976139,🟠 Burst / Over,🟢 Pierde por xtreme
+Hells Chain,,5-60,High Taper,63.16,12,7,19,1.666,2.0,0.41039157498156714,🟠 Burst / Over,🟠 Pierde por burst/over
 Hells Chain,,5-60,Needle,0.0,0,1,1,0.0,2.0,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Chain,,5-60,Point,36.36,4,7,11,2.5,1.29,0.15166223614131386,🟢 Xtreme finish,🔵 Pierde por spin
 Hells Chain,,5-60,Taper,60.0,3,2,5,1.33,1.5,0.23071993220883702,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -271,6 +271,7 @@ Hells Scythe,,5-60,Point,33.33,1,2,3,1.0,2.5,0.061490315276160515,⚪ Datos insu
 Hells Scythe,,5-60,Taper,25.0,1,3,4,1.0,1.0,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Scythe,,5-70,Ball,50.0,2,2,4,1.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Scythe,,5-80,Orb,50.0,2,2,4,1.5,2.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
+Hells Scythe,,7-60,Orb,50.0,2,2,4,1.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Scythe,,9-60,Ball,64.88,133,72,205,1.41,1.67,0.5812439312787488,🔵 Spin finish,🟠 Pierde por burst/over
 Hells Scythe,,9-60,Disc Ball,75.0,3,1,4,1.33,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
 Hells Scythe,,9-60,Free Ball,65.71,23,12,35,1.26,1.83,0.4915164687273671,🔵 Spin finish,🟠 Pierde por burst/over
@@ -310,6 +311,7 @@ Impact Drake,,9-60,Low Rush,44.0,11,14,25,1.45,1.36,0.26665374947002574,🔵 Spi
 Impact Drake,,9-60,Point,20.0,1,4,5,2.0,2.0,0.036223160969787456,⚪ Datos insuficientes,⚪ Datos insuficientes
 Impact Drake,,9-60,Rush,25.0,1,3,4,1.0,1.33,0.045586062644636216,⚪ Datos insuficientes,⚪ Datos insuficientes
 Knife Shinobi,,9-60,Gear Flat,40.0,2,3,5,2.0,2.33,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
+Knight Fortress Flow,Wheel,3-60,Free Ball,30.0,3,7,10,1.0,1.29,0.10778928748621182,🔵 Spin finish,🔵 Pierde por spin
 Knight Fortress Outer,Wheel,9-60,Narrow,75.0,9,3,12,1.22,1.67,0.4676896608793401,🔵 Spin finish,🟠 Pierde por burst/over
 Knight Lance,,1-60,Hexa,40.0,2,3,5,1.5,1.0,0.11761823115925325,⚪ Datos insuficientes,⚪ Datos insuficientes
 Knight Lance,,3-60,Hexa,50.0,2,2,4,2.0,1.5,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -395,9 +397,9 @@ Mammoth Tusk,,9-60,Ball,25.0,1,3,4,1.0,1.0,0.045586062644636216,⚪ Datos insufi
 Mammoth Tusk,,9-60,Orb,50.0,6,6,12,1.17,1.17,0.2537781703934222,🔵 Spin finish,🔵 Pierde por spin
 Meteor Dragoon,,0-60,Level,55.56,10,8,18,1.5,1.5,0.33716069428251627,🟠 Burst / Over,🟠 Pierde por burst/over
 Meteor Dragoon,,1-60,Taper,50.0,4,4,8,1.5,1.0,0.2152125268244419,⚪ Datos insuficientes,⚪ Datos insuficientes
-Meteor Dragoon,,5-60,Level,54.05,20,17,37,1.8,1.53,0.3838377952476737,🟠 Burst / Over,🟠 Pierde por burst/over
+Meteor Dragoon,,5-60,Level,54.35,25,21,46,1.76,1.62,0.4017993496608042,🟠 Burst / Over,🟠 Pierde por burst/over
 Meteor Dragoon,,7-55,Level,63.64,7,4,11,1.71,1.75,0.35379677689163724,🟠 Burst / Over,🟠 Pierde por burst/over
-Meteor Dragoon,,7-60,Level,75.0,27,9,36,1.59,1.67,0.5892923231679658,🟠 Burst / Over,🟠 Pierde por burst/over
+Meteor Dragoon,,7-60,Level,69.05,29,13,42,1.59,1.77,0.539737222336594,🟠 Burst / Over,🟠 Pierde por burst/over
 Meteor Dragoon,,7-70,Level,52.83,28,25,53,1.36,1.44,0.39659852300756443,🔵 Spin finish,🔵 Pierde por spin
 Meteor Dragoon,,9-60,Level,28.57,2,5,7,2.0,1.2,0.08221716570901552,⚪ Datos insuficientes,⚪ Datos insuficientes
 Meteor Dragoon,,9-70,Level,37.5,6,10,16,2.17,1.4,0.18480982554752803,🟠 Burst / Over,🔵 Pierde por spin
@@ -629,7 +631,7 @@ Shark Scale,,7-60,Low Rush,83.33,5,1,6,1.4,2.0,0.4364905634363539,⚪ Datos insu
 Shark Scale,,7-60,Under Flat,0.0,0,6,6,0.0,1.33,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,,9-60,Free Ball,80.0,16,4,20,1.75,1.75,0.5839782779742402,🟠 Burst / Over,🟠 Pierde por burst/over
 Shark Scale,,9-60,Low Orb,55.56,10,8,18,1.3,1.5,0.33716069428251627,🔵 Spin finish,🟠 Pierde por burst/over
-Shark Scale,,9-60,Narrow,75.0,12,4,16,1.17,1.75,0.5050123107060135,🔵 Spin finish,🟠 Pierde por burst/over
+Shark Scale,,9-60,Narrow,81.48,22,5,27,1.18,1.6,0.6330094349480825,🔵 Spin finish,🟠 Pierde por burst/over
 Shark Scale,,9-70,Free Ball,100.0,2,0,2,2.5,0.0,0.3423719528896193,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,,9-70,Low Rush,83.33,5,1,6,2.0,2.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
 Shark Scale,,9-80,Rush,62.5,5,3,8,1.2,1.67,0.3057378545838018,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -770,8 +772,10 @@ Tyranno Beat,,9-60,Unite,66.67,2,1,3,2.0,3.0,0.20765495512648788,⚪ Datos insuf
 Tyranno Beat,,9-80,Ball,60.0,6,4,10,1.5,2.0,0.3126695474501863,🟠 Burst / Over,🟠 Pierde por burst/over
 Tyranno Roar,,3-60,Rush,33.33,1,2,3,1.0,1.5,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
 Tyranno Roar,,9-60,High Needle,83.33,5,1,6,1.0,3.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Delta Peak,Heavy,1-60,Kick,50.0,5,5,10,1.2,1.2,0.2365895936154873,🔵 Spin finish,🔵 Pierde por spin
 Unicorn Sting,,1-60,Ball,71.43,10,4,14,1.1,2.25,0.4535045882751561,🔵 Spin finish,🟠 Pierde por burst/over
 Unicorn Sting,,1-60,Gear Ball,100.0,1,0,1,1.0,0.0,0.20654329147389294,⚪ Datos insuficientes,⚪ Datos insuficientes
+Unicorn Sting,,1-80,Unite,0.0,0,5,5,0.0,1.2,0.0,⚪ Datos insuficientes,⚪ Datos insuficientes
 Unicorn Sting,,3-60,Dot,57.14,4,3,7,1.0,1.0,0.2504542304090258,⚪ Datos insuficientes,⚪ Datos insuficientes
 Unicorn Sting,,3-60,Orb,50.0,3,3,6,1.33,1.67,0.1876128068994087,⚪ Datos insuficientes,⚪ Datos insuficientes
 Unicorn Sting,,3-70,Unite,33.33,1,2,3,1.0,1.0,0.061490315276160515,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -850,7 +854,7 @@ Wizard Rod,,1-50,Hexa,69.23,18,8,26,1.39,1.63,0.5001138848576876,🔵 Spin finis
 Wizard Rod,,1-60,Ball,71.43,10,4,14,1.9,2.75,0.4535045882751561,🟠 Burst / Over,🟢 Pierde por xtreme
 Wizard Rod,,1-60,Bound Spike,70.0,7,3,10,1.0,1.33,0.3967732199795652,🔵 Spin finish,🔵 Pierde por spin
 Wizard Rod,,1-60,Free Ball,75.0,3,1,4,1.67,1.0,0.30063605244263664,⚪ Datos insuficientes,⚪ Datos insuficientes
-Wizard Rod,,1-60,Hexa,71.72,558,220,778,1.26,1.69,0.6845703895292821,🔵 Spin finish,🟠 Pierde por burst/over
+Wizard Rod,,1-60,Hexa,71.5,567,226,793,1.26,1.69,0.6826094678361392,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,1-60,High Needle,90.91,10,1,11,1.4,1.0,0.6226353745137962,🔵 Spin finish,🔵 Pierde por spin
 Wizard Rod,,1-60,Level,66.67,8,4,12,1.5,1.5,0.3906175873976139,🟠 Burst / Over,🟠 Pierde por burst/over
 Wizard Rod,,1-60,Low Rush,50.0,2,2,4,1.0,1.0,0.15003570882017145,⚪ Datos insuficientes,⚪ Datos insuficientes
@@ -883,7 +887,7 @@ Wizard Rod,,7-60,Hexa,61.54,8,5,13,1.38,2.0,0.3552248097226855,🔵 Spin finish,
 Wizard Rod,,7-70,Hexa,66.67,8,4,12,1.753,1.248,0.3906175873976139,🟠 Burst / Over,🔵 Pierde por spin
 Wizard Rod,,9-60,Ball,74.48,397,136,533,1.147,1.773,0.7061686022354574,🔵 Spin finish,🟠 Pierde por burst/over
 Wizard Rod,,9-60,Dot,71.05,27,11,38,1.41,1.73,0.5524256173381022,🔵 Spin finish,🟠 Pierde por burst/over
-Wizard Rod,,9-60,Free Ball,90.91,10,1,11,1.3,3.0,0.6226353745137962,🔵 Spin finish,🟢 Pierde por xtreme
+Wizard Rod,,9-60,Free Ball,86.36,19,3,22,1.42,2.67,0.6666458812053,🔵 Spin finish,🟢 Pierde por xtreme
 Wizard Rod,,9-60,Gear Flat,37.5,3,5,8,1.33,2.4,0.13684175946152105,⚪ Datos insuficientes,⚪ Datos insuficientes
 Wizard Rod,,9-60,Gear Needle,83.33,5,1,6,1.4,1.0,0.4364905634363539,⚪ Datos insuficientes,⚪ Datos insuficientes
 Wizard Rod,,9-60,Hexa,72.83,67,25,92,1.3,2.04,0.6295795515958801,🔵 Spin finish,🟠 Pierde por burst/over
